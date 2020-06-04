@@ -1,7 +1,0 @@
-[
-{
-  "directory": "/home/sentenced/Documents/Internships/2018_ETH/work/spec_ast/input/isl_point/build",
-  "command": "/home/sentenced/Documents/Utilities/llvm-install/bin/clang++   -I/home/sentenced/Documents/Internships/2018_ETH/isl/../isl-install/include -I/home/sentenced/Documents/Utilities/llvm-install/include -I/home/sentenced/Documents/Utilities/llvm-install/include/../lib/clang/10.0.0/include -I../    -std=gnu++17 -o CMakeFiles/isl_point_lib.dir/isl_point.cpp.o -c /home/sentenced/Documents/Internships/2018_ETH/work/spec_ast/input/isl_point/isl_point.cpp",
-  "file": "/home/sentenced/Documents/Internships/2018_ETH/work/spec_ast/input/isl_point/isl_point.cpp"
-}
-]

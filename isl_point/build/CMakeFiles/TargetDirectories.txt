@@ -1,5 +1,0 @@
-/home/sentenced/Documents/Internships/2018_ETH/work/spec_ast/input/isl_point/build/CMakeFiles/edit_cache.dir
-/home/sentenced/Documents/Internships/2018_ETH/work/spec_ast/input/isl_point/build/CMakeFiles/rebuild_cache.dir
-/home/sentenced/Documents/Internships/2018_ETH/work/spec_ast/input/isl_point/build/CMakeFiles/isl_point_lib.dir
-/home/sentenced/Documents/Internships/2018_ETH/work/spec_ast/input/isl_point/build/CMakeFiles/intrinsics_gen.dir
-/home/sentenced/Documents/Internships/2018_ETH/work/spec_ast/input/isl_point/build/CMakeFiles/clang-tablegen-targets.dir
