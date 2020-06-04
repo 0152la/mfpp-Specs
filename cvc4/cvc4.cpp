@@ -46,7 +46,7 @@ make_pow_expr(CVC4::api::Solver& slv, CVC4::api::Term lhs, CVC4::api::Term rhs)
     CVC4::api::Term is_zero = slv.mkTerm(CVC4::api::AND,
         slv.mkTerm(CVC4::api::EQUAL, lhs, zero),
         slv.mkTerm(CVC4::api::EQUAL, rhs, zero));
-    return is_zero.iteTerm(lhs, slv.mkTerm(CVC4::api::Kind::POW, lhs, rhs));
+    return is_zero.iteTerm(lhs, slv.mkTerm(CVC4::api::Kind::POW, lhs, slv.mkTerm(CVC4::api::Kind::ABS, rhs)));
 }
 
 
