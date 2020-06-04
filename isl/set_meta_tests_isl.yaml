@@ -1,0 +1,74 @@
+# %n, where n is an integer = input set
+# %e = empty set
+# %u = universe
+# %m = metamorphic test variable
+#
+# formula names taken from
+# https://www.allaboutcircuits.com/technical-articles/boolean-identities/
+---
+input_count: 3
+meta_var_type: "isl::set"
+meta_test_count: 5
+variant_count: 20
+meta_check:
+    - "assert(%m.is_equal(%m0))"
+
+generators:
+    universe: # universe
+        identifier: 'u'
+        relations:
+            - "%1.unite(%1.complement())" # complementarity
+            - "%e.complement()" # logical inverse
+            - "%1.unite(%u)" # dominance
+
+    empty: # empty
+        identifier: 'e'
+        relations:
+            - "%1.intersect(%1.complement())" # complementarity
+            - "%1.subtract(%1)"
+            - "%1.subtract(%u)"
+            - "%1.intersect(%e)" # dominance
+            - "%u.complement()" # logical inverse
+
+    #invertible_functions:
+        #- [ "%1.complement()" , "%1.complement()" ]
+
+relations:
+    identity:
+        - "%m = %1.unite(%1)" # idempotence
+        - "%m = %1.unite(%e)" # identity
+        - "%m = %1.intersect(%1)" # idempotence
+        - "%m = %1.intersect(%u)" # identity
+        - "%m = %1.subtract(%e)"
+        - "%m = %u.subtract(%1.complement())"
+        - "%m = %1.intersect(%1.unite(%2))" # absorption
+        - "%m = %1.unite(%1.intersect(%2))" # absorption
+        - "%m = %1.complement().complement()" # involution
+        - "%m = %1.coalesce()"
+        - "%m = %1.detect_equalities()"
+
+    complement:
+        - "%m = %1.complement()"
+        - "%m = %u.subtract(%1)"
+
+    subtract:
+        - "%m = %1.subtract(%2)"
+        - "%m = %1.intersect(%2.complement())"
+
+    union:
+        - "%m = %1.unite(%2)"
+        - "%m = %2.unite(%1)" # commutativity
+        - "%m = %1.complement().intersect(%2.complement()).complement()" # DeMorgan
+
+    intersect:
+        - "%m = %1.intersect(%2)"
+        - "%m = %2.intersect(%1)" # commutativity
+        - "%m = %1.complement().unite(%2.complement()).complement()" # DeMorgan
+
+    associativity_union:
+        - "%m = %1.unite(%2).unite(%3)"
+        - "%m = %1.unite(%2.unite(%3))"
+
+    associativity_intersect:
+        - "%m = %1.intersect(%2).intersect(%3)"
+        - "%m = %1.intersect(%2.intersect(%3))"
