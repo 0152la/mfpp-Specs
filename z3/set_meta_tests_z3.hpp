@@ -196,11 +196,11 @@ namespace multiply {
     z3::expr
     mul_by_add(z3::expr e1, z3::expr e2)
     {
-        z3::expr mul = identity::placeholder(e1.ctx(), e1);
+        z3::expr mul = generators::zero::placeholder(c, e);
         for (int i = 0; (i < z3::abs(e2)).simplify().is_true(); ++i)
         {
-            z3::expr e2_iden = identity::placeholder(e2.ctx(), e2);
-            mul = add::placeholder(mul, e2_iden);
+            z3::expr e1_iden = identity::placeholder(e1.ctx(), e1);
+            mul = add::placeholder(mul, z3::ite(e2 >= 0, e1_iden, -e1_iden);
         }
         return mul;
     }
