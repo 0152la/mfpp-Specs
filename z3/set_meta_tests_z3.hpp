@@ -200,7 +200,7 @@ namespace multiply {
         for (int i = 0; (i < z3::abs(e2)).simplify().is_true(); ++i)
         {
             z3::expr e1_iden = identity::placeholder(e1.ctx(), e1);
-            mul = add::placeholder(mul, z3::ite(e2 >= 0, e1_iden, -e1_iden);
+            mul = add::placeholder(mul, z3::ite(e2 >= 0, e1_iden, -e1_iden));
         }
         return mul;
     }
