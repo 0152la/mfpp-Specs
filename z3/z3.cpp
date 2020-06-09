@@ -10,6 +10,12 @@ ctor_expr(int n, z3::context& ctx)
 }
 
 z3::expr
+div_wrapper(z3::expr const& e1, z3::expr const& e2)
+{
+    return z3::ite(e2 != 0, e1 / e2, e1);
+}
+
+z3::expr
 mod_wrapper(z3::expr const& e1, z3::expr const& e2)
 {
     return z3::ite(e2 != 0, z3::mod(e1, e2), e1);

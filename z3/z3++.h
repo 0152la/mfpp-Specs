@@ -1068,9 +1068,9 @@ namespace z3 {
 
         friend expr is_int(expr const& e);
 
-        friend __attribute__((annotate("expose"))) expr operator/(expr const & a, expr const & b);
-        friend __attribute__((annotate("expose"))) expr operator/(expr const & a, int b);
-        friend __attribute__((annotate("expose"))) expr operator/(int a, expr const & b);
+        friend expr operator/(expr const & a, expr const & b);
+        friend expr operator/(expr const & a, int b);
+        friend expr operator/(int a, expr const & b);
 
         friend __attribute__((annotate("expose"))) expr operator-(expr const & a);
 
