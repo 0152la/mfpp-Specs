@@ -1052,9 +1052,9 @@ namespace z3 {
         friend __attribute__((annotate("expose"))) expr operator*(int a, expr const & b);
 
         /*  \brief Power operator  */
-        friend __attribute__((annotate("expose"))) expr pw(expr const & a, expr const & b);
-        friend __attribute__((annotate("expose"))) expr pw(expr const & a, int b);
-        friend __attribute__((annotate("expose"))) expr pw(int a, expr const & b);
+        friend expr pw(expr const & a, expr const & b);
+        friend expr pw(expr const & a, int b);
+        friend expr pw(int a, expr const & b);
 
         /* \brief mod operator */
         friend expr mod(expr const& a, expr const& b);

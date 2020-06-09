@@ -21,6 +21,11 @@ rem_wrapper(z3::expr const& e1, z3::expr const& e2)
     return z3::ite(e2 != 0, z3::rem(e1, e2), e1);
 }
 
+z3::expr
+pw_wrapper(z3::expr const& e1, z3::expr const& e2)
+{
+    return z3::ite(e1 != 0 && e2 != 0, z3::pw(e1, e2), e1);
+}
 
 } // namespace lib_helper_funcs
 } // namespace fuzz
