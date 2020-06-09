@@ -162,6 +162,7 @@ namespace add {
         return placeholder(e2, e1);
     }
 
+    /*
     z3::expr
     add_by_ones(z3::expr e1, z3::expr e2)
     {
@@ -174,6 +175,7 @@ namespace add {
         }
         return sum;
     }
+    */
 
 } // namespace add
 
@@ -193,6 +195,7 @@ namespace multiply {
         return placeholder(e2, e1);
     }
 
+    /*
     z3::expr
     mul_by_add(z3::expr e1, z3::expr e2)
     {
@@ -204,6 +207,7 @@ namespace multiply {
         }
         return mul;
     }
+    */
 
 } // namespace multiply
 
