@@ -9,32 +9,18 @@ ctor_expr(int n, z3::context& ctx)
     return ctx.int_val(n);
 }
 
-//z3::context&
-//get_ctx_from_expr(z3::expr& e)
-//{
-    //return e.ctx();
-//}
-
 z3::expr
-get_one(z3::expr e)
+mod_wrapper(z3::expr const& e1, z3::expr const& e2)
 {
-    return e.ctx().int_val(1);
+    return z3::ite(e2 != 0, z3::mod(e1, e2), e1);
 }
 
 z3::expr
-get_zero(z3::expr e)
+rem_wrapper(z3::expr const& e1, z3::expr const& e2)
 {
-    return e.ctx().int_val(0);
+    return z3::ite(e2 != 0, z3::rem(e1, e2), e1);
 }
 
-bool
-checkValid(z3::expr& e1, z3::expr& e2)
-{
-    z3::solver solver(e1.ctx());
-    z3::expr conjecture = z3::operator==(e1, e2);
-    solver.add(!conjecture);
-    return solver.check() != z3::sat;
-}
 
 } // namespace lib_helper_funcs
 } // namespace fuzz

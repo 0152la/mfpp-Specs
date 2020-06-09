@@ -1057,14 +1057,14 @@ namespace z3 {
         friend __attribute__((annotate("expose"))) expr pw(int a, expr const & b);
 
         /* \brief mod operator */
-        friend __attribute__((annotate("expose"))) expr mod(expr const& a, expr const& b);
-        friend __attribute__((annotate("expose"))) expr mod(expr const& a, int b);
-        friend __attribute__((annotate("expose"))) expr mod(int a, expr const& b);
+        friend expr mod(expr const& a, expr const& b);
+        friend expr mod(expr const& a, int b);
+        friend expr mod(int a, expr const& b);
 
         /* \brief rem operator */
-        friend __attribute__((annotate("expose"))) expr rem(expr const& a, expr const& b);
-        friend __attribute__((annotate("expose"))) expr rem(expr const& a, int b);
-        friend __attribute__((annotate("expose"))) expr rem(int a, expr const& b);
+        friend expr rem(expr const& a, expr const& b);
+        friend expr rem(expr const& a, int b);
+        friend expr rem(int a, expr const& b);
 
         friend expr is_int(expr const& e);
 
