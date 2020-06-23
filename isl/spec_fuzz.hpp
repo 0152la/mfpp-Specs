@@ -26,5 +26,9 @@ namespace fuzz
     void meta_test() {}
 }
 
+#ifndef EXECUTE
+#include "set_meta_tests_isl.hpp"
+#endif
+
 
 #endif // _SPEC_FUZZ_HPP
