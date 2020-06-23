@@ -9,7 +9,7 @@ if(NOT TEST_FILE)
 endif()
 
 find_package(PkgConfig REQUIRED)
-pkg_check_modules(ISL REQUIRED)
+pkg_check_modules(ISL REQUIRED isl)
 
 if(NOT ISL_FOUND)
     message(FATAL_ERROR "Did not find ISL pkg_config module!")
