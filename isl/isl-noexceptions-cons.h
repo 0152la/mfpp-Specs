@@ -143,7 +143,7 @@ class multi_aff;
 class multi_pw_aff;
 class multi_union_pw_aff;
 class multi_val;
-class __attribute__((annotate("expose"))) point;
+class point;
 class __attribute__((annotate("expose"))) pw_aff;
 class pw_aff_list;
 class pw_multi_aff;
@@ -2299,7 +2299,7 @@ public:
   inline /* implicit */ set(std::nullptr_t);
   inline explicit set(isl::ctx ctx, const std::string &str);
   inline /* implicit */ set(isl::basic_set bset);
-  inline __attribute__((annotate("expose"))) /* implicit */ set(isl::point pnt);
+  inline /* implicit */ set(isl::point pnt);
   inline explicit set(isl::union_set uset);
   inline isl::set &operator=(isl::set obj);
   inline ~set();
