@@ -1716,7 +1716,7 @@ public:
   inline isl::point add_ui(isl::dim type, int pos, unsigned int val) const;
   inline isl::val get_coordinate_val(isl::dim type, int pos) const;
   inline isl::space get_space() const;
-  inline __attribute__((annotate("expose"))) isl::point set_coordinate_val(isl::dim type, int pos, isl::val v) const;
+  inline isl::point set_coordinate_val(isl::dim type, int pos, isl::val v) const;
   inline isl::point sub_ui(isl::dim type, int pos, unsigned int val) const;
 };
 
