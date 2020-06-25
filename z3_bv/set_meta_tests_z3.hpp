@@ -30,13 +30,6 @@ namespace one {
     {
         return ite(e == 0, generators::one::placeholder(c, e), e/e);
     }
-
-    z3::expr
-    one_by_pw(z3::context& c, z3::expr e)
-    {
-        return ite(e == 0, generators::one::placeholder(c, e), z3::pw(e, 0));
-    }
-
 }
 
 namespace zero {
