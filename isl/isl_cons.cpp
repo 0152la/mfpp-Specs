@@ -3,6 +3,8 @@
 int
 main(int argc, char** argv)
 {
+    isl_ctx* c_ctx = isl_ctx_alloc();
+    //isl_options_set_on_error(c_ctx, ISL_ON_ERROR_ABORT);
     isl::ctx ctx(isl_ctx_alloc());
     isl::space space(ctx, 0, 3);
     isl::local_space local_space(space);

@@ -52,7 +52,7 @@ namespace zero {
     z3::expr
     zero_by_mul(z3::context& c, z3::expr e)
     {
-        return e * placeholder(c);
+        return e * placeholder(c, e);
     }
 
     z3::expr
@@ -64,7 +64,8 @@ namespace zero {
     z3::expr
     zero_by_mod(z3::context& c, z3::expr e)
     {
-        return ite(e != 0, mod(e, e), placholder(c, e));
+        z3::expr tmp_zero = placeholder(c, e);
+        return ite(e != tmp_zero, z3::mod(e, e), tmp_zero);
     }
 
 } // namespace zero
@@ -78,7 +79,7 @@ namespace identity {
     z3::expr placeholder(z3::context& c, z3::expr e);
 
     z3::expr
-    base(z3::context& c, z3::expr e)
+    base_iden(z3::context& c, z3::expr e)
     {
         return e;
     }
@@ -102,25 +103,128 @@ namespace identity {
     }
 
     z3::expr
-    div_one(z3::context& c, z3::expr e)
+    min(z3::context& c, z3::expr e)
     {
-        return placeholder(c, e) / generators::one::placeholder(c);
+
+        return z3::min(placeholder(c, e), placeholder(c, e));
     }
 
     z3::expr
-    simplify(z3::context& c, z3::expr e)
+    max(z3::context& c, z3::expr e)
     {
-        return placholder(c, e).simplify();
+        return z3::max(relations::identity::placeholder(c, e), relations::identity::placeholder(c, e));
+    }
+
+    z3::expr
+    max_with_zero(z3::context& c, z3::expr e)
+    {
+        z3::expr one = generators::one::placeholder(c, e);
+        return z3::ite(e >= 0, one, -one) * z3::max(abs(placeholder(c, e)), generators::zero::placeholder(c, e));
     }
 
     z3::expr
     double_negative(z3::context& c, z3::expr e)
     {
-        return -(-(placholder(c, e));
+        z3::expr tmp_e = -(e);
+        return -(tmp_e);
+    }
+
+    z3::expr
+    iden_simplify(z3::context& c, z3::expr e)
+    {
+        return placeholder(c, e).simplify();
+    }
+
+    z3::expr
+    div_one(z3::context& c, z3::expr e)
+    {
+        return placeholder(c, e) / generators::one::placeholder(c);
     }
 
 
 } // namespace identity
+
+namespace add {
+
+    z3::expr placeholder(z3::expr e1, z3::expr e2);
+
+    z3::expr
+    base_add(z3::expr e1, z3::expr e2)
+    {
+        return e1 + e2;
+    }
+
+    z3::expr
+    add_commute(z3::expr e1, z3::expr e2)
+    {
+        return placeholder(e2, e1);
+    }
+
+    z3::expr
+    add_by_ones(z3::expr e1, z3::expr e2)
+    {
+        z3::expr sum = identity::placeholder(e1.ctx(), e1);
+        int sgn = e2 == z3::abs(e2) ? 1 : -1;
+        while (e2 != 0)
+        {
+            e2 = e2 + sgn;
+            sum = sum + sgn;
+        }
+        return sum;
+    }
+
+} // namespace add
+
+namespace multiply {
+
+    z3::expr placeholder(z3::expr e1, z3::expr e2);
+
+    z3::expr
+    base_mul(z3::expr e1, z3::expr e2)
+    {
+        return e1 * e2;
+    }
+
+    z3::expr
+    mul_commute(z3::expr e1, z3::expr e2)
+    {
+        return placeholder(e2, e1);
+    }
+
+    z3::expr
+    mul_by_sum(z3::expr e1, z3::expr e2)
+    {
+        z3::expr sum = identity::placeholder(e1.ctx(), e1);
+        int sgn = e2 == z3::abs(e2) ? 1 : -1;
+        while (e2 != 0)
+        {
+            e2 = e2 + sgn;
+            sum = sum + e2;
+        }
+        return sgn * sum;
+    }
+
+} // namespace multiply
+
+namespace modulo
+{
+
+    z3::expr placeholder(z3::expr e1, z3::expr e2);
+
+    z3::expr
+    base_modulo(z3::expr e1, z3::expr e2)
+    {
+        return ite(e2 != 0, z3::mod(e1, e2), e1);
+    }
+
+    z3::expr
+    mod_by_sub(z3::expr e1, z3::expr e2)
+    {
+        return ite(e2 != 0, e1 - (e2 * (e1 / e2)), e1);
+    }
+
+} // namespace modulo
+
 
 } // namespace relations
 

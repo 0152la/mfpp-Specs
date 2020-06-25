@@ -99,6 +99,12 @@ namespace identity {
     }
 
     z3::expr
+    sub_zero(z3::context& c, z3::expr e)
+    {
+        return placeholder(c, e) - generators::zero::placeholder(c);
+    }
+
+    z3::expr
     mul_one(z3::context& c, z3::expr e)
     {
         return placeholder(e.ctx(), e) * generators::one::placeholder(c, e);
@@ -135,6 +141,12 @@ namespace identity {
     iden_simplify(z3::context& c, z3::expr e)
     {
         return placeholder(c, e).simplify();
+    }
+
+    z3::expr
+    div_one(z3::context& c, z3::expr e)
+    {
+        return placeholder(c, e) / generators::one::placeholder(c);
     }
 
     //z3::expr
