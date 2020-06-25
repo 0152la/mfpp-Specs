@@ -5,7 +5,7 @@
 
 #include <cassert>
 #include <vector>
-//#include "testing/isl-point-gen-helpers.h"
+#define BV_SIZE 32
 
 namespace fuzz
 {

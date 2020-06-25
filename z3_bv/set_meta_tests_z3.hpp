@@ -17,36 +17,36 @@ namespace generators {
 
 namespace one {
 
-    z3::expr placeholder(z3::context&, z3::expr e);
+    z3::expr placeholder(z3::context&, z3::expr);
 
     z3::expr
     get_one(z3::context& c, z3::expr e)
     {
-        return c.bv_val(1);
+        return c.bv_val(1, BV_SIZE);
     }
 
     z3::expr
-    one_by_div(z3::context& c, z3::expr f)
+    one_by_div(z3::context& c, z3::expr e)
     {
-        return ite(f == 0, generators::one::placeholder(c), f/f);
+        return ite(e == 0, generators::one::placeholder(c, e), e/e);
     }
 
     z3::expr
-    one_by_pw(z3::context& c, z3::expr f)
+    one_by_pw(z3::context& c, z3::expr e)
     {
-        return ite(f == 0, generators::one::placeholder(c), z3::pw(f, 0));
+        return ite(e == 0, generators::one::placeholder(c, e), z3::pw(e, 0));
     }
 
 }
 
 namespace zero {
 
-    z3::expr placeholder(z3::context&, z3::expr e);
+    z3::expr placeholder(z3::context&, z3::expr);
 
     z3::expr
     get_zero(z3::context& c, z3::expr e)
     {
-        return c.bv_val(0);
+        return c.bv_val(0, BV_SIZE);
     }
 
     z3::expr
@@ -87,19 +87,19 @@ namespace identity {
     z3::expr
     add_zero(z3::context& c, z3::expr e)
     {
-        return placeholder(c, e) + generators::zero::placeholder(c);
+        return placeholder(c, e) + generators::zero::placeholder(c, e);
     }
 
     z3::expr
     sub_zero(z3::context& c, z3::expr e)
     {
-        return placeholder(c, e) - generators::zero::placeholder(c);
+        return placeholder(c, e) - generators::zero::placeholder(c, e);
     }
 
     z3::expr
     mul_one(z3::context& c, z3::expr e)
     {
-        return placeholder(c, e) * generators::one::placeholder(c);
+        return placeholder(c, e) * generators::one::placeholder(c, e);
     }
 
     z3::expr
@@ -138,7 +138,7 @@ namespace identity {
     z3::expr
     div_one(z3::context& c, z3::expr e)
     {
-        return placeholder(c, e) / generators::one::placeholder(c);
+        return placeholder(c, e) / generators::one::placeholder(c, e);
     }
 
 
@@ -224,7 +224,6 @@ namespace modulo
     }
 
 } // namespace modulo
-
 
 } // namespace relations
 

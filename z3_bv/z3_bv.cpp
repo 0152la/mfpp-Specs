@@ -1,4 +1,4 @@
-#include "/home/sentenced/Documents/Internships/2018_ETH/work/spec_ast/input/z3/spec_fuzz.hpp"
+#include "/home/sentenced/Documents/Internships/2018_ETH/work/spec_ast/input/spec_repo/z3_bv/spec_fuzz.hpp"
 
 #define BV_SIZE 32
 
