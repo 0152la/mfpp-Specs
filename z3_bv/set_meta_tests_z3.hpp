@@ -160,18 +160,18 @@ namespace add {
         return placeholder(e2, e1);
     }
 
-    z3::expr
-    add_by_ones(z3::expr e1, z3::expr e2)
-    {
-        z3::expr sum = identity::placeholder(e1.ctx(), e1);
-        int sgn = e2 == z3::abs(e2) ? 1 : -1;
-        while (e2 != 0)
-        {
-            e2 = e2 + sgn;
-            sum = sum + sgn;
-        }
-        return sum;
-    }
+    //z3::expr
+    //add_by_ones(z3::expr e1, z3::expr e2)
+    //{
+        //z3::expr sum = identity::placeholder(e1.ctx(), e1);
+        //int sgn = e2 == z3::abs(e2) ? 1 : -1;
+        //while (e2 != 0)
+        //{
+            //e2 = e2 + sgn;
+            //sum = sum + sgn;
+        //}
+        //return sum;
+    //}
 
 } // namespace add
 
@@ -191,18 +191,18 @@ namespace multiply {
         return placeholder(e2, e1);
     }
 
-    z3::expr
-    mul_by_sum(z3::expr e1, z3::expr e2)
-    {
-        z3::expr sum = identity::placeholder(e1.ctx(), e1);
-        int sgn = e2 == z3::abs(e2) ? 1 : -1;
-        while (e2 != 0)
-        {
-            e2 = e2 + sgn;
-            sum = sum + e2;
-        }
-        return sgn * sum;
-    }
+    //z3::expr
+    //mul_by_sum(z3::expr e1, z3::expr e2)
+    //{
+        //z3::expr sum = identity::placeholder(e1.ctx(), e1);
+        //int sgn = e2 == z3::abs(e2) ? 1 : -1;
+        //while (e2 != 0)
+        //{
+            //e2 = e2 + sgn;
+            //sum = sum + e2;
+        //}
+        //return sgn * sum;
+    //}
 
 } // namespace multiply
 
