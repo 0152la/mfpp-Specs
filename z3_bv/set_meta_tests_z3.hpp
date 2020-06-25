@@ -109,13 +109,6 @@ namespace identity {
     }
 
     z3::expr
-    max_with_zero(z3::context& c, z3::expr e)
-    {
-        z3::expr one = generators::one::placeholder(c, e);
-        return z3::ite(e >= 0, one, -one) * z3::max(abs(placeholder(c, e)), generators::zero::placeholder(c, e));
-    }
-
-    z3::expr
     double_negative(z3::context& c, z3::expr e)
     {
         z3::expr tmp_e = -(e);
