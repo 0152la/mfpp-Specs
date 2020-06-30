@@ -203,11 +203,11 @@ namespace modulo
         return ite(e2 != 0, z3::mod(e1, e2), e1);
     }
 
-    z3::expr
-    mod_by_sub(z3::expr e1, z3::expr e2)
-    {
-        return ite(e2 != 0, e1 - (e2 * (e1 / e2)), e1);
-    }
+    //z3::expr
+    //mod_by_sub(z3::expr e1, z3::expr e2)
+    //{
+        //return ite(e2 != 0, e1 - (e2 * (e1 / e2)), e1);
+    //}
 
 } // namespace modulo
 
