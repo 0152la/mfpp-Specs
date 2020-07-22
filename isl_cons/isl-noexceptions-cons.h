@@ -101,7 +101,7 @@ enum class stat {
   error = isl_stat_error
 };
 
-enum __attribute__((annotate("expose"))) class dim {
+enum class __attribute__((annotate("expose"))) dim {
   cst = isl_dim_cst,
   param = isl_dim_param,
   in = isl_dim_in,

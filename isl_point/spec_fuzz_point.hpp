@@ -3,6 +3,7 @@
 
 #ifndef TEST
 #include "isl-noexceptions-point.h"
+#include "set_meta_tests_isl.hpp"
 #else
 #include "isl-noexceptions.h"
 #endif
@@ -29,6 +30,5 @@ namespace fuzz
 
     void meta_test() {}
 }
-
 
 #endif // _SPEC_FUZZ_HPP
