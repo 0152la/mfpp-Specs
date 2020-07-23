@@ -101,7 +101,7 @@ namespace identity {
     z3::expr
     sub_zero(z3::context& c, z3::expr e)
     {
-        return placeholder(c, e) - generators::zero::placeholder(c);
+        return placeholder(c, e) - generators::zero::placeholder(c, e);
     }
 
     z3::expr
@@ -146,7 +146,7 @@ namespace identity {
     z3::expr
     div_one(z3::context& c, z3::expr e)
     {
-        return placeholder(c, e) / generators::one::placeholder(c);
+        return placeholder(c, e) / generators::one::placeholder(c, e);
     }
 
     //z3::expr
