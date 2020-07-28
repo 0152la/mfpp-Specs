@@ -44,7 +44,8 @@ main(int argc, char** argv)
     //std::string var_name = "var" + std::to_string(fuzz::fuzz_rand(0, 2000));
     //z3::expr e1 = ctx.int_const(var_name.c_str());
     //z3::expr e2 = ctx.int_val(fuzz::fuzz_rand(20, 30));
-    fuzz::output_var = ctx.int_val(fuzz::fuzz_rand(-20, 20));
+    fuzz::output_var = ctx.int_val(fuzz::fuzz_rand<int, int>(-20, 20));
+    fuzz::output_var = ctx.int_const(std::string(fuzz::fuzz_rand<std::string, uint8_t>(3, 3)).c_str());
     fuzz::output_var = z3::operator+(fuzz::fuzz_new<z3::expr>(), fuzz::output_var);
     fuzz::end();
     fuzz::meta_test();

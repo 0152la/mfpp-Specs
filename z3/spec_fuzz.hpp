@@ -22,7 +22,7 @@ namespace fuzz
     void end()   {}
 
     template <class T> T fuzz_new();
-    template<typename T> T fuzz_rand(T min, T max);
+    template<typename T, typename U> T fuzz_rand(U min, U max);
 
     void meta_test() {}
 }
