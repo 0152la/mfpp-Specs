@@ -1,11 +1,15 @@
-#ifdef TEST
+#ifdef EXECUTE
 #include "isl-noexceptions.h"
 #include <cassert>
 #else
-#include "spec_fuzz_point.hpp"
+#include "isl-noexceptions-point.h"
+#include "isl_spec_defs.hpp"
+#include "spec_fuzz.hpp"
 #endif
 
 #define MAX_INT_EXP 64
+#define SPACE_MIN 3
+#define SPACE_MAX 6
 
 namespace fuzz {
 namespace lib_helper_funcs {
@@ -46,7 +50,7 @@ int
 main(int argc, char** argv)
 {
     isl::ctx ctx = isl::ctx(isl_ctx_alloc());
-    isl::space space(ctx, 0, 3);
+    isl::space space(ctx, 0, fuzz::fuzz_rand<int, int>(SPACE_MIN, SPACE_MAX));
     isl::local_space local_space(space);
     fuzz::start();
     //isl::pw_aff dim0 = isl::pw_aff::var_on_domain(local_space, isl::dim::set, 0);
@@ -59,6 +63,7 @@ main(int argc, char** argv)
     fuzz::output_var = fuzz::output_var.unite(fuzz::fuzz_new<isl::set>());
     fuzz::output_var = fuzz::output_var.unite(fuzz::fuzz_new<isl::set>());
     fuzz::output_var = fuzz::output_var.convex_hull();
+    fuzz::output_var = fuzz::output_var.project_out(isl::dim::set, 0, SPACE_MIN / 2);
     fuzz::end();
     fuzz::meta_test();
 }
