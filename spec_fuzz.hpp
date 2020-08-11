@@ -6,7 +6,7 @@
 
 namespace fuzz
 {
-    static OUT_VAR_TYPE output_var;
+    //static OUT_VAR_TYPE output_var;
 
     void start() {}
     void end()   {}

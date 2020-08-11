@@ -1,6 +1,10 @@
-#include "/home/sentenced/Documents/Internships/2018_ETH/work/spec_ast/input/spec_repo/z3_bv/spec_fuzz.hpp"
-
 #define BV_SIZE 32
+
+#include "z3++.h"
+#ifndef EXECUTE
+#include "z3_bv_spec_defs.hpp"
+#include "spec_fuzz.hpp"
+#endif
 
 namespace fuzz {
 namespace lib_helper_funcs {
@@ -43,12 +47,12 @@ main(int argc, char** argv)
 {
     z3::context ctx;
     fuzz::start();
-    std::string var_name = "var" + std::to_string(fuzz::fuzz_rand(0, 2000));
     //z3::expr e1 = ctx.int_const(var_name.c_str());
     //z3::expr e2 = ctx.int_val(fuzz::fuzz_rand(20, 30));
-    //fuzz::output_var = ctx.bv_val(fuzz::fuzz_rand(-20, 20));
+   //fuzz::output_var = ctx.bv_val(fuzz::fuzz_rand(-20, 20));
     //fuzz::output_var = fuzz::lib_helper_funcs::ctor_expr(fuzz::fuzz_rand(-20, 20), ctx);
-    fuzz::output_var = ctx.bv_val(fuzz::fuzz_rand(-20, 20), BV_SIZE);
+    fuzz::output_var = ctx.bv_val(fuzz::fuzz_rand<int, int>(-20, 20), BV_SIZE);
+    fuzz::output_var = ctx.bv_const(std::string(fuzz::fuzz_rand<std::string, uint8_t>(3, 3)).c_str(), BV_SIZE);
     fuzz::output_var = z3::operator+(fuzz::fuzz_new<z3::expr>(), fuzz::output_var);
     fuzz::output_var = fuzz::output_var.simplify();
     fuzz::end();

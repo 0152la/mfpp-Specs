@@ -9,12 +9,13 @@ if (LLVM_INSTALL_LOC)
     set(Clang_DIR ${LLVM_INSTALL_LOC}/lib/cmake/clang)
 endif()
 
-set(Z3_DIR /home/sentenced/Documents/Internships/2018_ETH/work/other_libs/z3/build)
 find_package(Z3 REQUIRED)
 find_package(Clang REQUIRED)
 string(REGEX MATCH [0-9\.]+ CLANG_VERSION ${LLVM_PACKAGE_VERSION})
 
 add_library(z3_lib OBJECT
-    z3.cpp)
+    z3_bv.cpp)
 target_include_directories(z3_lib PUBLIC ${CLANG_INCLUDE_DIRS} ${Z3_CXX_INCLUDE_DIRS})
 target_include_directories(z3_lib PUBLIC ${CLANG_INCLUDE_DIRS}/../lib/clang/${CLANG_VERSION}/include)
+target_include_directories(z3_lib PUBLIC ${CMAKE_SOURCE_DIR})
+message(status ${CMAKE_SOURCE_DIR})
