@@ -1,4 +1,6 @@
-#include "/home/sentenced/Documents/Internships/2018_ETH/work/spec_ast/input/spec_repo/z3/spec_fuzz.hpp"
+#include "/home/sentenced/Documents/Internships/2018_ETH/work/spec_ast/input/spec_repo/z3_obf/spec_fuzz.hpp"
+
+#define OBFUSCATE
 
 namespace fuzz {
 namespace lib_helper_funcs {
@@ -50,6 +52,7 @@ main(int argc, char** argv)
     //std::string var_name = "var" + std::to_string(fuzz::fuzz_rand(0, 2000));
     //z3::expr e1 = ctx.int_const(var_name.c_str());
     //z3::expr e2 = ctx.int_val(fuzz::fuzz_rand(20, 30));
+    z3::expr tmp_v = ctx.int_const("tmp_v");
     fuzz::output_var = ctx.int_const(std::string(fuzz::fuzz_rand<std::string, uint8_t>(3, 3)).c_str());
     fuzz::output_var = z3::operator+(fuzz::fuzz_new<z3::expr>(), fuzz::output_var);
     fuzz::end();
