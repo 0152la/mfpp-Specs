@@ -1,1 +1,0 @@
-./build/mtFuzzer ./input/isl/isl_point.cpp -o /home/sentenced/Documents/Internships/2018_ETH/work/spec_ast/output/test.cpp --lib-list=./include_local/isl-noexceptions-pointexpose.hpp,./include_libfuzz/testing/isl-point-gen-helpers.h --set-meta-path /home/sentenced/Documents/Internships/2018_ETH/work/spec_ast/input/set_meta_tests_isl.yaml

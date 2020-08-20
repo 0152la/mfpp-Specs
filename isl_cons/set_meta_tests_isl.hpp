@@ -137,6 +137,17 @@ namespace identity {
         return relations::complement::placeholder(tmp);
     }
 
+    isl::set
+    identity_coalesce(isl::set s1, isl::set s2)
+    {
+        return s1.coalesce();
+    }
+
+    isl::set
+    identity_detect_equalities(isl::set s1, isl::set s2)
+    {
+        return s1.detect_equalities();
+    }
 } // namespace identity
 
 namespace complement {
