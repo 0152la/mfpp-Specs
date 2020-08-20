@@ -28,7 +28,8 @@ inv(isl::val v)
     return v.is_zero() ? isl::val::zero(v.get_ctx()) : v.inv();
 }
 
-}
+} // namespace lib_helper_funcs
+} // namespace fuzz
 
 int
 main(int argc, char** argv)
