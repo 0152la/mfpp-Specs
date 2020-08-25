@@ -9,7 +9,6 @@ if (LLVM_INSTALL_LOC)
     set(Clang_DIR ${LLVM_INSTALL_LOC}/lib/cmake/clang)
 endif()
 
-set(Z3_DIR /home/sentenced/Documents/Internships/2018_ETH/work/other_libs/z3/build)
 find_package(Z3 REQUIRED)
 find_package(Clang REQUIRED)
 string(REGEX MATCH [0-9\.]+ CLANG_VERSION ${LLVM_PACKAGE_VERSION})
