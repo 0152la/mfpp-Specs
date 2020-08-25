@@ -18,3 +18,4 @@ add_library(z3_lib OBJECT
     z3.cpp)
 target_include_directories(z3_lib PUBLIC ${CLANG_INCLUDE_DIRS} ${Z3_CXX_INCLUDE_DIRS})
 target_include_directories(z3_lib PUBLIC ${CLANG_INCLUDE_DIRS}/../lib/clang/${CLANG_VERSION}/include)
+target_include_directories(z3_lib PUBLIC ${CMAKE_SOURCE_DIR})

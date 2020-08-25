@@ -1,4 +1,9 @@
-#include "/home/sentenced/Documents/Internships/2018_ETH/work/spec_ast/input/spec_repo/z3/spec_fuzz.hpp"
+#ifdef EXECUTE
+#include "z3++.h"
+#include <cassert>
+#else
+#include "z3_spec_defs.hpp"
+#endif
 
 namespace fuzz {
 namespace lib_helper_funcs {
