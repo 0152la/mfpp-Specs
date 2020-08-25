@@ -50,12 +50,12 @@ namespace zero {
         return c.int_val(0);
     }
 
-    //z3::expr
-    //zero_by_fuzz_sub(z3::context& c)
-    //{
-        //z3::expr fuzz = fuzz::fuzz_new<z3::expr>();
-        //return fuzz - fuzz;
-    //}
+    z3::expr
+    zero_by_fuzz_sub(z3::context& c)
+    {
+        z3::expr fuzz = fuzz::fuzz_new<z3::expr>();
+        return fuzz - fuzz;
+    }
 
     z3::expr
     zero_by_mul(z3::context& c, z3::expr e)
@@ -137,16 +137,25 @@ namespace identity {
         return -(tmp_e);
     }
 
-    z3::expr
+    /*z3::expr
     iden_simplify(z3::context& c, z3::expr e)
     {
         return placeholder(c, e).simplify();
-    }
+    }*/
 
     z3::expr
     div_one(z3::context& c, z3::expr e)
     {
         return placeholder(c, e) / generators::one::placeholder(c, e);
+    }
+
+    z3::expr
+    iden_by_ite_lt(z3::context& c, z3::expr e)
+    {
+        z3::expr dead = fuzz::fuzz_new<z3::expr>();
+        return z3::ite(e < e, dead, relations::identity::placeholder(c, e));
+        //return z3::ite(e < e, generators::zero::placeholder(c, e1),
+            //generators::identity::placeholder(c, e1));
     }
 
     //z3::expr

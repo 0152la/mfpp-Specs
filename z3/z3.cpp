@@ -16,6 +16,18 @@ ctor_expr(std::string s, z3::context& ctx)
 }
 
 z3::expr
+ite_lt_wrapper(z3::expr cond1, z3::expr cond2, z3::expr if_b, z3::expr then_b)
+{
+    return z3::ite(cond1 < cond2, if_b, then_b);
+}
+
+z3::expr
+ite_gte_wrapper(z3::expr cond1, z3::expr cond2, z3::expr if_b, z3::expr then_b)
+{
+    return z3::ite(cond1 >= cond2, if_b, then_b);
+}
+
+z3::expr
 div_wrapper(z3::expr const& e1, z3::expr const& e2)
 {
     return z3::ite(e2 != 0, e1 / e2, e1);
