@@ -3,12 +3,14 @@ namespace metalib {
 namespace checks {
 
     void
-    check_sat_expr_maintained(z3::context& c, mr_pair p)
+    check_sat_expr_maintained(z3::context& c, mr_pair p, z3::model model)
     {
         z3::solver solver(c);
-        solver.add(z3::operator<(p.first, p.second));
-        z3::check_result e1_sat = solver.check();
-        std::cout << e1_sat << std::endl;
+        z3::expr check_expr = z3::operator<(p.first, p.second);
+        solver.add(check_expr);
+        assert(solver.check() == z3::sat);
+        std::cout << model.eval(check_expr) << std::endl;
+        assert(model.eval(check_expr).bool_value() == Z3_L_TRUE);
     }
 }
 
@@ -49,12 +51,12 @@ namespace zero {
         return c.int_val(0);
     }
 
-    z3::expr
-    zero_by_fuzz_sub(z3::context& c)
-    {
-        z3::expr fuzz = fuzz::fuzz_new<z3::expr>();
-        return fuzz - fuzz;
-    }
+    //z3::expr
+    //zero_by_fuzz_sub(z3::context& c)
+    //{
+        //z3::expr fuzz = fuzz::fuzz_new<z3::expr>();
+        //return fuzz - fuzz;
+    //}
 
     z3::expr
     zero_by_mul(z3::context& c, z3::expr e)
@@ -164,14 +166,14 @@ namespace identity_lhs {
             p.second);
     }
 
-    mr_pair
-    iden_by_ite_lt_lhs(z3::context& c, mr_pair p)
-    {
-        z3::expr dead = fuzz::fuzz_new<z3::expr>();
-        return std::make_pair(
-            z3::ite(p.first < p.first, dead, placeholder(c, p).first),
-            p.second);
-    }
+    //mr_pair
+    //iden_by_ite_lt_lhs(z3::context& c, mr_pair p)
+    //{
+        //z3::expr dead = fuzz::fuzz_new<z3::expr>();
+        //return std::make_pair(
+            //z3::ite(p.first < p.first, dead, placeholder(c, p).first),
+            //p.second);
+    //}
 } // namespace identity_lhs
 
 namespace identity_rhs {
@@ -250,13 +252,13 @@ namespace identity_rhs {
             placeholder(c, p).second / generators::one::placeholder(c, p.second));
     }
 
-    mr_pair
-    iden_by_ite_lt_rhs(z3::context& c, mr_pair p)
-    {
-        z3::expr dead = fuzz::fuzz_new<z3::expr>();
-        return std::make_pair(p.first,
-            z3::ite(p.second < p.second, dead, placeholder(c, p).second));
-    }
+    //mr_pair
+    //iden_by_ite_lt_rhs(z3::context& c, mr_pair p)
+    //{
+        //z3::expr dead = fuzz::fuzz_new<z3::expr>();
+        //return std::make_pair(p.first,
+            //z3::ite(p.second < p.second, dead, placeholder(c, p).second));
+    //}
 } // namespace identity_rhs
 
 //namespace add {

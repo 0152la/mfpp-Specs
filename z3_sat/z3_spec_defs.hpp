@@ -12,6 +12,7 @@ namespace fuzz
 {
     static z3::context ctx;
     static mr_pair output_var(ctx, ctx);
+    mr_pair output_var_get(size_t);
 } // namespace fuzz
 
 #include "set_meta_tests_z3.hpp"

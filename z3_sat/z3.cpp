@@ -1,6 +1,7 @@
 #ifdef EXECUTE
 #include "z3++.h"
 #include <cassert>
+typedef std::pair<z3::expr, z3::expr> mr_pair;
 #else
 #include "z3_spec_defs.hpp"
 #endif
@@ -8,11 +9,11 @@
 namespace fuzz {
 namespace lib_helper_funcs {
 
-z3::expr
-ctor_expr(int n, z3::context& ctx)
-{
-    return ctx.int_val(n);
-}
+//z3::expr
+//ctor_expr(int n, z3::context& ctx)
+//{
+    //return ctx.int_val(n);
+//}
 
 //z3::expr
 //ctor_expr(std::string s, z3::context& ctx)
@@ -71,7 +72,17 @@ main(int argc, char** argv)
     z3::expr t = ctx.int_val(23);
     z3::expr lhs = fuzz::fuzz_new<z3::expr>();
     z3::expr rhs = fuzz::fuzz_new<z3::expr>();
+    //fuzz::output_var = std::make_pair(lhs, rhs);
     fuzz::output_var = std::make_pair(lhs, rhs);
     fuzz::end();
+    z3::solver s(ctx);
+    s.add(z3::operator<(fuzz::output_var_get(0).first, fuzz::output_var_get(0).second));
+    std::cout << s.to_smt2() << std::endl;
+    if (s.check() != z3::sat)
+    {
+        std::cout << "Non-SAT formula." << std::endl;
+        exit(0);
+    }
+    z3::model out_model = s.get_model();
     fuzz::meta_test();
 }

@@ -57,11 +57,11 @@ namespace z3 {
     class sort;
     class func_decl;
     class __attribute__((annotate("expose"))) expr;
-    class solver;
+    class __attribute__((annotate("expose"))) solver;
     class goal;
     class tactic;
     class probe;
-    class model;
+    class __attribute__((annotate("expose"))) model;
     class func_interp;
     class func_entry;
     class statistics;
