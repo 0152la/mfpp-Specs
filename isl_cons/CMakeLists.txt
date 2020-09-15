@@ -19,4 +19,4 @@ add_library(isl_lib OBJECT
     isl_cons.cpp)
 target_include_directories(isl_lib PUBLIC ${CLANG_INCLUDE_DIRS} ${ISL_INCLUDE_DIRS})
 target_include_directories(isl_lib PUBLIC ${CLANG_INCLUDE_DIRS}/../lib/clang/${CLANG_VERSION}/include)
-
+target_include_directories(isl_lib PUBLIC ${CMAKE_SOURCE_DIR})

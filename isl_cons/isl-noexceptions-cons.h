@@ -1738,7 +1738,7 @@ public:
   inline /* implicit */ pw_aff(std::nullptr_t);
   inline /* implicit */ pw_aff(isl::aff aff);
   inline explicit pw_aff(isl::local_space ls);
-  inline explicit pw_aff(isl::set domain, isl::val v);
+  inline __attribute__((annotate("expose"))) explicit pw_aff(isl::set domain, isl::val v);
   inline explicit pw_aff(isl::ctx ctx, const std::string &str);
   inline isl::pw_aff &operator=(isl::pw_aff obj);
   inline ~pw_aff();
