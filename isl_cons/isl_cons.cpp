@@ -60,5 +60,6 @@ main(int argc, char** argv)
     fuzz::output_var = fuzz::output_var.intersect(fuzz::fuzz_new<isl::set>());
     fuzz::output_var = fuzz::output_var.intersect(fuzz::fuzz_new<isl::set>());
     fuzz::end();
+    assert(isl_ctx_last_error(ctx.get()) == isl_error_none);
     fuzz::meta_test();
 }

@@ -70,5 +70,6 @@ main(int argc, char** argv)
     fuzz::output_var = fuzz::output_var.convex_hull();
     fuzz::output_var = fuzz::output_var.project_out(isl::dim::set, 0, SPACE_MIN / 2);
     fuzz::end();
+    assert(isl_ctx_last_error(ctx.get()) == isl_error_none);
     fuzz::meta_test();
 }
