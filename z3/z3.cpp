@@ -14,11 +14,11 @@ ctor_expr(int n, z3::context& ctx)
     return ctx.int_val(n);
 }
 
-z3::expr
-ctor_expr(std::string s, z3::context& ctx)
-{
-    return ctx.int_const(std::string(s).c_str());
-}
+//z3::expr
+//ctor_expr(std::string s, z3::context& ctx)
+//{
+    //return ctx.int_const(std::string(s).c_str());
+//}
 
 z3::expr
 ite_lt_wrapper(z3::expr cond1, z3::expr cond2, z3::expr if_b, z3::expr then_b)
@@ -63,12 +63,14 @@ int
 main(int argc, char** argv)
 {
     z3::context ctx;
+    z3::expr cnst_var1 = ctx.int_const("x");
+    z3::expr cnst_var2 = ctx.int_const("y");
+    z3::expr cnst_var3 = ctx.int_const("z");
     fuzz::start();
-    //std::string var_name = "var" + std::to_string(fuzz::fuzz_rand(0, 2000));
-    //z3::expr e1 = ctx.int_const(var_name.c_str());
-    //z3::expr e2 = ctx.int_val(fuzz::fuzz_rand(20, 30));
-    fuzz::output_var = ctx.int_const(std::string(fuzz::fuzz_rand<std::string, uint8_t>(3, 3)).c_str());
+    fuzz::output_var = ctx.int_val(fuzz::fuzz_rand<int, int>(0, 30));
+    //fuzz::output_var = ctx.int_const(std::string(fuzz::fuzz_rand<std::string, uint8_t>(3, 3)).c_str());
     fuzz::output_var = z3::operator+(fuzz::fuzz_new<z3::expr>(), fuzz::output_var);
     fuzz::end();
+    assert(ctx.check_error() == Z3_OK);
     fuzz::meta_test();
 }
