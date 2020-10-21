@@ -1766,13 +1766,13 @@ public:
   inline isl::pw_aff drop_unused_params() const;
   static inline isl::pw_aff empty(isl::space dim);
   inline isl::map eq_map(isl::pw_aff pa2) const;
-  inline  isl::set eq_set(isl::pw_aff pwaff2) const;
+  inline isl::set eq_set(isl::pw_aff pwaff2) const;
   inline isl::val eval(isl::point pnt) const;
   inline int find_dim_by_name(isl::dim type, const std::string &name) const;
   inline __attribute__((annotate("expose"))) isl::pw_aff floor() const;
   inline isl::stat foreach_piece(const std::function<isl::stat(isl::set, isl::aff)> &fn) const;
   inline isl::pw_aff from_range() const;
-  inline  isl::set ge_set(isl::pw_aff pwaff2) const;
+  inline __attribute__((annotate("expose"))) isl::set ge_set(isl::pw_aff pwaff2) const;
   inline isl::id get_dim_id(isl::dim type, unsigned int pos) const;
   inline std::string get_dim_name(isl::dim type, unsigned int pos) const;
   inline isl::space get_domain_space() const;
@@ -1782,7 +1782,7 @@ public:
   inline isl::pw_aff gist(isl::set context) const;
   inline isl::pw_aff gist_params(isl::set context) const;
   inline isl::map gt_map(isl::pw_aff pa2) const;
-  inline  isl::set gt_set(isl::pw_aff pwaff2) const;
+  inline __attribute__((annotate("expose"))) isl::set gt_set(isl::pw_aff pwaff2) const;
   inline isl::boolean has_dim_id(isl::dim type, unsigned int pos) const;
   inline isl::boolean has_tuple_id(isl::dim type) const;
   inline isl::pw_aff insert_dims(isl::dim type, unsigned int first, unsigned int n) const;
@@ -1793,9 +1793,9 @@ public:
   inline isl::boolean is_cst() const;
   inline isl::boolean is_empty() const;
   inline isl::boolean is_equal(const isl::pw_aff &pa2) const;
-  inline isl::set le_set(isl::pw_aff pwaff2) const;
+  inline __attribute__((annotate("expose"))) isl::set le_set(isl::pw_aff pwaff2) const;
   inline isl::map lt_map(isl::pw_aff pa2) const;
-  inline isl::set lt_set(isl::pw_aff pwaff2) const;
+  inline __attribute__((annotate("expose"))) isl::set lt_set(isl::pw_aff pwaff2) const;
   inline __attribute__((annotate("expose"))) isl::pw_aff max(isl::pw_aff pwaff2) const;
   inline __attribute__((annotate("expose"))) isl::pw_aff min(isl::pw_aff pwaff2) const;
   inline isl::pw_aff mod(isl::val mod) const;
