@@ -8,7 +8,7 @@ namespace checks {
         z3::solver solver(c);
         z3::expr check_expr = z3::operator<(p.first, p.second);
         solver.add(check_expr);
-        assert(solver.check() == z3::sat);
+        assert(solver.check() != z3::unsat);
         std::cout << model.eval(check_expr) << std::endl;
         assert(model.eval(check_expr).bool_value() == Z3_L_TRUE);
     }
@@ -149,7 +149,7 @@ namespace identity_lhs {
     double_negative_lhs(z3::context& c, mr_pair p)
     {
         z3::expr tmp_e = -(placeholder(c, p).first);
-        return std::make_pair(p.first, -tmp_e);
+        return std::make_pair(-tmp_e, p.second);
     }
 
     mr_pair

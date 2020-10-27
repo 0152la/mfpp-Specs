@@ -1,8 +1,10 @@
-#ifdef TEST
+#ifdef EXECUTE
 #include "isl-noexceptions.h"
 #include <cassert>
 #else
-#include "spec_fuzz_point.hpp"
+#include "isl-noexceptions-point.h"
+#include "isl_spec_defs.hpp"
+#include "spec_fuzz.hpp"
 #endif
 
 #define MAX_INT_EXP 64

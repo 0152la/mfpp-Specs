@@ -75,6 +75,7 @@ main(int argc, char** argv)
     //fuzz::output_var = std::make_pair(lhs, rhs);
     fuzz::output_var = std::make_pair(lhs, rhs);
     fuzz::end();
+    assert(ctx.check_error() == Z3_OK);
     z3::solver s(ctx);
     s.add(z3::operator<(fuzz::output_var_get(0).first, fuzz::output_var_get(0).second));
     std::cout << s.to_smt2() << std::endl;
