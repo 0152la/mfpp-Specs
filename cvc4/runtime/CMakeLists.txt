@@ -5,21 +5,19 @@ set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 
 if(NOT TEST_FILE)
     message(FATAL_ERROR "Missing TEST_FILE variable declaration!")
-    return()
 endif()
 
-if(NOT CVC4_DIR)
-    message(FATAL_ERROR "Missing CVC4_DIR variable declaration!")
-    return()
+if(NOT DEFINED ENV{CVC4_INSTALL_LOC})
+    message(FATAL_ERROR "Missing CVC4_INSTALL_LOC env variable declaration!")
 endif()
 
-find_library(CVC4_LIBS cvc4 PATHS ${CVC4_DIR}/lib)
+find_library(CVC4_LIBS cvc4 PATHS $ENV{CVC4_INSTALL_LOC}/lib)
 
 get_filename_component(TEST_OUT ${TEST_FILE} NAME_WLE)
 add_executable(${TEST_OUT}
     ${TEST_FILE})
 
-target_include_directories(${TEST_OUT} PUBLIC ${CVC4_DIR}/include)
+target_include_directories(${TEST_OUT} PUBLIC $ENV{CVC4_INSTALL_LOC}/include)
 target_link_libraries(${TEST_OUT} PUBLIC ${CVC4_LIBS})
 target_compile_options(${TEST_OUT} PRIVATE "-Wno-attributes")
 target_compile_definitions(${TEST_OUT} PRIVATE EXECUTE=1)

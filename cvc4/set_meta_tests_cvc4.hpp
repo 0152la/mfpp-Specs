@@ -72,7 +72,7 @@ namespace zero {
     {
         CVC4::api::Term tmp_zero = placeholder(c, e);
         return e.eqTerm(tmp_zero).iteTerm(
-            c.mkTerm(CVC4::api::INTS_MODULUS_TOTAL, e, e), tmp_zero);
+            c.mkTerm(CVC4::api::INTS_MODULUS, e, e), tmp_zero);
     }
 
 } // namespace zero
