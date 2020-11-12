@@ -1716,7 +1716,7 @@ public:
   inline isl::point add_ui(isl::dim type, int pos, unsigned int val) const;
   inline isl::val get_coordinate_val(isl::dim type, int pos) const;
   inline isl::space get_space() const;
-  inline __attribute__((annotate("expose_special"))) isl::point set_coordinate_val(isl::dim type, int pos, isl::val v) const;
+  inline isl::point set_coordinate_val(isl::dim type, int pos, isl::val v) const;
   inline isl::point sub_ui(isl::dim type, int pos, unsigned int val) const;
 };
 
@@ -1772,7 +1772,7 @@ public:
   inline __attribute__((annotate("expose"))) isl::pw_aff floor() const;
   inline isl::stat foreach_piece(const std::function<isl::stat(isl::set, isl::aff)> &fn) const;
   inline isl::pw_aff from_range() const;
-  inline __attribute__((annotate("expose"))) isl::set ge_set(isl::pw_aff pwaff2) const;
+  inline isl::set ge_set(isl::pw_aff pwaff2) const;
   inline isl::id get_dim_id(isl::dim type, unsigned int pos) const;
   inline std::string get_dim_name(isl::dim type, unsigned int pos) const;
   inline isl::space get_domain_space() const;
@@ -1782,7 +1782,7 @@ public:
   inline isl::pw_aff gist(isl::set context) const;
   inline isl::pw_aff gist_params(isl::set context) const;
   inline isl::map gt_map(isl::pw_aff pa2) const;
-  inline __attribute__((annotate("expose"))) isl::set gt_set(isl::pw_aff pwaff2) const;
+  inline isl::set gt_set(isl::pw_aff pwaff2) const;
   inline isl::boolean has_dim_id(isl::dim type, unsigned int pos) const;
   inline isl::boolean has_tuple_id(isl::dim type) const;
   inline isl::pw_aff insert_dims(isl::dim type, unsigned int first, unsigned int n) const;
@@ -1793,14 +1793,14 @@ public:
   inline isl::boolean is_cst() const;
   inline isl::boolean is_empty() const;
   inline isl::boolean is_equal(const isl::pw_aff &pa2) const;
-  inline __attribute__((annotate("expose"))) isl::set le_set(isl::pw_aff pwaff2) const;
+  inline isl::set le_set(isl::pw_aff pwaff2) const;
   inline isl::map lt_map(isl::pw_aff pa2) const;
-  inline __attribute__((annotate("expose"))) isl::set lt_set(isl::pw_aff pwaff2) const;
+  inline isl::set lt_set(isl::pw_aff pwaff2) const;
   inline __attribute__((annotate("expose"))) isl::pw_aff max(isl::pw_aff pwaff2) const;
   inline __attribute__((annotate("expose"))) isl::pw_aff min(isl::pw_aff pwaff2) const;
   inline isl::pw_aff mod(isl::val mod) const;
   inline isl::pw_aff move_dims(isl::dim dst_type, unsigned int dst_pos, isl::dim src_type, unsigned int src_pos, unsigned int n) const;
-  inline __attribute__((annotate("expose"))) isl::pw_aff mul(isl::pw_aff pwaff2) const;
+  inline isl::pw_aff mul(isl::pw_aff pwaff2) const;
   inline int n_piece() const;
   static inline isl::pw_aff nan_on_domain(isl::local_space ls);
   inline isl::set ne_set(isl::pw_aff pwaff2) const;
@@ -2322,7 +2322,7 @@ public:
   static inline isl::set box_from_points(isl::point pnt1, isl::point pnt2);
   inline __attribute__((annotate("expose"))) isl::set coalesce() const;
   inline isl::basic_set coefficients() const;
-  inline __attribute__((annotate("expose"))) isl::set complement() const;
+  inline isl::set complement() const;
   inline __attribute__((annotate("expose"))) isl::basic_set convex_hull() const;
   inline isl::val count_val() const;
   inline __attribute__((annotate("expose"))) isl::set detect_equalities() const;
@@ -2338,7 +2338,7 @@ public:
   inline isl::set drop_constraints_not_involving_dims(isl::dim type, unsigned int first, unsigned int n) const;
   inline isl::set drop_unused_params() const;
   inline isl::set eliminate(isl::dim type, unsigned int first, unsigned int n) const;
-  static __attribute__((annotate("expose"))) inline isl::set empty(isl::space space);
+  static inline isl::set empty(isl::space space);
   inline isl::set equate(isl::dim type1, int pos1, isl::dim type2, int pos2) const;
   inline int find_dim_by_id(isl::dim type, const isl::id &id) const;
   inline int find_dim_by_name(isl::dim type, const std::string &name) const;
@@ -2372,7 +2372,7 @@ public:
   inline isl::map identity() const;
   inline isl::pw_aff indicator_function() const;
   inline isl::set insert_dims(isl::dim type, unsigned int pos, unsigned int n) const;
-  inline __attribute__((annotate("expose"))) isl::set intersect(isl::set set2) const;
+  inline isl::set intersect(isl::set set2) const;
   inline isl::set intersect_params(isl::set params) const;
   inline isl::boolean involves_dims(isl::dim type, unsigned int first, unsigned int n) const;
   inline isl::boolean is_bounded() const;
@@ -2434,10 +2434,10 @@ public:
   inline int size() const;
   inline isl::basic_set solutions() const;
   inline isl::set split_dims(isl::dim type, unsigned int first, unsigned int n) const;
-  inline __attribute__((annotate("expose"))) isl::set subtract(isl::set set2) const;
+  inline isl::set subtract(isl::set set2) const;
   inline isl::set sum(isl::set set2) const;
-  inline __attribute__((annotate("expose"))) isl::set unite(isl::set set2) const;
-  static __attribute__((annotate("expose_special"))) inline isl::set universe(isl::space space);
+  inline isl::set unite(isl::set set2) const;
+  static inline isl::set universe(isl::space space);
   inline isl::basic_set unshifted_simple_hull() const;
   inline isl::basic_set unshifted_simple_hull_from_set_list(isl::set_list list) const;
   inline isl::map unwrap() const;
