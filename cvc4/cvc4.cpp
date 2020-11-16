@@ -11,7 +11,7 @@ namespace lib_helper_funcs {
 CVC4::api::Term
 ctor_expr(int n, CVC4::api::Solver& slv)
 {
-    return slv.mkReal(n);
+    return slv.mkInteger(n);
 }
 
 CVC4::api::Term
@@ -80,9 +80,9 @@ int
 main(int argc, char** argv)
 {
     CVC4::api::Solver slv;
-    slv.setLogic("QF_LIRA");
+    slv.setLogic("QF_NIA");
     fuzz::start();
-    fuzz::output_var = slv.mkReal(fuzz::fuzz_rand<int, int>(-20, 20));
+    fuzz::output_var = slv.mkInteger(fuzz::fuzz_rand<int, int>(-20, 20));
     fuzz::output_var = slv.mkTerm(CVC4::api::Kind::PLUS, fuzz::fuzz_new<CVC4::api::Term>(), fuzz::output_var);
     fuzz::end();
     fuzz::meta_test();

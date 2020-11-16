@@ -14,36 +14,6 @@ namespace checks {
 
 namespace generators {
 
-namespace one {
-
-    CVC4::api::Term placeholder(CVC4::api::Solver& slv, CVC4::api::Term t);
-
-    CVC4::api::Term
-    get_one(CVC4::api::Solver& slv, CVC4::api::Term t)
-    {
-        return slv.mkReal(1);
-    }
-
-    CVC4::api::Term
-    one_by_div(CVC4::api::Solver& c, CVC4::api::Term f)
-    {
-        CVC4::api::Term tmp_zero = placeholder(c, f);
-        CVC4::api::Term is_zero = tmp_zero.eqTerm(f);
-        return is_zero.iteTerm(placeholder(c, f),
-            c.mkTerm(CVC4::api::INTS_DIVISION, f, f));
-    }
-
-    CVC4::api::Term
-    one_by_pw(CVC4::api::Solver& c, CVC4::api::Term f)
-    {
-        CVC4::api::Term tmp_zero = placeholder(c, f);
-        CVC4::api::Term is_zero = tmp_zero.eqTerm(f);
-        return is_zero.iteTerm(placeholder(c, f),
-            c.mkTerm(CVC4::api::POW, f, tmp_zero));
-    }
-
-
-} // namespace one
 
 namespace zero {
 
@@ -52,7 +22,7 @@ namespace zero {
     CVC4::api::Term
     get_zero(CVC4::api::Solver& slv, CVC4::api::Term t)
     {
-        return slv.mkReal(0);
+        return slv.mkInteger(0);
     }
 
     CVC4::api::Term
@@ -71,11 +41,42 @@ namespace zero {
     zero_by_mod(CVC4::api::Solver& c, CVC4::api::Term e)
     {
         CVC4::api::Term tmp_zero = placeholder(c, e);
-        return e.eqTerm(tmp_zero).iteTerm(
-            c.mkTerm(CVC4::api::INTS_MODULUS, e, e), tmp_zero);
+        return e.eqTerm(tmp_zero).iteTerm(tmp_zero,
+            c.mkTerm(CVC4::api::INTS_MODULUS, e, e));
     }
 
 } // namespace zero
+
+namespace one {
+
+    CVC4::api::Term placeholder(CVC4::api::Solver& slv, CVC4::api::Term t);
+
+    CVC4::api::Term
+    get_one(CVC4::api::Solver& slv, CVC4::api::Term t)
+    {
+        return slv.mkInteger(1);
+    }
+
+    CVC4::api::Term
+    one_by_div(CVC4::api::Solver& c, CVC4::api::Term f)
+    {
+        CVC4::api::Term tmp_zero = zero::placeholder(c, f);
+        CVC4::api::Term is_zero = tmp_zero.eqTerm(f);
+        return is_zero.iteTerm(placeholder(c, f),
+            c.mkTerm(CVC4::api::INTS_DIVISION, f, f));
+    }
+
+    CVC4::api::Term
+    one_by_pw(CVC4::api::Solver& c, CVC4::api::Term f)
+    {
+        CVC4::api::Term tmp_zero = zero::placeholder(c, f);
+        CVC4::api::Term is_zero = tmp_zero.eqTerm(f);
+        return is_zero.iteTerm(placeholder(c, f),
+            c.mkTerm(CVC4::api::POW, f, tmp_zero));
+    }
+
+
+} // namespace one
 
 } // namespace generators
 
