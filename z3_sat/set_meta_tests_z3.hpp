@@ -9,11 +9,7 @@ namespace checks {
         z3::expr check_expr = z3::operator<(p.first, p.second);
         solver.add(check_expr);
         assert(solver.check() != z3::unsat);
-        std::cout << model.eval(check_expr) << std::endl;
-        if (model.num_consts)
-        {
-            assert(model.eval(check_expr).bool_value() == Z3_L_TRUE);
-        }
+        assert(model.eval(check_expr).bool_value() == Z3_L_TRUE);
     }
 }
 
