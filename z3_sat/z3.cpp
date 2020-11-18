@@ -68,22 +68,33 @@ main(int argc, char** argv)
     z3::expr cnst_var1 = ctx.int_const("x");
     z3::expr cnst_var2 = ctx.int_const("y");
     z3::expr cnst_var3 = ctx.int_const("z");
+
     fuzz::start();
     z3::expr t = ctx.int_val(23);
     z3::expr lhs = fuzz::fuzz_new<z3::expr>();
     z3::expr rhs = fuzz::fuzz_new<z3::expr>();
-    //fuzz::output_var = std::make_pair(lhs, rhs);
     fuzz::output_var = std::make_pair(lhs, rhs);
     fuzz::end();
     assert(ctx.check_error() == Z3_OK);
+
     z3::solver s(ctx);
     s.add(z3::operator<(fuzz::output_var_get(0).first, fuzz::output_var_get(0).second));
-    std::cout << s.to_smt2() << std::endl;
+    //std::cout << s.to_smt2() << std::endl;
     if (s.check() != z3::sat)
     {
         std::cout << "Non-SAT formula." << std::endl;
         exit(0);
     }
     z3::model out_model = s.get_model();
+
+    for (z3::expr cnst_expr : {cnst_var1, cnst_var2, cnst_var3})
+    {
+        z3::func_decl cnst_decl = cnst_expr.decl();
+        if (!out_model.has_interp(cnst_decl))
+        {
+            z3::expr zero_val = ctx.int_val(0);
+            out_model.add_const_interp(cnst_decl, zero_val);
+        }
+    }
     fuzz::meta_test();
 }
