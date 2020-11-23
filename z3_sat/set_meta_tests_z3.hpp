@@ -26,6 +26,13 @@ namespace one {
     }
 
     z3::expr
+    one_by_fuzz_div(z3::context& c, z3::expr f)
+    {
+        z3::expr fuzz = fuzz::fuzz_new<z3::expr>();
+        return ite(fuzz == 0, placeholder(c, fuzz), fuzz/fuzz);
+    }
+
+    z3::expr
     one_by_div(z3::context& c, z3::expr f)
     {
         return ite(f == 0, placeholder(c, f), f/f);
@@ -50,12 +57,12 @@ namespace zero {
         return c.int_val(0);
     }
 
-    //z3::expr
-    //zero_by_fuzz_sub(z3::context& c)
-    //{
-        //z3::expr fuzz = fuzz::fuzz_new<z3::expr>();
-        //return fuzz - fuzz;
-    //}
+    z3::expr
+    zero_by_fuzz_sub(z3::context& c)
+    {
+        z3::expr fuzz = fuzz::fuzz_new<z3::expr>();
+        return fuzz - fuzz;
+    }
 
     z3::expr
     zero_by_mul(z3::context& c, z3::expr e)
@@ -77,6 +84,18 @@ namespace zero {
     }
 
 } // namespace zero
+
+namespace fuzz_expr
+{
+    z3::expr placeholder(z3::context&);
+
+    z3::expr
+    get_expr_by_fuzz(z3::context& c)
+    {
+        z3::expr fuzz = fuzz::fuzz_new<z3::expr>();
+        return fuzz;
+    }
+} // namespace fuzz
 
 } //namespace generators
 
@@ -164,15 +183,6 @@ namespace identity_lhs {
             placeholder(c, p).first / generators::one::placeholder(c, p.first),
             p.second);
     }
-
-    //mr_pair
-    //iden_by_ite_lt_lhs(z3::context& c, mr_pair p)
-    //{
-        //z3::expr dead = fuzz::fuzz_new<z3::expr>();
-        //return std::make_pair(
-            //z3::ite(p.first < p.first, dead, placeholder(c, p).first),
-            //p.second);
-    //}
 } // namespace identity_lhs
 
 namespace identity_rhs {
@@ -251,79 +261,69 @@ namespace identity_rhs {
             placeholder(c, p).second / generators::one::placeholder(c, p.second));
     }
 
-    //mr_pair
-    //iden_by_ite_lt_rhs(z3::context& c, mr_pair p)
-    //{
-        //z3::expr dead = fuzz::fuzz_new<z3::expr>();
-        //return std::make_pair(p.first,
-            //z3::ite(p.second < p.second, dead, placeholder(c, p).second));
-    //}
 } // namespace identity_rhs
 
-//namespace add {
+namespace add_rhs {
 
-    //z3::expr placeholder(z3::expr e1, z3::expr e2);
+    mr_pair placeholder(mr_pair p, z3::expr e);
 
-    //z3::expr
-    //base_add(z3::expr e1, z3::expr e2)
+    mr_pair
+    base_add(mr_pair p, z3::expr e)
+    {
+        return std::make_pair(p.first, p.second + e);
+    }
+
+    mr_pair
+    add_pair_first(mr_pair p, z3::expr e)
+    {
+        return placeholder(p, p.first);
+    }
+
+    mr_pair
+    add_pair_second(mr_pair p, z3::expr e)
+    {
+        return placeholder(p, p.second);
+    }
+
+    //mr_pair
+    //add_by_fuzz(mr_pair p)
     //{
-        //return e1 + e2;
+        //z3::context& c = p.first.ctx();
+        //return placeholder(p, fuzz::fuzz_new<z3::expr>());
     //}
 
-    //z3::expr
-    //add_commute(z3::expr e1, z3::expr e2)
-    //{
-        //return placeholder(e2, e1);
-    //}
+} // namespace add_rhs
 
-    //[>
-    //z3::expr
-    //add_by_ones(z3::expr e1, z3::expr e2)
-    //{
-        //z3::expr sum = identity::placeholder(e1.ctx(), e1);
-        //for (int i = 0; (i < z3::abs(e2)).simplify().is_true(); ++i)
-        //{
-            //z3::expr one = generators::one::placeholder(e1.ctx(), e1);
-            //sum = placeholder(sum, z3::ite(e2 >= 0, one, -one));
-            ////sum = placeholder(sum, generators::one::placeholder(e1.ctx()));
-        //}
-        //return sum;
-    //}
-    //*/
+namespace mul_rhs {
 
-//} // namespace add
+    mr_pair placeholder(mr_pair p, z3::expr e);
 
-//namespace multiply {
+    mr_pair
+    base_mul(mr_pair p, z3::expr e)
+    {
+        return std::make_pair(p.first, p.second + e);
+    }
 
-    //z3::expr placeholder(z3::expr e1, z3::expr e2);
+    mr_pair
+    mul_pair_first(mr_pair p, z3::expr e)
+    {
+        return placeholder(p, p.first);
+    }
 
-    //z3::expr
-    //base_mul(z3::expr e1, z3::expr e2)
-    //{
-        //return e1 * e2;
-    //}
+    mr_pair
+    mul_pair_second(mr_pair p, z3::expr e)
+    {
+        return placeholder(p, p.second);
+    }
 
-    //z3::expr
-    //mul_commute(z3::expr e1, z3::expr e2)
-    //{
-        //return placeholder(e2, e1);
-    //}
+    mr_pair
+    mul_by_fuzz(mr_pair p)
+    {
+        z3::expr e = generators::fuzz_expr::placeholder(p.first.ctx());
+        return placeholder(p, e);
+    }
 
-    //[>
-    //z3::expr
-    //mul_by_add(z3::expr e1, z3::expr e2)
-    //{
-        //z3::expr mul = generators::zero::placeholder(e1.ctx(), e1);
-        //for (int i = 0; (i < z3::abs(e2)).simplify().is_true(); ++i)
-        //{
-            //z3::expr e1_iden = identity::placeholder(e1.ctx(), e1);
-            //mul = add::placeholder(mul, z3::ite(e2 >= 0, e1_iden, -e1_iden));
-        //}
-        //return mul;
-    //}
-    //*/
-
-//} // namespace multiply
+} // namespace mul_rhs
 
 //namespace modulo
 //{

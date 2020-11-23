@@ -9,11 +9,11 @@ typedef std::pair<z3::expr, z3::expr> mr_pair;
 namespace fuzz {
 namespace lib_helper_funcs {
 
-//z3::expr
-//ctor_expr(int n, z3::context& ctx)
-//{
-    //return ctx.int_val(n);
-//}
+z3::expr
+ctor_expr(int n, z3::context& ctx)
+{
+    return ctx.int_val(n);
+}
 
 //z3::expr
 //ctor_expr(std::string s, z3::context& ctx)
@@ -54,7 +54,7 @@ rem_wrapper(z3::expr const& e1, z3::expr const& e2)
 z3::expr
 pw_wrapper(z3::expr const& e1, z3::expr const& e2)
 {
-    return z3::ite(e1 != 0 && e2 != 0, z3::pw(e1, e2), e1);
+    return z3::ite(e1 != 0 && e2 != 0, z3::pw(z3::mod(z3::abs(e1), 32), z3::mod(z3::abs(e2), 32)), e1);
 }
 
 
@@ -70,7 +70,6 @@ main(int argc, char** argv)
     z3::expr cnst_var3 = ctx.int_const("z");
 
     fuzz::start();
-    z3::expr t = ctx.int_val(23);
     z3::expr lhs = fuzz::fuzz_new<z3::expr>();
     z3::expr rhs = fuzz::fuzz_new<z3::expr>();
     fuzz::output_var = std::make_pair(lhs, rhs);
