@@ -6,6 +6,8 @@ typedef std::pair<z3::expr, z3::expr> mr_pair;
 #include "z3_spec_defs.hpp"
 #endif
 
+#define POW_LIM 32
+
 namespace fuzz {
 namespace lib_helper_funcs {
 
@@ -54,7 +56,11 @@ rem_wrapper(z3::expr const& e1, z3::expr const& e2)
 z3::expr
 pw_wrapper(z3::expr const& e1, z3::expr const& e2)
 {
-    return z3::ite(e1 != 0 && e2 != 0, z3::pw(z3::mod(z3::abs(e1), 32), z3::mod(z3::abs(e2), 32)), e1);
+    int e1_sgn = (0 < e1.get_numeral_int()) ? 1 : -1;
+    int e2_sgn = (0 < e2.get_numeral_int()) ? 1 : -1;
+    e1 = e1_sgn * z3::mod(e1, POW_LIM);
+    e2 = e2_sgn * z3::mod(e2, POW_LIM);
+    return z3::ite(e1 != 0 && e2 != 0, z3::pw(e1, e2), e1);
 }
 
 

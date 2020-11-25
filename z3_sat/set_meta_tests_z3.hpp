@@ -270,7 +270,7 @@ namespace add_rhs {
     mr_pair
     base_add(mr_pair p, z3::expr e)
     {
-        return std::make_pair(p.first, p.second + e);
+        return std::make_pair(p.first, p.second + z3::abs(e));
     }
 
     mr_pair
@@ -301,7 +301,7 @@ namespace mul_rhs {
     mr_pair
     base_mul(mr_pair p, z3::expr e)
     {
-        return std::make_pair(p.first, p.second + e);
+        return std::make_pair(p.first, p.second * z3::abs(e));
     }
 
     mr_pair
