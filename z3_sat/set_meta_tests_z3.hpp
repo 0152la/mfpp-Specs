@@ -285,12 +285,13 @@ namespace add_rhs {
         return placeholder(p, p.second);
     }
 
-    //mr_pair
-    //add_by_fuzz(mr_pair p)
-    //{
-        //z3::context& c = p.first.ctx();
-        //return placeholder(p, fuzz::fuzz_new<z3::expr>());
-    //}
+    mr_pair
+    add_by_fuzz(mr_pair p, z3::expr e)
+    {
+        z3::context& c = p.first.ctx();
+        z3::expr f = generators::fuzz_expr::placeholder(p.first.ctx());
+        return placeholder(p, f);
+    }
 
 } // namespace add_rhs
 
@@ -301,7 +302,7 @@ namespace mul_rhs {
     mr_pair
     base_mul(mr_pair p, z3::expr e)
     {
-        return std::make_pair(p.first, p.second * z3::abs(e));
+        return std::make_pair(p.first, z3::abs(p.second * e));
     }
 
     mr_pair
@@ -317,10 +318,11 @@ namespace mul_rhs {
     }
 
     mr_pair
-    mul_by_fuzz(mr_pair p)
+    mul_by_fuzz(mr_pair p, z3::expr e)
     {
-        z3::expr e = generators::fuzz_expr::placeholder(p.first.ctx());
-        return placeholder(p, e);
+        z3::context& c = p.first.ctx();
+        z3::expr f = generators::fuzz_expr::placeholder(p.first.ctx());
+        return placeholder(p, f);
     }
 
 } // namespace mul_rhs
