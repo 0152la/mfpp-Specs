@@ -45,7 +45,7 @@ namespace isl {
     abort();                                                 \
   } while (0)
 
-class __attribute__((annotate("expose"))) boolean {
+class boolean {
 private:
   isl_bool val;
 
@@ -60,7 +60,7 @@ public:
 
   bool is_error() const { return val == isl_bool_error; }
   bool is_false() const { return val == isl_bool_false; }
-  bool __attribute__((annotate("expose"))) is_true() const { return val == isl_bool_true; }
+  bool is_true() const { return val == isl_bool_true; }
 
   operator bool() const {
     ISLPP_ASSERT(!is_error(), "IMPLEMENTATION ERROR: Unhandled error state");
@@ -144,7 +144,7 @@ class multi_pw_aff;
 class multi_union_pw_aff;
 class multi_val;
 class __attribute__((annotate("expose"))) point;
-class __attribute__((annotate("expose"))) pw_aff;
+class pw_aff;
 class pw_aff_list;
 class pw_multi_aff;
 class pw_qpolynomial;
@@ -1752,11 +1752,11 @@ public:
   inline std::string to_str() const;
   inline void dump() const;
 
-  inline __attribute__((annotate("expose"))) isl::pw_aff add(isl::pw_aff pwaff2) const;
+  inline isl::pw_aff add(isl::pw_aff pwaff2) const;
   inline isl::pw_aff add_dims(isl::dim type, unsigned int n) const;
   inline isl::pw_aff align_params(isl::space model) const;
   static inline isl::pw_aff alloc(isl::set set, isl::aff aff);
-  inline __attribute__((annotate("expose"))) isl::pw_aff ceil() const;
+  inline isl::pw_aff ceil() const;
   inline isl::pw_aff coalesce() const;
   inline isl::pw_aff cond(isl::pw_aff pwaff_true, isl::pw_aff pwaff_false) const;
   inline unsigned int dim(isl::dim type) const;
@@ -1769,7 +1769,7 @@ public:
   inline isl::set eq_set(isl::pw_aff pwaff2) const;
   inline isl::val eval(isl::point pnt) const;
   inline int find_dim_by_name(isl::dim type, const std::string &name) const;
-  inline __attribute__((annotate("expose"))) isl::pw_aff floor() const;
+  inline isl::pw_aff floor() const;
   inline isl::stat foreach_piece(const std::function<isl::stat(isl::set, isl::aff)> &fn) const;
   inline isl::pw_aff from_range() const;
   inline isl::set ge_set(isl::pw_aff pwaff2) const;
@@ -1796,15 +1796,15 @@ public:
   inline isl::set le_set(isl::pw_aff pwaff2) const;
   inline isl::map lt_map(isl::pw_aff pa2) const;
   inline isl::set lt_set(isl::pw_aff pwaff2) const;
-  inline __attribute__((annotate("expose"))) isl::pw_aff max(isl::pw_aff pwaff2) const;
-  inline __attribute__((annotate("expose"))) isl::pw_aff min(isl::pw_aff pwaff2) const;
+  inline isl::pw_aff max(isl::pw_aff pwaff2) const;
+  inline isl::pw_aff min(isl::pw_aff pwaff2) const;
   inline isl::pw_aff mod(isl::val mod) const;
   inline isl::pw_aff move_dims(isl::dim dst_type, unsigned int dst_pos, isl::dim src_type, unsigned int src_pos, unsigned int n) const;
   inline isl::pw_aff mul(isl::pw_aff pwaff2) const;
   inline int n_piece() const;
   static inline isl::pw_aff nan_on_domain(isl::local_space ls);
   inline isl::set ne_set(isl::pw_aff pwaff2) const;
-  inline __attribute__((annotate("expose"))) isl::pw_aff neg() const;
+  inline isl::pw_aff neg() const;
   inline isl::set non_zero_set() const;
   inline isl::set nonneg_set() const;
   inline isl::set params() const;
@@ -1817,11 +1817,11 @@ public:
   inline isl::pw_aff pullback(isl::multi_pw_aff mpa) const;
   inline isl::pw_aff reset_tuple_id(isl::dim type) const;
   inline isl::pw_aff reset_user() const;
-  inline __attribute__((annotate("expose"))) isl::pw_aff scale(isl::val v) const;
+  inline isl::pw_aff scale(isl::val v) const;
   inline isl::pw_aff scale_down(isl::val f) const;
   inline isl::pw_aff set_dim_id(isl::dim type, unsigned int pos, isl::id id) const;
   inline isl::pw_aff set_tuple_id(isl::dim type, isl::id id) const;
-  inline __attribute__((annotate("expose"))) isl::pw_aff sub(isl::pw_aff pwaff2) const;
+  inline isl::pw_aff sub(isl::pw_aff pwaff2) const;
   inline isl::pw_aff subtract_domain(isl::set set) const;
   inline isl::pw_aff tdiv_q(isl::pw_aff pa2) const;
   inline isl::pw_aff tdiv_r(isl::pw_aff pa2) const;
@@ -2379,7 +2379,7 @@ public:
   inline isl::boolean is_box() const;
   inline isl::boolean is_disjoint(const isl::set &set2) const;
   inline isl::boolean is_empty() const;
-  inline isl::boolean __attribute__((annotate("expose"))) is_equal(const isl::set &set2) const;
+  inline isl::boolean is_equal(const isl::set &set2) const;
   inline isl::boolean is_params() const;
   inline isl::boolean is_singleton() const;
   inline isl::boolean is_strict_subset(const isl::set &set2) const;
@@ -2434,9 +2434,9 @@ public:
   inline int size() const;
   inline isl::basic_set solutions() const;
   inline isl::set split_dims(isl::dim type, unsigned int first, unsigned int n) const;
-  inline isl::set subtract(isl::set set2) const;
-  inline isl::set sum(isl::set set2) const;
-  inline isl::set unite(isl::set set2) const;
+  inline __attribute__((annotate("expose"))) isl::set subtract(isl::set set2) const;
+  inline __attribute__((annotate("expose"))) isl::set sum(isl::set set2) const;
+  inline __attribute__((annotate("expose"))) isl::set unite(isl::set set2) const;
   static inline isl::set universe(isl::space space);
   inline isl::basic_set unshifted_simple_hull() const;
   inline isl::basic_set unshifted_simple_hull_from_set_list(isl::set_list list) const;

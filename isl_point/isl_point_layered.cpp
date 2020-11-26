@@ -51,34 +51,32 @@ main(int argc, char** argv)
     isl::space space(ctx, 0, 3);
     isl::local_space local_space(space);
     fuzz::start();
-    isl::pw_aff dim0 = isl::pw_aff::var_on_domain(local_space, isl::dim::set, 0);
-    isl::pw_aff dim1 = isl::pw_aff::var_on_domain(local_space, isl::dim::set, 1);
-    isl::pw_aff dim2 = isl::pw_aff::var_on_domain(local_space, isl::dim::set, 2);
     fuzz::output_var = isl::set::empty(space);
     // Unite set 1
     isl::set tmp = isl::set::empty(space);
     tmp = fuzz::fuzz_new<isl::set>();
-    tmp = tmp.unite(fuzz::fuzz_new<isl::set>());
-    tmp = tmp.unite(fuzz::fuzz_new<isl::set>());
+    tmp = tmp.unite(isl::set(fuzz::fuzz_new<isl::point>()));
+    tmp = tmp.unite(isl::set(fuzz::fuzz_new<isl::point>()));
     tmp = tmp.unite(fuzz::fuzz_new<isl::set>());
     tmp = tmp.unite(fuzz::fuzz_new<isl::set>());
     fuzz::output_var = tmp.convex_hull();
     // Unite set 2
     tmp = fuzz::fuzz_new<isl::set>();
-    tmp = tmp.unite(fuzz::fuzz_new<isl::set>());
-    tmp = tmp.unite(fuzz::fuzz_new<isl::set>());
+    tmp = tmp.unite(isl::set(fuzz::fuzz_new<isl::point>()));
+    tmp = tmp.unite(isl::set(fuzz::fuzz_new<isl::point>()));
     tmp = tmp.unite(fuzz::fuzz_new<isl::set>());
     tmp = tmp.unite(fuzz::fuzz_new<isl::set>());
     tmp = tmp.convex_hull();
     fuzz::output_var = fuzz::output_var.unite(tmp);
     // Unite set 3
     tmp = fuzz::fuzz_new<isl::set>();
-    tmp = tmp.unite(fuzz::fuzz_new<isl::set>());
-    tmp = tmp.unite(fuzz::fuzz_new<isl::set>());
+    tmp = tmp.unite(isl::set(fuzz::fuzz_new<isl::point>()));
+    tmp = tmp.unite(isl::set(fuzz::fuzz_new<isl::point>()));
     tmp = tmp.unite(fuzz::fuzz_new<isl::set>());
     tmp = tmp.unite(fuzz::fuzz_new<isl::set>());
     tmp = tmp.convex_hull();
     fuzz::output_var = fuzz::output_var.unite(tmp);
+    fuzz::output_var.dump();
     fuzz::end();
     assert(isl_ctx_last_error(ctx.get()) == isl_error_none);
     fuzz::meta_test();
