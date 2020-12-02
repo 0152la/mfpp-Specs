@@ -74,7 +74,7 @@ main(int argc, char** argv)
         z3::func_decl cnst_decl = cnst_expr.decl();
         if (!out_model.has_interp(cnst_decl))
         {
-            z3::expr zero_val = ctx.int_val(0);
+            z3::expr zero_val = ctx.bv_val(0, BV_SIZE);
             out_model.add_const_interp(cnst_decl, zero_val);
         }
     }

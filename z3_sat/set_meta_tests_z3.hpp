@@ -17,7 +17,7 @@ namespace generators {
 
 namespace one {
 
-    z3::expr placeholder(z3::context&, z3::expr f);
+    z3::expr placeholder(z3::context&, z3::expr);
 
     z3::expr
     get_one(z3::context& c, z3::expr f)
@@ -49,7 +49,7 @@ namespace one {
 
 namespace zero {
 
-    z3::expr placeholder(z3::context&, z3::expr e);
+    z3::expr placeholder(z3::context&, z3::expr);
 
     z3::expr
     get_zero(z3::context& c, z3::expr e)
@@ -58,7 +58,7 @@ namespace zero {
     }
 
     z3::expr
-    zero_by_fuzz_sub(z3::context& c)
+    zero_by_fuzz_sub(z3::context& c, z3::expr e)
     {
         z3::expr fuzz = fuzz::fuzz_new<z3::expr>();
         return fuzz - fuzz;
@@ -85,8 +85,8 @@ namespace zero {
 
 } // namespace zero
 
-namespace fuzz_expr
-{
+namespace fuzz_expr {
+
     z3::expr placeholder(z3::context&);
 
     z3::expr
@@ -183,6 +183,14 @@ namespace identity_lhs {
             placeholder(c, p).first / generators::one::placeholder(c, p.first),
             p.second);
     }
+
+    mr_pair
+    abs_lhs(z3::context& c, mr_pair p)
+    {
+        return std::make_pair(
+            z3::ite(p.first == z3::abs(p.first), abs(placeholder(c, p)), p).first,
+            p.second);
+    }
 } // namespace identity_lhs
 
 namespace identity_rhs {
@@ -259,6 +267,14 @@ namespace identity_rhs {
     {
         return std::make_pair(p.first,
             placeholder(c, p).second / generators::one::placeholder(c, p.second));
+    }
+
+    mr_pair
+    abs_rhs(z3::context& c, mr_pair p)
+    {
+        return std::make_pair(
+            p.first,
+            z3::ite(p.second == z3::abs(p.second), abs(placeholder(c, p)), p).second);
     }
 
 } // namespace identity_rhs
