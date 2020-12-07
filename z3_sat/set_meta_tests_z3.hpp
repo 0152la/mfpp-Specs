@@ -188,7 +188,7 @@ namespace identity_lhs {
     abs_lhs(z3::context& c, mr_pair p)
     {
         return std::make_pair(
-            z3::ite(p.first == z3::abs(p.first), abs(placeholder(c, p)), p).first,
+            z3::ite(p.first == z3::abs(p.first), abs(placeholder(c, p).first), p.first),
             p.second);
     }
 } // namespace identity_lhs
@@ -274,7 +274,7 @@ namespace identity_rhs {
     {
         return std::make_pair(
             p.first,
-            z3::ite(p.second == z3::abs(p.second), abs(placeholder(c, p)), p).second);
+            z3::ite(p.second == z3::abs(p.second), abs(placeholder(c, p).second), p.second));
     }
 
 } // namespace identity_rhs
@@ -318,7 +318,9 @@ namespace mul_rhs {
     mr_pair
     base_mul(mr_pair p, z3::expr e)
     {
-        return std::make_pair(p.first, z3::abs(p.second * e));
+        z3::expr tmp_zero = e.ctx().int_val(0);
+        return std::make_pair(p.first,
+            ite(operator==(e, tmp_zero), p.second, z3::abs(p.second * e)));
     }
 
     mr_pair
