@@ -284,25 +284,25 @@ namespace add_rhs {
     mr_pair placeholder(mr_pair p, z3::expr e);
 
     mr_pair
-    base_add(mr_pair p, z3::expr e)
+    base_add_rhs(mr_pair p, z3::expr e)
     {
         return std::make_pair(p.first, p.second + z3::abs(e));
     }
 
     mr_pair
-    add_pair_first(mr_pair p, z3::expr e)
+    add_pair_first_rhs(mr_pair p, z3::expr e)
     {
         return placeholder(p, p.first);
     }
 
     mr_pair
-    add_pair_second(mr_pair p, z3::expr e)
+    add_pair_second_rhs(mr_pair p, z3::expr e)
     {
         return placeholder(p, p.second);
     }
 
     mr_pair
-    add_by_fuzz(mr_pair p, z3::expr e)
+    add_by_fuzz_rhs(mr_pair p, z3::expr e)
     {
         z3::context& c = p.first.ctx();
         z3::expr f = generators::fuzz_expr::placeholder(p.first.ctx());
@@ -316,27 +316,27 @@ namespace mul_rhs {
     mr_pair placeholder(mr_pair p, z3::expr e);
 
     mr_pair
-    base_mul(mr_pair p, z3::expr e)
+    base_mul_rhs(mr_pair p, z3::expr e)
     {
-        z3::expr tmp_zero = e.ctx().int_val(0);
         return std::make_pair(p.first,
-            ite(operator==(e, tmp_zero), p.second, z3::abs(p.second * e)));
+            z3::ite(operator||(operator==(e, e.ctx().int_val(0)), operator<(z3::abs(e), e.ctx().int_val(1))),
+               p.second, z3::abs(p.second * e)));
     }
 
     mr_pair
-    mul_pair_first(mr_pair p, z3::expr e)
+    mul_pair_first_rhs(mr_pair p, z3::expr e)
     {
         return placeholder(p, p.first);
     }
 
     mr_pair
-    mul_pair_second(mr_pair p, z3::expr e)
+    mul_pair_second_rhs(mr_pair p, z3::expr e)
     {
         return placeholder(p, p.second);
     }
 
     mr_pair
-    mul_by_fuzz(mr_pair p, z3::expr e)
+    mul_by_fuzz_rhs(mr_pair p, z3::expr e)
     {
         z3::context& c = p.first.ctx();
         z3::expr f = generators::fuzz_expr::placeholder(p.first.ctx());

@@ -59,8 +59,8 @@ pw_wrapper(z3::expr const& e1, z3::expr const& e2)
     z3::expr e1c = z3::mod(e1, POW_LIM);
     z3::expr e2c = z3::mod(e2, POW_LIM);
     e1c = z3::ite(0 < e1, e1c, -e1c);
-    e2c = z3::ite(0 < e1, e2c, -e2c);
-    return z3::ite(e1 != 0 && e2 != 0, z3::pw(e1c, e2c), e1);
+    e2c = z3::ite(0 < e2, e2c, -e2c);
+    return z3::ite(e1c != 0 && e2c != 0, z3::pw(e1c, e2c), e1);
 }
 
 
