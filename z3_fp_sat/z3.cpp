@@ -7,14 +7,15 @@ typedef std::pair<z3::expr, z3::expr> mr_pair;
 #endif
 
 #define POW_LIM 32
+typedef z3::expr z3_fp_rm
 
 namespace fuzz {
 namespace lib_helper_funcs {
 
 z3::expr
-ctor_expr(int n, z3::context& ctx)
+ctor_expr(double n, z3::context& ctx)
 {
-    return ctx.int_val(n);
+    return ctx.fpa_val(n);
 }
 
 //z3::expr
@@ -42,18 +43,6 @@ div_wrapper(z3::expr const& e1, z3::expr const& e2)
 }
 
 z3::expr
-mod_wrapper(z3::expr const& e1, z3::expr const& e2)
-{
-    return z3::ite(e2 != 0, z3::mod(e1, e2), e1);
-}
-
-z3::expr
-rem_wrapper(z3::expr const& e1, z3::expr const& e2)
-{
-    return z3::ite(e2 != 0, z3::rem(e1, e2), e1);
-}
-
-z3::expr
 pw_wrapper(z3::expr const& e1, z3::expr const& e2)
 {
     z3::expr e1c = z3::mod(e1, POW_LIM);
@@ -63,7 +52,6 @@ pw_wrapper(z3::expr const& e1, z3::expr const& e2)
     return z3::ite(e1c != 0 && e2c != 0, z3::pw(e1c, e2c), e1);
 }
 
-
 } // namespace lib_helper_funcs
 } // namespace fuzz
 
@@ -71,9 +59,11 @@ int
 main(int argc, char** argv)
 {
     z3::context ctx;
-    z3::expr cnst_var1 = ctx.int_const("x");
-    z3::expr cnst_var2 = ctx.int_const("y");
-    z3::expr cnst_var3 = ctx.int_const("z");
+    z3_fp_rm fp_rm = ctx.rounding_mode
+
+    z3::expr cnst_var1 = ctx.fpa_const("x");
+    z3::expr cnst_var2 = ctx.fpa_const("y");
+    z3::expr cnst_var3 = ctx.fpa_const("z");
 
     fuzz::start();
     z3::expr lhs = fuzz::fuzz_new<z3::expr>();
