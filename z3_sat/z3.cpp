@@ -83,12 +83,18 @@ main(int argc, char** argv)
     assert(ctx.check_error() == Z3_OK);
 
     z3::solver s(ctx);
-    s.add(z3::operator<(fuzz::output_var_get(0).first, fuzz::output_var_get(0).second));
-    //std::cout << s.to_smt2() << std::endl;
+    z3::expr (*chk_op)(z3::expr const&, z3::expr const&){ &z3::operator< };
+    s.add((*chk_op)(fuzz::output_var_get(0).first, fuzz::output_var_get(0).second));
     if (s.check() != z3::sat)
     {
-        std::cout << "Non-SAT formula." << std::endl;
-        exit(0);
+        chk_op = &z3::operator>=;
+        s.reset();
+        s.add((*chk_op)(fuzz::output_var_get(0).first, fuzz::output_var_get(0).second));
+        if (s.check() != z3::sat)
+        {
+            std::cout << "Non-SAT formula." << std::endl;
+            exit(0);
+        }
     }
     z3::model out_model = s.get_model();
 

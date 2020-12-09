@@ -6,8 +6,8 @@ typedef std::pair<z3::expr, z3::expr> mr_pair;
 #include "z3_spec_defs.hpp"
 #endif
 
-#define POW_LIM 32
-typedef z3::expr z3_fp_rm
+#define POW_LIM 32.0
+#define FPA_PREC 64
 
 namespace fuzz {
 namespace lib_helper_funcs {
@@ -39,17 +39,7 @@ ite_gte_wrapper(z3::expr cond1, z3::expr cond2, z3::expr if_b, z3::expr then_b)
 z3::expr
 div_wrapper(z3::expr const& e1, z3::expr const& e2)
 {
-    return z3::ite(e2 != 0, e1 / e2, e1);
-}
-
-z3::expr
-pw_wrapper(z3::expr const& e1, z3::expr const& e2)
-{
-    z3::expr e1c = z3::mod(e1, POW_LIM);
-    z3::expr e2c = z3::mod(e2, POW_LIM);
-    e1c = z3::ite(0 < e1, e1c, -e1c);
-    e2c = z3::ite(0 < e2, e2c, -e2c);
-    return z3::ite(e1c != 0 && e2c != 0, z3::pw(e1c, e2c), e1);
+    return z3::ite(e2 != e1.ctx().fpa_val(0.0), e1 / e2, e1);
 }
 
 } // namespace lib_helper_funcs
@@ -59,11 +49,10 @@ int
 main(int argc, char** argv)
 {
     z3::context ctx;
-    z3_fp_rm fp_rm = ctx.rounding_mode
 
-    z3::expr cnst_var1 = ctx.fpa_const("x");
-    z3::expr cnst_var2 = ctx.fpa_const("y");
-    z3::expr cnst_var3 = ctx.fpa_const("z");
+    z3::expr cnst_var1 = ctx.fpa_const<FPA_PREC>("x");
+    z3::expr cnst_var2 = ctx.fpa_const<FPA_PREC>("y");
+    z3::expr cnst_var3 = ctx.fpa_const<FPA_PREC>("z");
 
     fuzz::start();
     z3::expr lhs = fuzz::fuzz_new<z3::expr>();
@@ -73,12 +62,18 @@ main(int argc, char** argv)
     assert(ctx.check_error() == Z3_OK);
 
     z3::solver s(ctx);
-    s.add(z3::operator<(fuzz::output_var_get(0).first, fuzz::output_var_get(0).second));
-    //std::cout << s.to_smt2() << std::endl;
+    z3::expr (*chk_op)(z3::expr const&, z3::expr const&){ &z3::operator< };
+    s.add((*chk_op)(fuzz::output_var_get(0).first, fuzz::output_var_get(0).second));
     if (s.check() != z3::sat)
     {
-        std::cout << "Non-SAT formula." << std::endl;
-        exit(0);
+        chk_op = &z3::operator>=;
+        s.reset();
+        s.add((*chk_op)(fuzz::output_var_get(0).first, fuzz::output_var_get(0).second));
+        if (s.check() != z3::sat)
+        {
+            std::cout << "Non-SAT formula." << std::endl;
+            exit(0);
+        }
     }
     z3::model out_model = s.get_model();
 
@@ -87,7 +82,7 @@ main(int argc, char** argv)
         z3::func_decl cnst_decl = cnst_expr.decl();
         if (!out_model.has_interp(cnst_decl))
         {
-            z3::expr zero_val = ctx.int_val(0);
+            z3::expr zero_val = ctx.fpa_val(0.0);
             out_model.add_const_interp(cnst_decl, zero_val);
         }
     }

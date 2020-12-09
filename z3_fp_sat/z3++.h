@@ -362,8 +362,8 @@ namespace z3 {
         expr bv_val(char const * n, unsigned sz);
         expr bv_val(unsigned n, bool const* bits);
 
-        expr __attribute__((annotate("expose"))) fpa_val(double n);
-        expr __attribute__((annotate("expose"))) fpa_val(float n);
+        expr __attribute__((annotate("expose")))fpa_val(double n);
+        expr fpa_val(float n);
 
         expr string_val(char const* s);
         expr string_val(char const* s, unsigned n);
@@ -1164,18 +1164,18 @@ namespace z3 {
         friend expr operator==(int a, expr const & b);
 
         friend __attribute__((annotate("expose_special"))) expr operator!=(expr const & a, expr const & b);
-        friend __attribute__((annotate("expose_special"))) expr operator!=(expr const & a, int b);
-        friend __attribute__((annotate("expose_special"))) expr operator!=(expr const & a, unsigned int b);
-        friend __attribute__((annotate("expose_special"))) expr operator!=(int a, expr const & b);
+        friend expr operator!=(expr const & a, int b);
+        friend expr operator!=(expr const & a, unsigned int b);
+        friend expr operator!=(int a, expr const & b);
 
         friend __attribute__((annotate("expose"))) expr operator+(expr const & a, expr const & b);
-        friend __attribute__((annotate("expose"))) expr operator+(expr const & a, int b);
-        friend __attribute__((annotate("expose"))) expr operator+(int a, expr const & b);
+        friend expr operator+(expr const & a, int b);
+        friend expr operator+(int a, expr const & b);
         friend expr sum(expr_vector const& args);
 
         friend __attribute__((annotate("expose"))) expr operator*(expr const & a, expr const & b);
-        friend __attribute__((annotate("expose"))) expr operator*(expr const & a, int b);
-        friend __attribute__((annotate("expose"))) expr operator*(int a, expr const & b);
+        friend expr operator*(expr const & a, int b);
+        friend expr operator*(int a, expr const & b);
 
         /*  \brief Power operator  */
         friend expr pw(expr const & a, expr const & b);
@@ -1201,8 +1201,8 @@ namespace z3 {
         friend __attribute__((annotate("expose"))) expr operator-(expr const & a);
 
         friend __attribute__((annotate("expose"))) expr operator-(expr const & a, expr const & b);
-        friend __attribute__((annotate("expose"))) expr operator-(expr const & a, int b);
-        friend __attribute__((annotate("expose"))) expr operator-(int a, expr const & b);
+        friend expr operator-(expr const & a, int b);
+        friend expr operator-(int a, expr const & b);
 
         friend expr operator<=(expr const & a, expr const & b);
         friend expr operator<=(expr const & a, int b);

@@ -3,10 +3,11 @@ namespace metalib {
 namespace checks {
 
     void
-    check_sat_expr_maintained(z3::context& c, mr_pair p, z3::model model)
+    check_sat_expr_maintained(z3::context& c, mr_pair p, z3::model model,
+        z3::expr (*chk_op)(z3::expr const&, z3::expr const&))
     {
         z3::solver solver(c);
-        z3::expr check_expr = z3::operator<(p.first, p.second);
+        z3::expr check_expr = (*chk_op)(p.first, p.second);
         solver.add(check_expr);
         assert(solver.check() != z3::unsat);
         assert(model.eval(check_expr).bool_value() == Z3_L_TRUE);
@@ -191,6 +192,14 @@ namespace identity_lhs {
             z3::ite(p.first == z3::abs(p.first), abs(placeholder(c, p).first), p.first),
             p.second);
     }
+
+    mr_pair
+    sum_alone_lhs(z3::context& c, mr_pair p)
+    {
+        z3::expr_vector ev(c);
+        ev.push_back(p.first);
+        return std::make_pair(z3::sum(ev), p.second);
+    }
 } // namespace identity_lhs
 
 namespace identity_rhs {
@@ -277,6 +286,14 @@ namespace identity_rhs {
             z3::ite(p.second == z3::abs(p.second), abs(placeholder(c, p).second), p.second));
     }
 
+    mr_pair
+    sum_alone_rhs(z3::context& c, mr_pair p)
+    {
+        z3::expr_vector ev(c);
+        ev.push_back(p.second);
+        return std::make_pair(p.first, z3::sum(ev));
+    }
+
 } // namespace identity_rhs
 
 namespace add_rhs {
@@ -307,6 +324,15 @@ namespace add_rhs {
         z3::context& c = p.first.ctx();
         z3::expr f = generators::fuzz_expr::placeholder(p.first.ctx());
         return placeholder(p, f);
+    }
+
+    mr_pair
+    add_by_sum(mr_pair p, z3::expr e)
+    {
+        z3::expr_vector ev(e.ctx());
+        ev.push_back(p.second());
+        ev.push_back(e);
+        return std::make_pair(p.first, z3::sum(ev));
     }
 
 } // namespace add_rhs
