@@ -330,7 +330,7 @@ namespace add_rhs {
     add_by_sum(mr_pair p, z3::expr e)
     {
         z3::expr_vector ev(e.ctx());
-        ev.push_back(p.second());
+        ev.push_back(p.second);
         ev.push_back(e);
         return std::make_pair(p.first, z3::sum(ev));
     }
