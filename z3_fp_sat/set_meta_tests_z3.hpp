@@ -146,9 +146,8 @@ namespace identity_lhs {
     max_with_zero_lhs(z3::context& c, mr_pair p)
     {
         z3::expr one = generators::one::placeholder(c, p.first);
-        z3::expr zero = generators::zero::placeholder(c, p.first);
         return std::make_pair(
-            z3::ite(p.first >= zero, one, -one) *
+            z3::ite(z3::abs(p.first) == p.first, one, -one) *
                 z3::max(abs(placeholder(c, p).first),
                     generators::zero::placeholder(c, p.first)),
             p.second);
