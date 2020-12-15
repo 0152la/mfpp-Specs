@@ -349,9 +349,9 @@ namespace mul {
     {
         return std::make_pair(
             z3::ite(operator<(z3::abs(e), e.ctx().int_val(1)),
-               p.first, z3::abs(p.first * e)),
+               p.first, p.first * z3::abs(e)),
             z3::ite(operator<(z3::abs(e), e.ctx().int_val(1)),
-               p.second, z3::abs(p.second * e)));
+               p.second, p.second * z3::abs(e)));
     }
 
     mr_pair
