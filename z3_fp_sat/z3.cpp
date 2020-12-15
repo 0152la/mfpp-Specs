@@ -8,7 +8,7 @@ typedef std::pair<z3::expr, z3::expr> mr_pair;
 
 #define POW_LIM 32.0
 #define FPA_PREC 64
-#define FP_RM_COUNT 5
+#define FP_RM_COUNT_MAX 4
 
 namespace fuzz {
 
@@ -72,9 +72,7 @@ fma_wrapper(z3::expr const& e1, z3::expr const& e2, z3::expr const& e3)
     else
     {
         assert(false);
-    }
-    return z3::fma(e1, e2, e3, z3::expr(e1.ctx(), rm_c));
-}
+    } return z3::fma(e1, e2, e3, z3::expr(e1.ctx(), rm_c)); }
 
 } // namespace lib_helper_funcs
 } // namespace fuzz
@@ -88,7 +86,7 @@ main(int argc, char** argv)
     z3::expr cnst_var2 = ctx.fpa_const<FPA_PREC>("y");
     z3::expr cnst_var3 = ctx.fpa_const<FPA_PREC>("z");
 
-    ctx.set_rounding_mode(static_cast<z3::rounding_mode>(fuzz::fuzz_rand<int, int>(0, FP_RM_COUNT - 1)));
+    ctx.set_rounding_mode(static_cast<z3::rounding_mode>(fuzz::fuzz_rand<int, int>(0, FP_RM_COUNT_MAX)));
 
     fuzz::start();
     z3::expr lhs = fuzz::fuzz_new<z3::expr>();
