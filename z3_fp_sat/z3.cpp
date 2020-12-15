@@ -6,7 +6,6 @@ typedef std::pair<z3::expr, z3::expr> mr_pair;
 #include "z3_spec_defs.hpp"
 #endif
 
-
 #define POW_LIM 32.0
 #define FPA_PREC 64
 #define FP_RM_COUNT 5
