@@ -44,6 +44,19 @@ namespace zero {
         return yices_bvmul(t, generators::zero::placeholder(ctx, t));
     }
 
+    term_t
+    get_zero_by_fuzz_sub(context_t* ctx, term_t t)
+    {
+        term_t t_fuzz = fuzz::fuzz_new<term_t>();
+        return yices_bvsub(t_fuzz, t_fuzz);
+    }
+
+    term_t
+    get_zero_by_shift_left(context_t* ctx, term_t t)
+    {
+        return yices_shift_left0(t, BV_SIZE);
+    }
+
 
 } // namespace zero
 

@@ -1554,9 +1554,9 @@ __YICES_DLLSPEC__ extern term_t __attribute__((annotate("expose"))) yices_bvnand
 __YICES_DLLSPEC__ extern term_t __attribute__((annotate("expose"))) yices_bvnor(term_t t1, term_t t2);   // bitwise not or
 __YICES_DLLSPEC__ extern term_t __attribute__((annotate("expose"))) yices_bvxnor(term_t t1, term_t t2);  // bitwise not xor
 
-__YICES_DLLSPEC__ extern term_t yices_bvshl(term_t t1, term_t t2);   // shift t1 left by k bits where k = value of t2
-__YICES_DLLSPEC__ extern term_t yices_bvlshr(term_t t1, term_t t2);  // logical shift t1 right by k bits, where k = value of t2
-__YICES_DLLSPEC__ extern term_t yices_bvashr(term_t t1, term_t t2);  // arithmetic shift t1 right by k bits, k = value of t2
+__YICES_DLLSPEC__ extern term_t __attribute__((annotate("expose"))) yices_bvshl(term_t t1, term_t t2);   // shift t1 left by k bits where k = value of t2
+__YICES_DLLSPEC__ extern term_t __attribute__((annotate("expose"))) yices_bvlshr(term_t t1, term_t t2);  // logical shift t1 right by k bits, where k = value of t2
+__YICES_DLLSPEC__ extern term_t __attribute__((annotate("expose"))) yices_bvashr(term_t t1, term_t t2);  // arithmetic shift t1 right by k bits, k = value of t2
 
 
 
@@ -1591,13 +1591,13 @@ __YICES_DLLSPEC__ extern term_t yices_bvand(uint32_t n, const term_t t[]);
 __YICES_DLLSPEC__ extern term_t yices_bvor(uint32_t n, const term_t t[]);
 __YICES_DLLSPEC__ extern term_t yices_bvxor(uint32_t n, const term_t t[]);
 
-__YICES_DLLSPEC__ extern term_t yices_bvand2(term_t t1, term_t t2);
-__YICES_DLLSPEC__ extern term_t yices_bvor2(term_t t1, term_t t2);
-__YICES_DLLSPEC__ extern term_t yices_bvxor2(term_t t1, term_t t2);
+__YICES_DLLSPEC__ extern term_t __attribute__((annotate("expose"))) yices_bvand2(term_t t1, term_t t2);
+__YICES_DLLSPEC__ extern term_t __attribute__((annotate("expose"))) yices_bvor2(term_t t1, term_t t2);
+__YICES_DLLSPEC__ extern term_t __attribute__((annotate("expose"))) yices_bvxor2(term_t t1, term_t t2);
 
-__YICES_DLLSPEC__ extern term_t yices_bvand3(term_t t1, term_t t2, term_t t3);
-__YICES_DLLSPEC__ extern term_t yices_bvor3(term_t t1, term_t t2, term_t t3);
-__YICES_DLLSPEC__ extern term_t yices_bvxor3(term_t t1, term_t t2, term_t t3);
+__YICES_DLLSPEC__ extern term_t __attribute__((annotate("expose"))) yices_bvand3(term_t t1, term_t t2, term_t t3);
+__YICES_DLLSPEC__ extern term_t __attribute__((annotate("expose"))) yices_bvor3(term_t t1, term_t t2, term_t t3);
+__YICES_DLLSPEC__ extern term_t __attribute__((annotate("expose"))) yices_bvxor3(term_t t1, term_t t2, term_t t3);
 
 
 /*
