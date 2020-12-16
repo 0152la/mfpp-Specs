@@ -19,7 +19,7 @@ namespace lib_helper_funcs {
 z3::expr
 ctor_expr(float n, z3::context& ctx)
 {
-    return ctx.fpa_val((float)n);
+    return ctx.fpa_val(n);
 }
 
 z3::expr
@@ -37,7 +37,7 @@ ite_gte_wrapper(z3::expr cond1, z3::expr cond2, z3::expr if_b, z3::expr then_b)
 z3::expr
 div_wrapper(z3::expr const& e1, z3::expr const& e2)
 {
-    return z3::ite(e2 != e1.ctx().fpa_val((float)0.0), e1 / e2, e1);
+    return z3::ite(e2 != e1.ctx().fpa_val(0.0), e1 / e2, e1);
 }
 
 z3::expr

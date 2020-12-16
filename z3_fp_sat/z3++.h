@@ -362,7 +362,7 @@ namespace z3 {
         expr bv_val(char const * n, unsigned sz);
         expr bv_val(unsigned n, bool const* bits);
 
-        expr __attribute__((annotate("expose")))fpa_val(double n);
+        expr fpa_val(double n);
         expr fpa_val(float n);
 
         expr string_val(char const* s);

@@ -23,7 +23,7 @@ namespace zero {
     z3::expr
     get_zero(z3::context& c, z3::expr e)
     {
-        return c.fpa_val((float)0.0);
+        return c.fpa_val(0.0);
     }
 
     z3::expr
@@ -55,7 +55,7 @@ namespace one {
     z3::expr
     get_one(z3::context& c, z3::expr f)
     {
-        return c.fpa_val((float) 1.0);
+        return c.fpa_val(1.0);
     }
 
     z3::expr
