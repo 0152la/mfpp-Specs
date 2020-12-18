@@ -344,8 +344,8 @@ namespace identity_rhs {
         return std::make_pair(
             p.first,
             yices_bvconcat2(
-                yices_bvextract(p.second, extract_count + 1, BV_SIZE - 1)));
-                yices_bvextract(p.second, 0, extract_count),
+                yices_bvextract(p.second, extract_count + 1, BV_SIZE - 1),
+                yices_bvextract(p.second, 0, extract_count)));
     }
 
     mr_pair
