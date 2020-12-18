@@ -230,8 +230,8 @@ namespace identity_lhs {
         unsigned int extract_count = fuzz::fuzz_rand<unsigned int, unsigned int>(0, BV_SIZE - 2);
         return std::make_pair(
             yices_bvconcat2(
-                yices_bvextract(p.first, extract_count + 1, BV_SIZE - 1)),
-                yices_bvextract(p.first, 0, extract_count),
+                yices_bvextract(p.first, extract_count + 1, BV_SIZE - 1),
+                yices_bvextract(p.first, 0, extract_count)),
             p.second);
     }
 
