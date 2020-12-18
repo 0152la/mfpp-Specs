@@ -3,12 +3,14 @@ namespace metalib {
 namespace checks {
 
     void
-    check_sat_expr_maintained(context_t* ctx, mr_pair p, smt_status_t stat)
+    check_sat_expr_maintained(context_t* ctx, mr_pair p, smt_status_t stat, model_t* mdl)
     {
         assert(!yices_error_code());
         yices_reset_context(ctx);
-        yices_assert_formula(ctx, yices_bvslt_atom(p.first, p.second));
+        term_t check = yices_bvslt_atom(p.first, p.second);
+        yices_assert_formula(ctx, check);
         assert(yices_check_context(ctx, NULL) == stat);
+        assert(yices_formula_true_in_model(mdl, check));
     }
 
 } // namespace checks
