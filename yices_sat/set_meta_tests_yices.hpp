@@ -10,7 +10,10 @@ namespace checks {
         term_t check = yices_bvslt_atom(p.first, p.second);
         yices_assert_formula(ctx, check);
         assert(yices_check_context(ctx, NULL) == stat);
-        assert(yices_formula_true_in_model(mdl, check));
+        if (stat == STATUS_SAT)
+        {
+            assert(yices_formula_true_in_model(mdl, check));
+        }
     }
 
 } // namespace checks
@@ -116,7 +119,7 @@ namespace one {
     {
         term_t zero = generators::zero::placeholder(ctx, t);
         return yices_ite(
-            yices_bvneq_atom(t, zero), yices_bvpower(t, zero),
+            yices_bvneq_atom(t, zero), yices_bvpower(t, 0),
             generators::one::placeholder(ctx, t));
     }
 
