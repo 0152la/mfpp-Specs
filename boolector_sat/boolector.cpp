@@ -58,7 +58,10 @@ main(int argc, char** argv)
         fuzz::output_var_get(0).first, fuzz::output_var_get(0).second);
     boolector_assert(ctx, check);
     sat_stat status = boolector_sat(ctx);
-    assert(status == BOOLECTOR_SAT);
+    if (status != BOOLECTOR_SAT)
+    {
+        return 0;
+    }
 
     fuzz::meta_test();
 
