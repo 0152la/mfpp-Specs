@@ -3,7 +3,6 @@
 
 #include "spec_fuzz.hpp"
 #include "yices.h"
-#include <utility>
 
 typedef std::pair<term_t, term_t> mr_pair;
 typedef mr_pair OUT_VAR_TYPE;

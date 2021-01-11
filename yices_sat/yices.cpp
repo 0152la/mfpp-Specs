@@ -59,6 +59,10 @@ main(int argc, char** argv)
     yices_assert_formula(ctx, yices_bvslt_atom(
         fuzz::output_var_get(0).first, fuzz::output_var_get(0).second));
     smt_status_t stat = yices_check_context(ctx, NULL);
+    if (stat != YICES_SAT)
+    {
+        return 0;
+    }
     model_t* mdl = yices_get_model(ctx, true);
 
     fuzz::meta_test();
