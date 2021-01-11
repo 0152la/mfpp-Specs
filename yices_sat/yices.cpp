@@ -59,7 +59,7 @@ main(int argc, char** argv)
     yices_assert_formula(ctx, yices_bvslt_atom(
         fuzz::output_var_get(0).first, fuzz::output_var_get(0).second));
     smt_status_t stat = yices_check_context(ctx, NULL);
-    if (stat != YICES_SAT)
+    if (stat != STATUS_SAT)
     {
         return 0;
     }
