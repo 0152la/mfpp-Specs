@@ -7,11 +7,8 @@ namespace checks {
     {
         BoolectorNode* check = boolector_slt(ctx, p.first, p.second);
         boolector_assert(ctx, check);
-        assert(boolector_sat(ctx) == stat);
-        //if (stat == BOOLECTOR_SAT)
-        //{
-            //assert(yices_formula_true_in_model(mdl, check));
-        //}
+        assert(boolector_sat(ctx) == stat ||
+            boolector_sat(ctx) == BOOLECTOR_UNKNOWN);
     }
 
 } // namespace checks

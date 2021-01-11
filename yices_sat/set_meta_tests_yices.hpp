@@ -9,7 +9,8 @@ namespace checks {
         yices_reset_context(ctx);
         term_t check = yices_bvslt_atom(p.first, p.second);
         yices_assert_formula(ctx, check);
-        assert(yices_check_context(ctx, NULL) == stat);
+        smt_status_t chk_stat = yices_check_context(ctx, NULL);
+        assert(chk_stat == stat || chk_stat == STATUS_UNKNOWN);
         if (stat == STATUS_SAT)
         {
             assert(yices_formula_true_in_model(mdl, check));
