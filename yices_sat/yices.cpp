@@ -31,6 +31,18 @@ ite_gte_wrapper(term_t cond1, term_t cond2, term_t then_e, term_t else_e)
     return yices_ite(yices_bvge_atom(cond1, cond2), then_e, else_e);
 }
 
+term_t
+rotate_left_wrapper(term_t t, unsigned int n)
+{
+    return yices_rotate_left(t, n % (BV_SIZE + 1));
+}
+
+term_t
+rotate_right_wrapper(term_t t, unsigned int n)
+{
+    return yices_rotate_right(t, n % (BV_SIZE + 1));
+}
+
 } // namespace lib_helper_funcs
 } // namespace fuzz
 

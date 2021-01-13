@@ -3,11 +3,12 @@ namespace metalib {
 namespace checks {
 
     void
-    check_sat_expr_maintained(context_t* ctx, term_t t1, term_t t2)
+    check_expr_eq(context_t* ctx, term_t t1, term_t t2)
     {
         yices_reset_context(ctx);
         yices_assert_formula(ctx, yices_eq(t1, t2));
-        yices_assert_formula(ctx, yices_not(yices_distinct(t1, t2)));
+        term_t f_arr[] = { t1, t2 };
+        yices_assert_formula(ctx, yices_not(yices_distinct(2, f_arr)));
         assert(yices_check_context(ctx, NULL) == STATUS_SAT);
         assert(!yices_error_code());
     }
@@ -16,7 +17,7 @@ namespace checks {
 
 namespace generators {
 
-namespace fuzz {
+namespace fuzz_expr {
 
     term_t placeholder(context_t*, term_t);
 
@@ -35,7 +36,7 @@ namespace zero {
     term_t
     get_zero(context_t* ctx, term_t t)
     {
-        return yices_bvconst_uint32(yices_bv_type(BV_SIZE), 0);
+        return yices_bvconst_uint32(BV_SIZE, 0);
     }
 
     term_t
@@ -60,7 +61,7 @@ namespace zero {
     term_t
     get_zero_by_fuzz_sub(context_t* ctx, term_t t)
     {
-        term_t t_fuzz = generators::fuzz::placeholder(ctx, t);
+        term_t t_fuzz = generators::fuzz_expr::placeholder(ctx, t);
         return yices_bvsub(t_fuzz, t_fuzz);
     }
 
@@ -80,7 +81,7 @@ namespace one {
     term_t
     get_one(context_t* ctx, term_t t)
     {
-        return yices_bvconst_uint32(yices_bv_type(BV_SIZE), 1);
+        return yices_bvconst_uint32(BV_SIZE, 1);
     }
 
     term_t
@@ -102,7 +103,7 @@ namespace one {
     {
         term_t zero = generators::zero::placeholder(ctx, t);
         return yices_ite(
-            yices_bvneq_atom(t, zero), yices_power(t, zero),
+            yices_bvneq_atom(t, zero), yices_bvpower(t, zero),
             generators::one::placeholder(ctx, t));
     }
 
@@ -143,7 +144,13 @@ namespace identity {
     term_t
     double_negation(context_t* ctx, term_t t)
     {
-        return yices_neg(yices_neg(relations::identity::placeholder(ctx, t)));
+        return yices_bvneg(yices_bvneg(relations::identity::placeholder(ctx, t)));
+    }
+
+    term_t
+    double_not(context_t* ctx, term_t t)
+    {
+        return yices_bvnot(yices_bvnot(relations::identity::placeholder(ctx, t)));
     }
 
     term_t
@@ -156,7 +163,7 @@ namespace identity {
     term_t
     iden_by_false_ite(context_t* ctx, term_t t)
     {
-        term_t fuzz = generators::fuzz::placeholder(ctx, t);
+        term_t fuzz = generators::fuzz_expr::placeholder(ctx, t);
         return yices_ite(yices_neq(t, t), fuzz, t);
     }
 
@@ -250,23 +257,19 @@ namespace square
     term_t
     base_square(context_t* ctx, term_t t)
     {
-        return yices_square(t1);
+        return yices_bvsquare(t);
     }
 
     term_t
     square_by_mul(context_t* ctx, term_t t)
     {
-        return relations::mul::placeholder(
-            relations::identity::placeholder(t1),
-            relations::identity::placeholder(t1));
+        return relations::mul::placeholder(ctx, t, t);
     }
 
     term_t
     square_by_pow(context_t* ctx, term_t t)
     {
-        term_t one = generators::one::placeholder(ctx, t);
-        term_t two = yices_add(one, generators::one::placeholder(ctx, t));
-        return yices_pow(relations::identity::placeholder(ctx, t), two);
+        return yices_bvpower(relations::identity::placeholder(ctx, t), 2);
     }
 
 } // namespace square
@@ -286,20 +289,20 @@ namespace bvand
     term_t
     commute_and(context_t* ctx, term_t t1, term_t t2)
     {
-        return relations::placeholder::bvand(t2, t1);
+        return relations::bvand::placeholder(ctx, t2, t1);
     }
 
     term_t
     nnand(context_t* ctx, term_t t1, term_t t2)
     {
-        return yices_not(yices_bvnand(t1, t2));
+        return yices_bvnot(yices_bvnand(t1, t2));
     }
 
 
     term_t
     demorgan_and(context_t* ctx, term_t t1, term_t t2)
     {
-        return yices_bvnot(relations::placeholder::bvor(yices_bvnot(t1), yices_bvnot(t2)));
+        return yices_bvnot(relations::bvor::placeholder(ctx, yices_bvnot(t1), yices_bvnot(t2)));
     }
 
 } // namespace bvand
@@ -315,19 +318,19 @@ namespace bvor
     term_t
     commute_or(context_t* ctx, term_t t1, term_t t2)
     {
-        return relations::placeholder::bvor(t2, t1);
+        return relations::bvor::placeholder(ctx, t2, t1);
     }
 
     term_t
     nnor(context_t* ctx, term_t t1, term_t t2)
     {
-        return yices_not(yices_bvnor(t1, t2));
+        return yices_bvnot(yices_bvnor(t1, t2));
     }
 
     term_t
     demorgan_or(context_t* ctx, term_t t1, term_t t2)
     {
-        return yices_bvnot(relations::placeholder::bvand(yices_bvnot(t1), yices_bvnot(t2)));
+        return yices_bvnot(relations::bvand::placeholder(ctx, yices_bvnot(t1), yices_bvnot(t2)));
     }
 
 } // namespace bvor
