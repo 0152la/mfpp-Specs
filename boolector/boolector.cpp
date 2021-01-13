@@ -37,6 +37,7 @@ int
 main(int argc, char** argv)
 {
     Btor* ctx = boolector_new();
+    boolector_set_opt(ctx, BTOR_OPT_INCREMENTAL, 1);
 
     BoolectorNode* x = boolector_var(ctx, boolector_bitvec_sort(ctx, BV_SIZE), "x");
     BoolectorNode* y = boolector_var(ctx, boolector_bitvec_sort(ctx, BV_SIZE), "y");
@@ -47,8 +48,6 @@ main(int argc, char** argv)
     BoolectorNode* rhs = fuzz::fuzz_new<BoolectorNode*>();
     fuzz::output_var = boolector_add(ctx, lhs, rhs);
     fuzz::end();
-
-    sat_stat status = -1;
 
     fuzz::meta_test();
 

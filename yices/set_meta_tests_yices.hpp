@@ -203,8 +203,9 @@ namespace add {
 } // namespace add
 
 namespace sub {
+
     term_t
-    base_add(context_t* ctx, term_t t1, term_t t2)
+    base_sub(context_t* ctx, term_t t1, term_t t2)
     {
         return yices_bvsub(t1, t2);
     }
@@ -241,7 +242,7 @@ namespace mul {
     }
 
     term_t
-    add_by_sum(context_t* ctx, term_t t1, term_t t2)
+    mul_by_product(context_t* ctx, term_t t1, term_t t2)
     {
         term_t product_ts[] = { t1, t2 };
         return yices_bvproduct(2, product_ts);
