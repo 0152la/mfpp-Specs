@@ -5,7 +5,6 @@ namespace checks {
     void
     check_sat_expr_maintained(context_t* ctx, mr_pair p, smt_status_t stat, model_t* mdl)
     {
-        assert(!yices_error_code());
         yices_reset_context(ctx);
         term_t check = yices_bvslt_atom(p.first, p.second);
         yices_assert_formula(ctx, check);
@@ -15,6 +14,7 @@ namespace checks {
         {
             assert(yices_formula_true_in_model(mdl, check));
         }
+        assert(!yices_error_code());
     }
 
 } // namespace checks

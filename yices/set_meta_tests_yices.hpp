@@ -6,14 +6,27 @@ namespace checks {
     check_sat_expr_maintained(context_t* ctx, term_t t1, term_t t2)
     {
         yices_reset_context(ctx);
-        yices_assert_formula(ctx, yices_bveq_atom(t1, t2));
+        yices_assert_formula(ctx, yices_eq(t1, t2));
+        yices_assert_formula(ctx, yices_not(yices_distinct(t1, t2)));
         assert(yices_check_context(ctx, NULL) == STATUS_SAT);
+        assert(!yices_error_code());
     }
 
 } // namespace checks
 
 namespace generators {
 
+namespace fuzz {
+
+    term_t placeholder(context_t*, term_t);
+
+    term_t
+    gen_fuzz(context_t* ctx, term_t t)
+    {
+        return fuzz::fuzz_new<term_t>();
+    }
+
+} // namespace fuzz
 
 namespace zero {
 
@@ -47,7 +60,7 @@ namespace zero {
     term_t
     get_zero_by_fuzz_sub(context_t* ctx, term_t t)
     {
-        term_t t_fuzz = fuzz::fuzz_new<term_t>();
+        term_t t_fuzz = generators::fuzz::placeholder(ctx, t);
         return yices_bvsub(t_fuzz, t_fuzz);
     }
 
@@ -133,6 +146,20 @@ namespace identity {
         return yices_neg(yices_neg(relations::identity::placeholder(ctx, t)));
     }
 
+    term_t
+    iden_by_rotate_left(context_t* ctx, term_t t)
+    {
+        size_t rotate_count = fuzz::fuzz_rand<unsigned int, unsigned int>(0, BV_SIZE - 1);
+        return yices_rotate_left(yices_rotate_right(t, rotate_count), BV_SIZE - rotate_count);
+    }
+
+    term_t
+    iden_by_false_ite(context_t* ctx, term_t t)
+    {
+        term_t fuzz = generators::fuzz::placeholder(ctx, t);
+        return yices_ite(yices_neq(t, t), fuzz, t);
+    }
+
 } // namespace identity
 
 namespace sub { term_t placeholder(context_t*, term_t, term_t); }
@@ -215,7 +242,95 @@ namespace mul {
 
 } // namespace mul
 
+namespace square
+{
 
+    term_t placeholder(context_t*, term_t);
+
+    term_t
+    base_square(context_t* ctx, term_t t)
+    {
+        return yices_square(t1);
+    }
+
+    term_t
+    square_by_mul(context_t* ctx, term_t t)
+    {
+        return relations::mul::placeholder(
+            relations::identity::placeholder(t1),
+            relations::identity::placeholder(t1));
+    }
+
+    term_t
+    square_by_pow(context_t* ctx, term_t t)
+    {
+        term_t one = generators::one::placeholder(ctx, t);
+        term_t two = yices_add(one, generators::one::placeholder(ctx, t));
+        return yices_pow(relations::identity::placeholder(ctx, t), two);
+    }
+
+} // namespace square
+
+namespace bvor { term_t placeholder(context_t*, term_t, term_t); }
+
+namespace bvand
+{
+    term_t placeholder(context_t*, term_t, term_t);
+
+    term_t
+    base_and(context_t* ctx, term_t t1, term_t t2)
+    {
+        return yices_bvand2(t1, t2);
+    }
+
+    term_t
+    commute_and(context_t* ctx, term_t t1, term_t t2)
+    {
+        return relations::placeholder::bvand(t2, t1);
+    }
+
+    term_t
+    nnand(context_t* ctx, term_t t1, term_t t2)
+    {
+        return yices_not(yices_bvnand(t1, t2));
+    }
+
+
+    term_t
+    demorgan_and(context_t* ctx, term_t t1, term_t t2)
+    {
+        return yices_bvnot(relations::placeholder::bvor(yices_bvnot(t1), yices_bvnot(t2)));
+    }
+
+} // namespace bvand
+
+namespace bvor
+{
+    term_t
+    base_or(context_t* ctx, term_t t1, term_t t2)
+    {
+        return yices_bvor2(t1, t2);
+    }
+
+    term_t
+    commute_or(context_t* ctx, term_t t1, term_t t2)
+    {
+        return relations::placeholder::bvor(t2, t1);
+    }
+
+    term_t
+    nnor(context_t* ctx, term_t t1, term_t t2)
+    {
+        return yices_not(yices_bvnor(t1, t2));
+    }
+
+    term_t
+    demorgan_or(context_t* ctx, term_t t1, term_t t2)
+    {
+        return yices_bvnot(relations::placeholder::bvand(yices_bvnot(t1), yices_bvnot(t2)));
+    }
+
+} // namespace bvor
 
 } // namespace relations
 

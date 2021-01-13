@@ -42,11 +42,17 @@ main(int argc, char** argv)
     yices_set_config(config, "mode", "one-shot");
     context_t* ctx = yices_new_context(config);
 
+    term_t x = yices_new_uninterpreted_term(yices_bv_type(BV_SIZE));
+    term_t y = yices_new_uninterpreted_term(yices_bv_type(BV_SIZE));
+    term_t z = yices_new_uninterpreted_term(yices_bv_type(BV_SIZE));
+
     fuzz::start();
     term_t lhs = fuzz::fuzz_new<term_t>();
     term_t rhs = fuzz::fuzz_new<term_t>();
     fuzz::output_var = yices_bvadd(lhs, rhs);
     fuzz::end();
+
+    assert(!yices_error_code());
 
     fuzz::meta_test();
 
