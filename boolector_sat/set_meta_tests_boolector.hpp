@@ -170,7 +170,7 @@ namespace identity_lhs {
         return std::make_pair(
             boolector_mul(ctx,
                 relations::identity_lhs::placeholder(ctx, p).first,
-                generators::zero::placeholder(ctx, p.first)),
+                generators::one::placeholder(ctx, p.first)),
             p.second);
     }
 
