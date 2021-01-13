@@ -63,8 +63,13 @@ main(int argc, char** argv)
     {
         return 0;
     }
-    model_t* mdl = yices_get_model(ctx, true);
+    model_t* mdl = nullptr;
+    if (stat == STATUS_SAT)
+    {
+        mdl = yices_get_model(ctx, true);
+    }
 
+    assert(!yices_error_code());
     fuzz::meta_test();
 
     yices_exit();

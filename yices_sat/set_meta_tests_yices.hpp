@@ -11,7 +11,7 @@ namespace checks {
         yices_assert_formula(ctx, check);
         smt_status_t chk_stat = yices_check_context(ctx, NULL);
         assert(chk_stat == stat || chk_stat == STATUS_UNKNOWN);
-        if (stat == STATUS_SAT)
+        if (chk_stat == STATUS_SAT)
         {
             assert(yices_formula_true_in_model(mdl, check));
         }
