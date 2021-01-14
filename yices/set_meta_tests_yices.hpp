@@ -157,7 +157,14 @@ namespace identity {
     iden_by_rotate_left(context_t* ctx, term_t t)
     {
         size_t rotate_count = fuzz::fuzz_rand<unsigned int, unsigned int>(0, BV_SIZE - 1);
-        return yices_rotate_left(yices_rotate_right(t, rotate_count), BV_SIZE - rotate_count);
+        return yices_rotate_left(yices_rotate_left(t, rotate_count), BV_SIZE - rotate_count);
+    }
+
+    term_t
+    iden_by_rotate_around(context_t* ctx, term_t t)
+    {
+        size_t rotate_count = fuzz::fuzz_rand<unsigned int, unsigned int>(0, BV_SIZE - 1);
+        return yices_rotate_left(yices_rotate_right(t, rotate_count), rotate_count);
     }
 
     term_t
