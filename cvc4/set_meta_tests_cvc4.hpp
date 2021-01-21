@@ -14,6 +14,18 @@ namespace checks {
 
 namespace generators {
 
+namespace fuzz_expr {
+
+    CVC4::api::Term placeholder(CVC4::api::Solver& slv);
+
+    CVC4::api::Term
+    get_expr_by_fuzz(CVC4::api::Solver& c)
+    {
+        CVC4::api::Term fuzz = fuzz::fuzz_new<CVC4::api::Term>();
+        return fuzz;
+    }
+
+} // namespace fuzz_expr
 
 namespace zero {
 
@@ -23,6 +35,13 @@ namespace zero {
     get_zero(CVC4::api::Solver& slv, CVC4::api::Term t)
     {
         return slv.mkInteger(0);
+    }
+
+    CVC4::api::Term
+    zero_by_fuzz_sub(CVC4::api::Solver& c)
+    {
+        CVC4::api::Term fuzz = generators::fuzz_expr::placeholder(c);
+        return c.mkTerm(CVC4::api::MINUS, fuzz, fuzz);
     }
 
     CVC4::api::Term
@@ -67,13 +86,23 @@ namespace one {
     }
 
     CVC4::api::Term
-    one_by_pw(CVC4::api::Solver& c, CVC4::api::Term f)
+    one_by_fuzz_div(CVC4::api::Solver& c, CVC4::api::Term f)
     {
-        CVC4::api::Term tmp_zero = zero::placeholder(c, f);
-        CVC4::api::Term is_zero = tmp_zero.eqTerm(f);
-        return is_zero.iteTerm(placeholder(c, f),
-            c.mkTerm(CVC4::api::POW, f, tmp_zero));
+        CVC4::api::Term fuzz = generators::fuzz_expr::placeholder(c);
+        CVC4::api::Term tmp_zero = zero::placeholder(c, fuzz);
+        CVC4::api::Term is_zero = tmp_zero.eqTerm(fuzz);
+        return is_zero.iteTerm(generators::one::placeholder(c, fuzz),
+            c.mkTerm(CVC4::api::INTS_DIVISION, fuzz, fuzz));
     }
+
+    //CVC4::api::Term
+    //one_by_pw(CVC4::api::Solver& c, CVC4::api::Term f)
+    //{
+        //CVC4::api::Term tmp_zero = zero::placeholder(c, f);
+        //CVC4::api::Term is_zero = tmp_zero.eqTerm(f);
+        //return is_zero.iteTerm(placeholder(c, f),
+            //c.mkTerm(CVC4::api::POW, f, tmp_zero));
+    //}
 
 
 } // namespace one
@@ -100,6 +129,13 @@ namespace identity {
     }
 
     CVC4::api::Term
+    sub_zero(CVC4::api::Solver& slv, CVC4::api::Term t)
+    {
+        return slv.mkTerm(CVC4::api::MINUS, placeholder(slv, t),
+            generators::zero::placeholder(slv, t));
+    }
+
+    CVC4::api::Term
     mul_one(CVC4::api::Solver& slv, CVC4::api::Term t)
     {
         return slv.mkTerm(CVC4::api::MULT, placeholder(slv, t),
@@ -113,7 +149,120 @@ namespace identity {
         return c.mkTerm(CVC4::api::UMINUS, tmp_e);
     }
 
+    CVC4::api::Term
+    abs(CVC4::api::Solver& c, CVC4::api::Term e)
+    {
+        return c.mkTerm(CVC4::api::ITE,
+            c.mkTerm(CVC4::api::EQUAL,
+                c.mkTerm(CVC4::api::ABS, e),
+                e),
+            e, c.mkTerm(CVC4::api::ABS, e));
+    }
+
+    CVC4::api::Term
+    sqrt_square(CVC4::api::Solver& c, CVC4::api::Term e)
+    {
+        CVC4::api::Term two = c.mkInteger(2);
+        return c.mkTerm(CVC4::api::SQRT, c.mkTerm(CVC4::api::POW, e, two));
+    }
+
+    CVC4::api::Term
+    iden_by_ite(CVC4::api::Solver& c, CVC4::api::Term e)
+    {
+        CVC4::api::Term dead = generators::fuzz_expr::placeholder(c);
+        return c.mkTerm(CVC4::api::ITE,
+            c.mkTerm(CVC4::api::EQUAL, e, dead), dead, e);
+    }
+
 } // namespace identity
+
+namespace sub {
+    CVC4::api::Term placeholder(CVC4::api::Solver&, CVC4::api::Term, CVC4::api::Term);
+}
+
+namespace add {
+
+    CVC4::api::Term placeholder(CVC4::api::Solver&, CVC4::api::Term, CVC4::api::Term);
+
+    CVC4::api::Term
+    add_base(CVC4::api::Solver& c, CVC4::api::Term e1, CVC4::api::Term e2)
+    {
+        return c.mkTerm(CVC4::api::PLUS, e1, e2);
+    }
+
+    CVC4::api::Term
+    add_comm(CVC4::api::Solver& c, CVC4::api::Term e1, CVC4::api::Term e2)
+    {
+        return relations::add::placeholder(c, e2, e1);
+    }
+
+    CVC4::api::Term
+    add_by_sub(CVC4::api::Solver& c, CVC4::api::Term e1, CVC4::api::Term e2)
+    {
+        return relations::sub::placeholder(c, e1, c.mkTerm(CVC4::api::UMINUS, e2));
+    }
+
+} // namespace add
+
+namespace sub {
+
+    CVC4::api::Term
+    sub_base(CVC4::api::Solver& c, CVC4::api::Term e1, CVC4::api::Term e2)
+    {
+        return c.mkTerm(CVC4::api::MINUS, e1, e2);
+    }
+
+    CVC4::api::Term
+    sub_by_add(CVC4::api::Solver& c, CVC4::api::Term e1, CVC4::api::Term e2)
+    {
+        return relations::add::placeholder(c, e1, c.mkTerm(CVC4::api::UMINUS, e2));
+    }
+
+} // namespace sub
+
+namespace mul {
+
+    CVC4::api::Term placeholder(CVC4::api::Solver&, CVC4::api::Term, CVC4::api::Term);
+
+    CVC4::api::Term
+    mul_base(CVC4::api::Solver& c, CVC4::api::Term e1, CVC4::api::Term e2)
+    {
+        return c.mkTerm(CVC4::api::MULT, e1, e2);
+    }
+
+    CVC4::api::Term
+    mul_comm(CVC4::api::Solver& c, CVC4::api::Term e1, CVC4::api::Term e2)
+    {
+        return relations::add::placeholder(c, e2, e1);
+    }
+
+} // namespace mul
+
+namespace modulo {
+
+    CVC4::api::Term placeholder(CVC4::api::Solver&, CVC4::api::Term, CVC4::api::Term);
+
+    CVC4::api::Term
+    mod_base(CVC4::api::Solver& c, CVC4::api::Term e1, CVC4::api::Term e2)
+    {
+        CVC4::api::Term zero = generators::zero::placeholder(c, e1);
+        return c.mkTerm(CVC4::api::ITE,
+            c.mkTerm(CVC4::api::EQUAL, e2, zero), e1,
+            c.mkTerm(CVC4::api::INTS_MODULUS, e1, e2));
+    }
+
+    CVC4::api::Term
+    mod_by_sub(CVC4::api::Solver& c, CVC4::api::Term e1, CVC4::api::Term e2)
+    {
+        CVC4::api::Term zero = generators::zero::placeholder(c, e1);
+        return c.mkTerm(CVC4::api::ITE,
+            c.mkTerm(CVC4::api::EQUAL, e2, zero), e1,
+            c.mkTerm(CVC4::api::MINUS, e1,
+                c.mkTerm(CVC4::api::MULT, e2,
+                    c.mkTerm(CVC4::api::INTS_DIVISION, e1, e2))));
+    }
+
+} // namespace modulo
 
 } // namespace relations
 

@@ -81,8 +81,14 @@ main(int argc, char** argv)
 {
     CVC4::api::Solver slv;
     slv.setLogic("QF_NIA");
+
+    CVC4::api::Sort int_s = slv.getIntegerSort();
+    CVC4::api::Term x = slv.mkConst(int_s, "x");
+    CVC4::api::Term y = slv.mkConst(int_s, "y");
+    CVC4::api::Term z = slv.mkConst(int_s, "z");
+
     fuzz::start();
-    fuzz::output_var = slv.mkInteger(fuzz::fuzz_rand<int, int>(-20, 20));
+    fuzz::output_var = fuzz::fuzz_new<CVC4::api::Term>();
     fuzz::output_var = slv.mkTerm(CVC4::api::Kind::PLUS, fuzz::fuzz_new<CVC4::api::Term>(), fuzz::output_var);
     fuzz::end();
     fuzz::meta_test();

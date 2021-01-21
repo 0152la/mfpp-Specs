@@ -204,7 +204,7 @@ class Datatype;
 /**
  * The sort of a CVC4 term.
  */
-class CVC4_PUBLIC Sort
+class __attribute__((annotate("expose"))) CVC4_PUBLIC Sort
 {
   friend class DatatypeConstructor;
   friend class DatatypeConstructorDecl;
