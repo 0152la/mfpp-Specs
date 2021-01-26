@@ -8,6 +8,7 @@ namespace checks {
         CVC4::api::Term check = slv.mkTerm(CVC4::api::DISTINCT, t1, t2);
         slv.assertFormula(check);
         assert(!slv.checkSat().isSat());
+        slv.resetAssertions();
     }
 
 } // namespace checks
@@ -124,6 +125,7 @@ namespace identity {
     CVC4::api::Term
     add_zero(CVC4::api::Solver& slv, CVC4::api::Term t)
     {
+        t = relations::identity::placeholder(slv, t);
         return slv.mkTerm(CVC4::api::PLUS, placeholder(slv, t),
             generators::zero::placeholder(slv, t));
     }
@@ -131,6 +133,7 @@ namespace identity {
     CVC4::api::Term
     sub_zero(CVC4::api::Solver& slv, CVC4::api::Term t)
     {
+        t = relations::identity::placeholder(slv, t);
         return slv.mkTerm(CVC4::api::MINUS, placeholder(slv, t),
             generators::zero::placeholder(slv, t));
     }
@@ -138,6 +141,7 @@ namespace identity {
     CVC4::api::Term
     mul_one(CVC4::api::Solver& slv, CVC4::api::Term t)
     {
+        t = relations::identity::placeholder(slv, t);
         return slv.mkTerm(CVC4::api::MULT, placeholder(slv, t),
             generators::one::placeholder(slv, t));
     }
@@ -145,6 +149,7 @@ namespace identity {
     CVC4::api::Term
     double_negative(CVC4::api::Solver& c, CVC4::api::Term e)
     {
+        e = relations::identity::placeholder(c, e);
         CVC4::api::Term tmp_e = c.mkTerm(CVC4::api::UMINUS, e);
         return c.mkTerm(CVC4::api::UMINUS, tmp_e);
     }
@@ -152,6 +157,7 @@ namespace identity {
     CVC4::api::Term
     abs(CVC4::api::Solver& c, CVC4::api::Term e)
     {
+        e = relations::identity::placeholder(c, e);
         return c.mkTerm(CVC4::api::ITE,
             c.mkTerm(CVC4::api::EQUAL,
                 c.mkTerm(CVC4::api::ABS, e),
@@ -163,6 +169,7 @@ namespace identity {
     sqrt_square(CVC4::api::Solver& c, CVC4::api::Term e)
     {
         CVC4::api::Term two = c.mkInteger(2);
+        e = relations::identity::placeholder(c, e);
         return c.mkTerm(CVC4::api::SQRT, c.mkTerm(CVC4::api::POW, e, two));
     }
 
@@ -170,9 +177,17 @@ namespace identity {
     iden_by_ite(CVC4::api::Solver& c, CVC4::api::Term e)
     {
         CVC4::api::Term dead = generators::fuzz_expr::placeholder(c);
+        e = relations::identity::placeholder(c, e);
         return c.mkTerm(CVC4::api::ITE,
             c.mkTerm(CVC4::api::EQUAL, e, dead), dead, e);
     }
+
+    CVC4::api::Term
+    iden_by_simplify(CVC4::api::Solver& c, CVC4::api::Term e)
+    {
+        return c.simplify(relations::identity::placeholder(c, e));
+    }
+
 
 } // namespace identity
 
@@ -193,12 +208,16 @@ namespace add {
     CVC4::api::Term
     add_comm(CVC4::api::Solver& c, CVC4::api::Term e1, CVC4::api::Term e2)
     {
+        e1 = relations::identity::placeholder(c, e1);
+        e2 = relations::identity::placeholder(c, e2);
         return relations::add::placeholder(c, e2, e1);
     }
 
     CVC4::api::Term
     add_by_sub(CVC4::api::Solver& c, CVC4::api::Term e1, CVC4::api::Term e2)
     {
+        e1 = relations::identity::placeholder(c, e1);
+        e2 = relations::identity::placeholder(c, e2);
         return relations::sub::placeholder(c, e1, c.mkTerm(CVC4::api::UMINUS, e2));
     }
 
@@ -215,6 +234,8 @@ namespace sub {
     CVC4::api::Term
     sub_by_add(CVC4::api::Solver& c, CVC4::api::Term e1, CVC4::api::Term e2)
     {
+        e1 = relations::identity::placeholder(c, e1);
+        e2 = relations::identity::placeholder(c, e2);
         return relations::add::placeholder(c, e1, c.mkTerm(CVC4::api::UMINUS, e2));
     }
 
@@ -233,7 +254,9 @@ namespace mul {
     CVC4::api::Term
     mul_comm(CVC4::api::Solver& c, CVC4::api::Term e1, CVC4::api::Term e2)
     {
-        return relations::add::placeholder(c, e2, e1);
+        e1 = relations::identity::placeholder(c, e1);
+        e2 = relations::identity::placeholder(c, e2);
+        return relations::mul::placeholder(c, e2, e1);
     }
 
 } // namespace mul
@@ -245,6 +268,8 @@ namespace modulo {
     CVC4::api::Term
     mod_base(CVC4::api::Solver& c, CVC4::api::Term e1, CVC4::api::Term e2)
     {
+        e1 = relations::identity::placeholder(c, e1);
+        e2 = relations::identity::placeholder(c, e2);
         CVC4::api::Term zero = generators::zero::placeholder(c, e1);
         return c.mkTerm(CVC4::api::ITE,
             c.mkTerm(CVC4::api::EQUAL, e2, zero), e1,
@@ -254,6 +279,8 @@ namespace modulo {
     CVC4::api::Term
     mod_by_sub(CVC4::api::Solver& c, CVC4::api::Term e1, CVC4::api::Term e2)
     {
+        e1 = relations::identity::placeholder(c, e1);
+        e2 = relations::identity::placeholder(c, e2);
         CVC4::api::Term zero = generators::zero::placeholder(c, e1);
         return c.mkTerm(CVC4::api::ITE,
             c.mkTerm(CVC4::api::EQUAL, e2, zero), e1,

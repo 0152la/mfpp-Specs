@@ -103,7 +103,7 @@ namespace one {
     {
         term_t zero = generators::zero::placeholder(ctx, t);
         return yices_ite(
-            yices_bvneq_atom(t, zero), yices_bvpower(t, zero),
+            yices_bvneq_atom(t, zero), yices_bvpower(t, 0),
             generators::one::placeholder(ctx, t));
     }
 
