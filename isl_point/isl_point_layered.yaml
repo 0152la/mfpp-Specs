@@ -1,0 +1,14 @@
+---
+working_dir: /home/sentenced/Documents/Internships/2018_ETH/work/spec_ast
+template_file: ./input/spec_repo/isl_point/isl_point_layered.cpp
+output_folder: ./output/isl_point
+output_file_name: t_isl_pl.cpp
+compile_script: ./scripts/compile.sh
+cmake_script_dir: ./input/spec_repo/isl_point/runtime/
+spec_repo_dir: ./input/spec_repo/
+lib_repo_dir: /home/sentenced/Documents/Internships/2018_ETH/work/other_libs/isl
+params:
+    inputs: 3
+    tests: 7
+    test-size: 5
+    test-depth: 4

@@ -2,7 +2,6 @@
 
 #include <utility>
 
-
 #ifdef EXECUTE
 #include "boolector/boolector.h"
 typedef int32_t sat_stat;

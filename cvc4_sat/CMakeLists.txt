@@ -10,7 +10,7 @@ if (LLVM_INSTALL_LOC)
 endif()
 
 if (NOT DEFINED ENV{CVC4_INSTALL_LOC})
-    message(FATAL_ERROR "CVC4_INSTALL_LOC environment variable required!")
+    message(FATAL_ERROR "Environment variable CVC4_INSTALL_LOC required!")
 endif()
 
 find_package(Clang REQUIRED)

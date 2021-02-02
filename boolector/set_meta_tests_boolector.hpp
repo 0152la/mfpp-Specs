@@ -3,11 +3,19 @@ namespace metalib {
 namespace checks {
 
     void
-    check_sat_expr_maintained(Btor* ctx, BoolectorNode* t1, BoolectorNode* t2)
+    check_equal(Btor* ctx, BoolectorNode* t1, BoolectorNode* t2)
     {
         BoolectorNode* check = boolector_eq(ctx, t1, t2);
         boolector_assert(ctx, check);
         assert(boolector_sat(ctx) == BOOLECTOR_SAT);
+    }
+
+    void
+    check_not_distinct(Btor* ctx, BoolectorNode* t1, BoolectorNode* t2)
+    {
+        BoolectorNode* check = boolector_ne(ctx, t1, t2);
+        boolector_assert(ctx, check);
+        assert(boolector_sat(ctx) != BOOLECTOR_SAT);
     }
 
 } // namespace checks
@@ -361,6 +369,62 @@ namespace bvor
     }
 
 } // namespace bvor
+
+namespace rotate_left {
+    BoolectorNode* placeholder(Btor*, BoolectorNode*, size_t);
+}
+
+namespace rotate_right
+{
+    BoolectorNode* placeholder(Btor*, BoolectorNode*, size_t);
+
+    BoolectorNode*
+    base_ror(Btor* ctx, BoolectorNode* n, size_t i)
+    {
+        return boolector_rori(ctx, n, i);
+    }
+
+    BoolectorNode*
+    bv_ror(Btor* ctx, BoolectorNode* n, size_t i)
+    {
+        return boolector_ror(ctx, n,
+            boolector_int(ctx, i, boolector_bitvec_sort(ctx, BV_SIZE)));
+    }
+
+    BoolectorNode*
+    ror_by_rol(Btor* ctx, BoolectorNode* n, size_t i)
+    {
+        i = i % (BV_SIZE + 1);
+        i = BV_SIZE - i;
+        return relations::rotate_left::placeholder(ctx, n, i);
+    }
+
+} // namespace rotate_right
+
+namespace rotate_left
+{
+
+    BoolectorNode*
+    base_rol(Btor* ctx, BoolectorNode* n, size_t i)
+    {
+        return boolector_roli(ctx, n, i);
+    }
+
+    BoolectorNode*
+    bv_ror(Btor* ctx, BoolectorNode* n, size_t i)
+    {
+        return boolector_rol(ctx, n,
+            boolector_int(ctx, i, boolector_bitvec_sort(ctx, BV_SIZE)));
+    }
+
+    BoolectorNode*
+    rol_by_ror(Btor* ctx, BoolectorNode* n, size_t i)
+    {
+        i = i % (BV_SIZE + 1);
+        i = BV_SIZE - i;
+        return relations::rotate_right::placeholder(ctx, n, i);
+    }
+}
 
 } // namespace relations
 

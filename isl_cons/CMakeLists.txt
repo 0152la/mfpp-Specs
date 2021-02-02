@@ -9,10 +9,10 @@ if (LLVM_INSTALL_LOC)
     set(Clang_DIR ${LLVM_INSTALL_LOC}/lib/cmake/clang)
 endif()
 
-find_package(Clang REQUIRED)
 find_package(PkgConfig REQUIRED)
 pkg_check_modules(ISL REQUIRED isl)
 
+find_package(Clang REQUIRED)
 string(REGEX MATCH [0-9\.]+ CLANG_VERSION ${LLVM_PACKAGE_VERSION})
 
 add_library(isl_lib OBJECT

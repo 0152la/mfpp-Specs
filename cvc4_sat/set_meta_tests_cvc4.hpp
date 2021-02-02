@@ -3,11 +3,12 @@ namespace metalib {
 namespace checks {
 
     void
-    check_expr_same_sat(CVC4::api::Solver& slv, CVC4::api::Term t1, CVC4::api::Term t2)
+    check_expr_same_sat(CVC4::api::Solver& slv, mr_pair p, CVC4::api::Kind op)
     {
-        CVC4::api::Term check = slv.mkTerm(CVC4::api::DISTINCT, t1, t2);
+        CVC4::api::Term check = slv.mkTerm(op, p.first, p.second);
         slv.assertFormula(check);
         assert(!slv.checkSat().isSat());
+        slv.resetAssertions();
     }
 
 } // namespace checks

@@ -107,15 +107,25 @@ main(int argc, char** argv)
     fuzz::output_var = std::make_pair(lhs, rhs);
     fuzz::end();
 
-    CVC4::api::Term check = slv.mkTerm(CVC4::api::Kind::LT,
+    CVC4::api::Kind op = CVC4::api::Kind::LT;
+    CVC4::api::Term check = slv.mkTerm(op,
         fuzz::output_var_get(0).first, fuzz::output_var_get(0).second);
     slv.assertFormula(check);
     if (!slv.checkSat().isSat())
     {
-        std::cout << "Non-SAT formula." << std::endl;
-        exit(0);
+        slv.resetAssertions();
+        op = CVC4::api::Kind::GEQ;
+        CVC4::api::Term check = slv.mkTerm(op,
+            fuzz::output_var_get(0).first, fuzz::output_var_get(0).second);
+        slv.assertFormula(check);
+        if (!slv.checkSat().isSAt())
+        {
+            std::cout << "Non-SAT formula." << std::endl;
+            exit(0);
+        }
     }
     //slv.printModel(std::cout);
+    slv.resetAssertions();
 
     fuzz::meta_test();
 }

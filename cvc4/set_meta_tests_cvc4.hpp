@@ -159,19 +159,18 @@ namespace identity {
     {
         e = relations::identity::placeholder(c, e);
         return c.mkTerm(CVC4::api::ITE,
-            c.mkTerm(CVC4::api::EQUAL,
-                c.mkTerm(CVC4::api::ABS, e),
-                e),
-            e, c.mkTerm(CVC4::api::ABS, e));
+            c.mkTerm(CVC4::api::EQUAL, c.mkTerm(CVC4::api::ABS, e), e),
+            c.mkTerm(CVC4::api::ABS, e), e);
     }
 
-    CVC4::api::Term
-    sqrt_square(CVC4::api::Solver& c, CVC4::api::Term e)
-    {
-        CVC4::api::Term two = c.mkInteger(2);
-        e = relations::identity::placeholder(c, e);
-        return c.mkTerm(CVC4::api::SQRT, c.mkTerm(CVC4::api::POW, e, two));
-    }
+    //CVC4::api::Term
+    //sqrt_square(CVC4::api::Solver& c, CVC4::api::Term e)
+    //{
+        //CVC4::api::Term two = c.mkInteger(2);
+        //e = relations::identity::placeholder(c, e);
+        //return c.mkTerm(CVC4::api::TO_INTEGER,
+            //c.mkTerm(CVC4::api::SQRT, c.mkTerm(CVC4::api::POW, e, two)));
+    //}
 
     CVC4::api::Term
     iden_by_ite(CVC4::api::Solver& c, CVC4::api::Term e)
@@ -290,6 +289,7 @@ namespace modulo {
     }
 
 } // namespace modulo
+
 
 } // namespace relations
 
