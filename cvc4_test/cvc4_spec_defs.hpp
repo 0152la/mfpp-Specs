@@ -5,18 +5,22 @@
 #include "cvc4cpp.h"
 
 //typedef struct FreeVars { CVC4::api::Term* vars[FV_COUNT]; } FreeVars;
-typedef CVC4::api::Term OUT_VAR_TYPE;
 
 namespace fuzz
 {
+    typedef CVC4::api::Term bool_term;
+    typedef CVC4::api::Term int_term;
+
     class FreeVars {
       public:
-        CVC4::api::Term* vars[FV_COUNT];
+        int_term* vars[FV_COUNT];
     };
 
     static CVC4::api::Solver slv;
-    static CVC4::api::Term output_var;
+    static int_term output_var;
 } // namespace fuzz
+
+typedef fuzz::int_term OUT_VAR_TYPE;
 
 #include "set_meta_tests_cvc4.hpp"
 
