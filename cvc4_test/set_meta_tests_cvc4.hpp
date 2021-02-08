@@ -5,7 +5,7 @@ namespace checks {
     void
     check_expr_same_sat(CVC4::api::Solver& slv, fuzz::int_term t1, fuzz::int_term t2)
     {
-        fuzz::int_term check = slv.mkTerm(CVC4::api::DISTINCT, t1, t2);
+        fuzz::bool_term check = slv.mkTerm(CVC4::api::DISTINCT, t1, t2);
         slv.assertFormula(check);
         assert(!slv.checkSat().isSat());
         slv.resetAssertions();
@@ -83,6 +83,9 @@ namespace sub {
 namespace mul {
     fuzz::int_term placeholder(CVC4::api::Solver&, fuzz::FreeVars&, fuzz::int_term, fuzz::int_term);
 }
+namespace division {
+    fuzz::int_term placeholder(CVC4::api::Solver&, fuzz::FreeVars&, fuzz::int_term, fuzz::int_term);
+}
 namespace modulo {
     fuzz::int_term placeholder(CVC4::api::Solver&, fuzz::FreeVars&, fuzz::int_term, fuzz::int_term);
 }
@@ -96,7 +99,7 @@ namespace generators {
 namespace fuzz_int_term {
 
     fuzz::int_term
-    get_expr_by_fuzz(CVC4::api::Solver& c, fuzz::FreeVars& fvs)
+    get_expr_by_fuzz(CVC4::api::Solver& slv, fuzz::FreeVars& fvs)
     {
         fuzz::int_term fuzz = fuzz::fuzz_new<fuzz::int_term>();
         return fuzz;
@@ -107,7 +110,7 @@ namespace fuzz_int_term {
 namespace fuzz_bool_term {
 
     fuzz::bool_term
-    get_expr_by_fuzz(CVC4::api::Solver& c, fuzz::FreeVars& fvs)
+    get_expr_by_fuzz(CVC4::api::Solver& slv, fuzz::FreeVars& fvs)
     {
         fuzz::bool_term fuzz = fuzz::fuzz_new<fuzz::bool_term>();
         return fuzz;
@@ -124,34 +127,57 @@ namespace zero {
     }
 
     fuzz::int_term
-    zero_by_mul(CVC4::api::Solver& c, fuzz::FreeVars& fvs, fuzz::int_term e)
+    zero_by_mul(CVC4::api::Solver& slv, fuzz::FreeVars& fvs, fuzz::int_term t)
     {
-        fuzz::int_term zero = generators::zero::placeholder(c, fvs, e);
-        return relations::mul::placeholder(c, fvs, e, zero);
-        //return c.mkTerm(CVC4::api::MULT, e, placeholder(c, fvs, e));
+        fuzz::int_term zero = generators::zero::placeholder(slv, fvs, t);
+        return relations::mul::placeholder(slv, fvs, t, zero);
     }
 
     fuzz::int_term
-    zero_by_sub(CVC4::api::Solver& c, fuzz::FreeVars& fvs, fuzz::int_term e)
+    zero_by_sub(CVC4::api::Solver& slv, fuzz::FreeVars& fvs, fuzz::int_term t)
     {
-        return relations::sub::placeholder(c, fvs, e, e);
-        //return c.mkTerm(CVC4::api::MINUS, e, e);
+        fuzz::int_term iden_term = relations::identity::placeholder(slv, fvs, t);
+        return relations::sub::placeholder(slv, fvs, t, iden_term);
     }
 
     fuzz::int_term
-    zero_by_fuzz_sub(CVC4::api::Solver& c, fuzz::FreeVars& fvs, fuzz::int_term t)
+    zero_by_fuzz_sub(CVC4::api::Solver& slv, fuzz::FreeVars& fvs, fuzz::int_term t)
     {
-        fuzz::int_term fuzz = generators::fuzz_int_term::placeholder(c, fvs);
-        return relations::sub::placeholder(c, fvs, fuzz, fuzz);
-        //return c.mkTerm(CVC4::api::MINUS, e, e);
+        fuzz::int_term iden_term = relations::identity::placeholder(slv, fvs, t);
+        fuzz::int_term fuzz = generators::fuzz_int_term::placeholder(slv, fvs);
+        return relations::sub::placeholder(slv, fvs, fuzz, iden_term);
     }
 
     fuzz::int_term
-    zero_by_mod(CVC4::api::Solver& c, fuzz::FreeVars& fvs, fuzz::int_term e)
+    zero_by_mod(CVC4::api::Solver& slv, fuzz::FreeVars& fvs, fuzz::int_term t)
     {
-        fuzz::int_term tmp_zero = placeholder(c, fvs, e);
-        return e.eqTerm(tmp_zero).iteTerm(tmp_zero,
-            c.mkTerm(CVC4::api::INTS_MODULUS, e, e));
+        fuzz::int_term iden_term = relations::identity::placeholder(slv, fvs, t);
+        fuzz::int_term tmp_zero = generators::zero::placeholder(slv, fvs, t);
+        fuzz::int_term mod_ts = relations::modulo::placeholder(slv, fvs, t, iden_term);
+        return t.eqTerm(tmp_zero).iteTerm(tmp_zero, mod_ts);
+    }
+
+    fuzz::int_term
+    zero_by_div(CVC4::api::Solver& slv, fuzz::FreeVars& fvs, fuzz::int_term t)
+    {
+        fuzz::int_term iden_term = relations::identity::placeholder(slv, fvs, t);
+        fuzz::int_term tmp_zero = zero::placeholder(slv, fvs, t);
+        fuzz::int_term is_zero = tmp_zero.eqTerm(t);
+        fuzz::int_term tmp_zero_return = generators::zero::placeholder(slv, fvs, t);
+        fuzz::int_term div_ts = relations::division::placeholder(slv, fvs, t, iden_term);
+        return is_zero.iteTerm(tmp_zero_return, div_ts);
+    }
+
+    fuzz::int_term
+    zero_by_div_fuzz(CVC4::api::Solver& slv, fuzz::FreeVars& fvs, fuzz::int_term t)
+    {
+        fuzz::int_term fuzz = generators::fuzz_int_term::placeholder(slv, fvs);
+        fuzz::int_term iden_fuzz = relations::identity::placeholder(slv, fvs, fuzz);
+        fuzz::int_term tmp_zero = zero::placeholder(slv, fvs, t);
+        fuzz::int_term is_zero = tmp_zero.eqTerm(t);
+        fuzz::int_term tmp_zero_return = generators::zero::placeholder(slv, fvs, t);
+        fuzz::int_term div_ts = relations::division::placeholder(slv, fvs, fuzz, iden_fuzz);
+        return is_zero.iteTerm(tmp_zero_return, div_ts);
     }
 
 } // namespace zero
@@ -165,22 +191,24 @@ namespace one {
     }
 
     fuzz::int_term
-    one_by_div(CVC4::api::Solver& c, fuzz::FreeVars& fvs, fuzz::int_term f)
+    one_by_div(CVC4::api::Solver& slv, fuzz::FreeVars& fvs, fuzz::int_term t)
     {
-        fuzz::int_term tmp_zero = zero::placeholder(c, fvs, f);
-        fuzz::int_term is_zero = tmp_zero.eqTerm(f);
-        return is_zero.iteTerm(placeholder(c, fvs, f),
-            c.mkTerm(CVC4::api::INTS_DIVISION, f, f));
+        fuzz::int_term iden_term = relations::identity::placeholder(slv, fvs, t);
+        fuzz::int_term tmp_zero = zero::placeholder(slv, fvs, t);
+        fuzz::int_term is_zero = generators::equal_int::placeholder(slv, fvs, tmp_zero, t);
+        fuzz::int_term div_ts = relations::division::placeholder(slv, fvs, t, iden_term);
+        return is_zero.iteTerm(generators::one::placeholder(slv, fvs, t), div_ts);
     }
 
     fuzz::int_term
-    one_by_fuzz_div(CVC4::api::Solver& c, fuzz::FreeVars& fvs, fuzz::int_term f)
+    one_by_fuzz_div(CVC4::api::Solver& slv, fuzz::FreeVars& fvs, fuzz::int_term t)
     {
-        fuzz::int_term fuzz = generators::fuzz_int_term::placeholder(c, fvs);
-        fuzz::int_term tmp_zero = zero::placeholder(c, fvs, fuzz);
-        fuzz::int_term is_zero = generators::equal_int::placeholder(c, fvs, tmp_zero, fuzz);
-        return is_zero.iteTerm(generators::one::placeholder(c, fvs, fuzz),
-            c.mkTerm(CVC4::api::INTS_DIVISION, fuzz, fuzz));
+        fuzz::int_term fuzz = generators::fuzz_int_term::placeholder(slv, fvs);
+        fuzz::int_term iden_fuzz = relations::identity::placeholder(slv, fvs, fuzz);
+        fuzz::int_term tmp_zero = zero::placeholder(slv, fvs, fuzz);
+        fuzz::int_term is_zero = generators::equal_int::placeholder(slv, fvs, tmp_zero, fuzz);
+        fuzz::int_term div_ts = relations::division::placeholder(slv, fvs, fuzz, iden_fuzz);
+        return is_zero.iteTerm(generators::one::placeholder(slv, fvs, fuzz), div_ts);
     }
 
     //fuzz::int_term
@@ -205,8 +233,8 @@ namespace true_cvc4 {
     fuzz::bool_term
     get_true_by_equal(CVC4::api::Solver& slv, fuzz::FreeVars& fvs, fuzz::bool_term t)
     {
-        t = generators::iden_bool::placeholder(slv, fvs, t);
-        return slv.mkTerm(CVC4::api::Kind::EQUAL, t, t);
+        fuzz::bool_term iden_term = generators::iden_bool::placeholder(slv, fvs, t);
+        return slv.mkTerm(CVC4::api::Kind::EQUAL, t, iden_term);
     }
 
     fuzz::bool_term
@@ -235,30 +263,33 @@ namespace true_cvc4 {
     fuzz::bool_term
     get_true_by_nxor(CVC4::api::Solver& slv, fuzz::FreeVars& fvs, fuzz::bool_term t)
     {
-        t = generators::iden_bool::placeholder(slv, fvs, t);
-        return slv.mkTerm(CVC4::api::NOT, generators::xor_cvc4::placeholder(slv, fvs, t, t));
+        fuzz::bool_term iden_term = generators::iden_bool::placeholder(slv, fvs, t);
+        return slv.mkTerm(CVC4::api::NOT, generators::xor_cvc4::placeholder(slv, fvs, t, iden_term));
     }
 
     fuzz::bool_term
     get_true_by_nxor_fuzz(CVC4::api::Solver& slv, fuzz::FreeVars& fvs, fuzz::bool_term t)
     {
         fuzz::bool_term fuzz_term = generators::fuzz_bool_term::placeholder(slv, fvs);
+        fuzz::bool_term iden_term = generators::iden_bool::placeholder(slv, fvs, fuzz_term);
         return slv.mkTerm(CVC4::api::NOT,
-            generators::xor_cvc4::placeholder(slv, fvs, fuzz_term, fuzz_term));
+            generators::xor_cvc4::placeholder(slv, fvs, fuzz_term, iden_term));
     }
 
     fuzz::bool_term
     get_true_by_lte_fuzz(CVC4::api::Solver& slv, fuzz::FreeVars& fvs, fuzz::bool_term t)
     {
         fuzz::int_term fuzz_term = generators::fuzz_int_term::placeholder(slv, fvs);
-        return generators::leq::placeholder(slv, fvs, fuzz_term, fuzz_term);
+        fuzz::int_term iden_term = relations::identity::placeholder(slv, fvs, fuzz_term);
+        return generators::leq::placeholder(slv, fvs, fuzz_term, iden_term);
     }
 
     fuzz::bool_term
     get_true_by_gte_fuzz(CVC4::api::Solver& slv, fuzz::FreeVars& fvs, fuzz::bool_term t)
     {
         fuzz::int_term fuzz_term = generators::fuzz_int_term::placeholder(slv, fvs);
-        return generators::geq::placeholder(slv, fvs, fuzz_term, fuzz_term);
+        fuzz::int_term iden_term = relations::identity::placeholder(slv, fvs, fuzz_term);
+        return generators::geq::placeholder(slv, fvs, fuzz_term, iden_term);
     }
 
 } // namespace true_cvc4
@@ -274,8 +305,8 @@ namespace false_cvc4 {
     fuzz::bool_term
     get_false_by_equal(CVC4::api::Solver& slv, fuzz::FreeVars& fvs, fuzz::bool_term t)
     {
-        t = generators::iden_bool::placeholder(slv, fvs, t);
-        return slv.mkTerm(CVC4::api::Kind::DISTINCT, t, t);
+        fuzz::bool_term iden_term = generators::iden_bool::placeholder(slv, fvs, t);
+        return slv.mkTerm(CVC4::api::Kind::DISTINCT, t, iden_term);
     }
 
     fuzz::bool_term
@@ -304,29 +335,32 @@ namespace false_cvc4 {
     fuzz::bool_term
     get_false_by_xor(CVC4::api::Solver& slv, fuzz::FreeVars& fvs, fuzz::bool_term t)
     {
-        t = generators::iden_bool::placeholder(slv, fvs, t);
-        return generators::xor_cvc4::placeholder(slv, fvs, t, t);
+        fuzz::bool_term iden_term = generators::iden_bool::placeholder(slv, fvs, t);
+        return generators::xor_cvc4::placeholder(slv, fvs, t, iden_term);
     }
 
     fuzz::bool_term
     get_false_by_xor_fuzz(CVC4::api::Solver& slv, fuzz::FreeVars& fvs, fuzz::bool_term t)
     {
         fuzz::bool_term fuzz_term = generators::fuzz_bool_term::placeholder(slv, fvs);
-        return generators::xor_cvc4::placeholder(slv, fvs, fuzz_term, fuzz_term);
+        fuzz::bool_term iden_term = generators::iden_bool::placeholder(slv, fvs, fuzz_term);
+        return generators::xor_cvc4::placeholder(slv, fvs, fuzz_term, iden_term);
     }
 
     fuzz::bool_term
     get_false_by_lt_fuzz(CVC4::api::Solver& slv, fuzz::FreeVars& fvs, fuzz::bool_term t)
     {
         fuzz::int_term fuzz_term = generators::fuzz_int_term::placeholder(slv, fvs);
-        return generators::lt::placeholder(slv, fvs, fuzz_term, fuzz_term);
+        fuzz::bool_term iden_term = generators::iden_bool::placeholder(slv, fvs, fuzz_term);
+        return generators::lt::placeholder(slv, fvs, fuzz_term, iden_term);
     }
 
     fuzz::bool_term
     get_false_by_gt_fuzz(CVC4::api::Solver& slv, fuzz::FreeVars& fvs, fuzz::bool_term t)
     {
         fuzz::int_term fuzz_term = generators::fuzz_int_term::placeholder(slv, fvs);
-        return generators::gt::placeholder(slv, fvs, fuzz_term, fuzz_term);
+        fuzz::bool_term iden_term = generators::iden_bool::placeholder(slv, fvs, fuzz_term);
+        return generators::gt::placeholder(slv, fvs, fuzz_term, iden_term);
     }
 
 } // namespace false_cvc4
@@ -358,27 +392,33 @@ namespace iden_bool {
     fuzz::bool_term
     iden_by_xor(CVC4::api::Solver& slv, fuzz::FreeVars& fvs, fuzz::bool_term t)
     {
-        t = generators::iden_bool::placeholder(slv, fvs, t);
-        fuzz::bool_term not_t = generators::not_cvc4::placeholder(slv, fvs, t);
+        fuzz::bool_term iden_term = generators::iden_bool::placeholder(slv, fvs, t);
+        fuzz::bool_term not_t = generators::not_cvc4::placeholder(slv, fvs, iden_term);
         return generators::xor_cvc4::placeholder(slv, fvs, t, not_t);
     }
 
-    fuzz::bool_term
-    iden_bool_by_ite_false(CVC4::api::Solver& slv, fuzz::FreeVars& fvs, fuzz::bool_term t)
-    {
-        fuzz::bool_term dead = generators::fuzz_bool_term::placeholder(slv, fvs);
-        t = generators::iden_bool::placeholder(slv, fvs, t);
-        return slv.mkTerm(CVC4::api::ITE,
-            generators::false_cvc4::placeholder(slv, fvs, t), dead, t);
-    }
+    //fuzz::bool_term
+    //iden_bool_by_ite_false(CVC4::api::Solver& slv, fuzz::FreeVars& fvs, fuzz::bool_term t)
+    //{
+        //fuzz::bool_term dead = generators::fuzz_bool_term::placeholder(slv, fvs);
+        //t = generators::iden_bool::placeholder(slv, fvs, t);
+        //return slv.mkTerm(CVC4::api::ITE,
+            //generators::false_cvc4::placeholder(slv, fvs, t), dead, t);
+    //}
 
+    //fuzz::bool_term
+    //iden_bool_by_ite_true(CVC4::api::Solver& slv, fuzz::FreeVars& fvs, fuzz::bool_term t)
+    //{
+        //fuzz::bool_term dead = generators::fuzz_bool_term::placeholder(slv, fvs);
+        //t = generators::iden_bool::placeholder(slv, fvs, t);
+        //return slv.mkTerm(CVC4::api::ITE,
+            //generators::true_cvc4::placeholder(slv, fvs, t), t, dead);
+    //}
+    //
     fuzz::bool_term
-    iden_bool_by_ite_true(CVC4::api::Solver& slv, fuzz::FreeVars& fvs, fuzz::bool_term t)
+    iden_by_simplify(CVC4::api::Solver& slv, fuzz::FreeVars& fvs, fuzz::bool_term t)
     {
-        fuzz::bool_term dead = generators::fuzz_bool_term::placeholder(slv, fvs);
-        t = generators::iden_bool::placeholder(slv, fvs, t);
-        return slv.mkTerm(CVC4::api::ITE,
-            generators::true_cvc4::placeholder(slv, fvs, t), t, dead);
+        return slv.simplify(generators::iden_bool::placeholder(slv, fvs, t));
     }
 
 } // namespace iden_bool
@@ -513,9 +553,10 @@ namespace equal_int {
     check_true_by_div_is_one(CVC4::api::Solver& slv, fuzz::FreeVars& fvs, fuzz::int_term t1, fuzz::int_term t2)
     {
         fuzz::int_term one = generators::one::placeholder(slv, fvs, t1);
-        fuzz::int_term div_ts = slv.mkTerm(CVC4::api::Kind::ITE,
-            slv.mkTerm(CVC4::api::Kind::EQUAL, t2, generators::zero::placeholder(slv, fvs, t2)),
-            one, slv.mkTerm(CVC4::api::INTS_DIVISION, t1, t2));
+        fuzz::int_term div_ts = relations::division::placeholder(slv, fvs, t1, t2);
+        //fuzz::int_term div_ts = slv.mkTerm(CVC4::api::Kind::ITE,
+            //slv.mkTerm(CVC4::api::Kind::EQUAL, t2, generators::zero::placeholder(slv, fvs, t2)),
+            //one, slv.mkTerm(CVC4::api::INTS_DIVISION, t1, t2));
         return generators::equal_int::placeholder(slv, fvs, one, div_ts);
     }
 
@@ -626,22 +667,29 @@ namespace identity {
     }
 
     fuzz::int_term
-    double_negative(CVC4::api::Solver& c, fuzz::FreeVars& fvs, fuzz::int_term e)
+    div_one(CVC4::api::Solver& slv, fuzz::FreeVars& fvs, fuzz::int_term t)
     {
-        e = relations::identity::placeholder(c, fvs, e);
-        fuzz::int_term tmp_e = c.mkTerm(CVC4::api::UMINUS, e);
-        tmp_e = relations::identity::placeholder(c, fvs, tmp_e);
-        return c.mkTerm(CVC4::api::UMINUS, tmp_e);
+        t = relations::identity::placeholder(slv, fvs, t);
+        fuzz::int_term one = generators::one::placeholder(slv, fvs, t);
+        return relations::division::placeholder(slv, fvs, t, one);
     }
 
     fuzz::int_term
-    abs(CVC4::api::Solver& c, fuzz::FreeVars& fvs, fuzz::int_term e)
+    double_negative(CVC4::api::Solver& slv, fuzz::FreeVars& fvs, fuzz::int_term t)
     {
-        e = relations::identity::placeholder(c, fvs, e);
-        fuzz::int_term abs_e = relations::abs_cvc4::placeholder(c, fvs, e);
-        return c.mkTerm(CVC4::api::ITE,
-            generators::equal_int::placeholder(c, fvs, abs_e, e),
-            abs_e, e);
+        t = relations::identity::placeholder(slv, fvs, t);
+        fuzz::int_term tmp_t = slv.mkTerm(CVC4::api::UMINUS, t);
+        tmp_t = relations::identity::placeholder(slv, fvs, tmp_t);
+        return slv.mkTerm(CVC4::api::UMINUS, tmp_t);
+    }
+
+    fuzz::int_term
+    abs(CVC4::api::Solver& slv, fuzz::FreeVars& fvs, fuzz::int_term t)
+    {
+        fuzz::int_term iden_term = relations::identity::placeholder(slv, fvs, t);
+        fuzz::int_term abs_t = relations::abs_cvc4::placeholder(slv, fvs, t);
+        fuzz::bool_term t_equal = generators::equal_int::placeholder(slv, fvs, abs_t, t);
+        return slv.mkTerm(CVC4::api::ITE, t_equal, abs_t, t);
     }
 
     //fuzz::int_term
@@ -653,36 +701,36 @@ namespace identity {
     //}
 
     fuzz::int_term
-    iden_by_ite_false(CVC4::api::Solver& c, fuzz::FreeVars& fvs, fuzz::int_term e)
+    iden_by_ite_false(CVC4::api::Solver& slv, fuzz::FreeVars& fvs, fuzz::int_term t)
     {
-        fuzz::int_term dead = generators::fuzz_int_term::placeholder(c, fvs);
-        e = relations::identity::placeholder(c, fvs, e);
-        return c.mkTerm(CVC4::api::ITE,
-            generators::false_cvc4::placeholder(c, fvs, e), dead, e);
+        fuzz::int_term dead = generators::fuzz_int_term::placeholder(slv, fvs);
+        t = relations::identity::placeholder(slv, fvs, t);
+        return slv.mkTerm(CVC4::api::ITE,
+            generators::false_cvc4::placeholder(slv, fvs, t), dead, t);
     }
 
-    fuzz::int_term
-    iden_by_ite_true(CVC4::api::Solver& c, fuzz::FreeVars& fvs, fuzz::int_term e)
-    {
-        fuzz::int_term dead = generators::fuzz_int_term::placeholder(c, fvs);
-        e = relations::identity::placeholder(c, fvs, e);
-        return c.mkTerm(CVC4::api::ITE,
-            generators::true_cvc4::placeholder(c, fvs, e), e, dead);
-    }
+    //fuzz::int_term
+    //iden_by_ite_true(CVC4::api::Solver& slv, fuzz::FreeVars& fvs, fuzz::int_term t)
+    //{
+        //fuzz::int_term dead = generators::fuzz_int_term::placeholder(slv, fvs);
+        //t = relations::identity::placeholder(c, fvs, e);
+        //return c.mkTerm(CVC4::api::ITE,
+            //generators::true_cvc4::placeholder(c, fvs, e), e, dead);
+    //}
+
+    //fuzz::int_term
+    //iden_by_ite_fuzz(CVC4::api::Solver& c, fuzz::FreeVars& fvs, fuzz::int_term e)
+    //{
+        //fuzz::int_term dead = generators::fuzz_int_term::placeholder(c, fvs);
+        //e = relations::identity::placeholder(c, fvs, e);
+        //return c.mkTerm(CVC4::api::ITE,
+            //c.mkTerm(CVC4::api::EQUAL, e, dead), dead, e);
+    //}
 
     fuzz::int_term
-    iden_by_ite_fuzz(CVC4::api::Solver& c, fuzz::FreeVars& fvs, fuzz::int_term e)
+    iden_by_simplify(CVC4::api::Solver& slv, fuzz::FreeVars& fvs, fuzz::int_term t)
     {
-        fuzz::int_term dead = generators::fuzz_int_term::placeholder(c, fvs);
-        e = relations::identity::placeholder(c, fvs, e);
-        return c.mkTerm(CVC4::api::ITE,
-            c.mkTerm(CVC4::api::EQUAL, e, dead), dead, e);
-    }
-
-    fuzz::int_term
-    iden_by_simplify(CVC4::api::Solver& c, fuzz::FreeVars& fvs, fuzz::int_term e)
-    {
-        return c.simplify(relations::identity::placeholder(c, fvs, e));
+        return slv.simplify(relations::identity::placeholder(slv, fvs, t));
     }
 
 
@@ -690,27 +738,26 @@ namespace identity {
 
 namespace add {
 
-
     fuzz::int_term
-    add_base(CVC4::api::Solver& c, fuzz::FreeVars& fvs, fuzz::int_term e1, fuzz::int_term e2)
+    add_base(CVC4::api::Solver& slv, fuzz::FreeVars& fvs, fuzz::int_term t1, fuzz::int_term t2)
     {
-        return c.mkTerm(CVC4::api::PLUS, e1, e2);
+        return slv.mkTerm(CVC4::api::PLUS, t1, t2);
     }
 
     fuzz::int_term
-    add_comm(CVC4::api::Solver& c, fuzz::FreeVars& fvs, fuzz::int_term e1, fuzz::int_term e2)
+    add_comm(CVC4::api::Solver& slv, fuzz::FreeVars& fvs, fuzz::int_term t1, fuzz::int_term t2)
     {
-        e1 = relations::identity::placeholder(c, fvs, e1);
-        e2 = relations::identity::placeholder(c, fvs, e2);
-        return relations::add::placeholder(c, fvs, e2, e1);
+        t1 = relations::identity::placeholder(slv, fvs, t1);
+        t2 = relations::identity::placeholder(slv, fvs, t2);
+        return relations::add::placeholder(slv, fvs, t2, t1);
     }
 
     fuzz::int_term
-    add_by_sub(CVC4::api::Solver& c, fuzz::FreeVars& fvs, fuzz::int_term e1, fuzz::int_term e2)
+    add_by_sub(CVC4::api::Solver& slv, fuzz::FreeVars& fvs, fuzz::int_term t1, fuzz::int_term t2)
     {
-        e1 = relations::identity::placeholder(c, fvs, e1);
-        e2 = relations::identity::placeholder(c, fvs, e2);
-        return relations::sub::placeholder(c, fvs, e1, c.mkTerm(CVC4::api::UMINUS, e2));
+        t1 = relations::identity::placeholder(slv, fvs, t1);
+        t2 = relations::identity::placeholder(slv, fvs, t2);
+        return relations::sub::placeholder(slv, fvs, t1, slv.mkTerm(CVC4::api::UMINUS, t2));
     }
 
 } // namespace add
@@ -718,17 +765,17 @@ namespace add {
 namespace sub {
 
     fuzz::int_term
-    sub_base(CVC4::api::Solver& c, fuzz::FreeVars& fvs, fuzz::int_term e1, fuzz::int_term e2)
+    sub_base(CVC4::api::Solver& slv, fuzz::FreeVars& fvs, fuzz::int_term t1, fuzz::int_term t2)
     {
-        return c.mkTerm(CVC4::api::MINUS, e1, e2);
+        return slv.mkTerm(CVC4::api::MINUS, t1, t2);
     }
 
     fuzz::int_term
-    sub_by_add(CVC4::api::Solver& c, fuzz::FreeVars& fvs, fuzz::int_term e1, fuzz::int_term e2)
+    sub_by_add(CVC4::api::Solver& slv, fuzz::FreeVars& fvs, fuzz::int_term t1, fuzz::int_term t2)
     {
-        e1 = relations::identity::placeholder(c, fvs, e1);
-        e2 = relations::identity::placeholder(c, fvs, e2);
-        return relations::add::placeholder(c, fvs, e1, c.mkTerm(CVC4::api::UMINUS, e2));
+        t1 = relations::identity::placeholder(slv, fvs, t1);
+        t2 = relations::identity::placeholder(slv, fvs, t2);
+        return relations::add::placeholder(slv, fvs, t1, slv.mkTerm(CVC4::api::UMINUS, t2));
     }
 
 } // namespace sub
@@ -736,57 +783,54 @@ namespace sub {
 namespace mul {
 
     fuzz::int_term
-    mul_base(CVC4::api::Solver& c, fuzz::FreeVars& fvs, fuzz::int_term e1, fuzz::int_term e2)
+    mul_base(CVC4::api::Solver& slv, fuzz::FreeVars& fvs, fuzz::int_term t1, fuzz::int_term t2)
     {
-        return c.mkTerm(CVC4::api::MULT, e1, e2);
+        return slv.mkTerm(CVC4::api::MULT, t1, t2);
     }
 
     fuzz::int_term
-    mul_comm(CVC4::api::Solver& c, fuzz::FreeVars& fvs, fuzz::int_term e1, fuzz::int_term e2)
+    mul_comm(CVC4::api::Solver& slv, fuzz::FreeVars& fvs, fuzz::int_term t1, fuzz::int_term t2)
     {
-        e1 = relations::identity::placeholder(c, fvs, e1);
-        e2 = relations::identity::placeholder(c, fvs, e2);
-        return relations::mul::placeholder(c, fvs, e2, e1);
+        t1 = relations::identity::placeholder(slv, fvs, t1);
+        t2 = relations::identity::placeholder(slv, fvs, t2);
+        return relations::mul::placeholder(slv, fvs, t2, t1);
     }
 
 } // namespace mul
 
-//namespace div {
+namespace division {
 
-    //fuzz::int_term
-    //div_base(CVC4::api::Solver& c, fuzz::FreeVars& fvs, fuzz::int_term e1, fuzz::int_term e2)
-    //{
-        //return c.mkTerm(CVC4::api::Kind::ITE,
-            //c.mkTerm(CVC4::api::Kind::EQUAL, e2, generators::zero::placeholder(c, fvs, e2)),
-            //e1, c.mkTerm(CVC4::api::INTS_DIVISION, e1, e2));
-    //}
+    fuzz::int_term
+    div_base(CVC4::api::Solver& slv, fuzz::FreeVars& fvs, fuzz::int_term t1, fuzz::int_term t2)
+    {
+        return slv.mkTerm(CVC4::api::Kind::ITE,
+            slv.mkTerm(CVC4::api::Kind::EQUAL, t2, slv.mkInteger(0)),
+            t1, slv.mkTerm(CVC4::api::INTS_DIVISION, t1, t2));
+    }
 
-//} // namespace div
+} // namespace division
 
 namespace modulo {
 
     fuzz::int_term
-    mod_base(CVC4::api::Solver& c, fuzz::FreeVars& fvs, fuzz::int_term e1, fuzz::int_term e2)
+    mod_base(CVC4::api::Solver& slv, fuzz::FreeVars& fvs, fuzz::int_term t1, fuzz::int_term t2)
     {
-        e1 = relations::identity::placeholder(c, fvs, e1);
-        e2 = relations::identity::placeholder(c, fvs, e2);
-        fuzz::int_term zero = generators::zero::placeholder(c, fvs, e1);
-        return c.mkTerm(CVC4::api::ITE,
-            c.mkTerm(CVC4::api::EQUAL, e2, zero), e1,
-            c.mkTerm(CVC4::api::INTS_MODULUS, e1, e2));
+        return slv.mkTerm(CVC4::api::ITE,
+            slv.mkTerm(CVC4::api::EQUAL, t2, slv.mkInteger(0)), t1,
+            slv.mkTerm(CVC4::api::INTS_MODULUS, t1, t2));
     }
 
     fuzz::int_term
-    mod_by_sub(CVC4::api::Solver& c, fuzz::FreeVars& fvs, fuzz::int_term e1, fuzz::int_term e2)
+    mod_by_sub(CVC4::api::Solver& slv, fuzz::FreeVars& fvs, fuzz::int_term t1, fuzz::int_term t2)
     {
-        e1 = relations::identity::placeholder(c, fvs, e1);
-        e2 = relations::identity::placeholder(c, fvs, e2);
-        fuzz::int_term zero = generators::zero::placeholder(c, fvs, e1);
-        return c.mkTerm(CVC4::api::ITE,
-            c.mkTerm(CVC4::api::EQUAL, e2, zero), e1,
-            c.mkTerm(CVC4::api::MINUS, e1,
-                c.mkTerm(CVC4::api::MULT, e2,
-                    c.mkTerm(CVC4::api::INTS_DIVISION, e1, e2))));
+        t1 = relations::identity::placeholder(slv, fvs, t1);
+        t2 = relations::identity::placeholder(slv, fvs, t2);
+        fuzz::int_term zero = generators::zero::placeholder(slv, fvs, t1);
+        return slv.mkTerm(CVC4::api::ITE,
+            slv.mkTerm(CVC4::api::EQUAL, t2, zero), t1,
+            slv.mkTerm(CVC4::api::MINUS, t1,
+                slv.mkTerm(CVC4::api::MULT, t2,
+                    slv.mkTerm(CVC4::api::INTS_DIVISION, t1, t2))));
     }
 
 } // namespace modulo
@@ -795,27 +839,27 @@ namespace abs_cvc4
 {
 
     fuzz::int_term
-    abs_base(CVC4::api::Solver& c, fuzz::FreeVars& fvs, fuzz::int_term e)
+    abs_base(CVC4::api::Solver& slv, fuzz::FreeVars& fvs, fuzz::int_term t)
     {
-        return c.mkTerm(CVC4::api::Kind::ABS, e);
+        return slv.mkTerm(CVC4::api::Kind::ABS, t);
     }
 
     fuzz::int_term
-    abs_by_check_gt_zero(CVC4::api::Solver& c, fuzz::FreeVars& fvs, fuzz::int_term e)
+    abs_by_check_gt_zero(CVC4::api::Solver& slv, fuzz::FreeVars& fvs, fuzz::int_term t)
     {
-        fuzz::int_term zero = generators::zero::placeholder(c, fvs, e);
-        fuzz::bool_term gt_term = generators::gt::placeholder(c, fvs, e, zero);
-        fuzz::int_term abs_e = relations::abs_cvc4::placeholder(c, fvs, e);
-        return c.mkTerm(CVC4::api::Kind::ITE, gt_term, e, abs_e);
+        fuzz::int_term zero = generators::zero::placeholder(slv, fvs, t);
+        fuzz::bool_term gt_term = generators::gt::placeholder(slv, fvs, t, zero);
+        fuzz::int_term abs_t = relations::abs_cvc4::placeholder(slv, fvs, t);
+        return slv.mkTerm(CVC4::api::Kind::ITE, gt_term, t, abs_t);
     }
 
     fuzz::int_term
-    abs_by_check_lt_zero(CVC4::api::Solver& c, fuzz::FreeVars& fvs, fuzz::int_term e)
+    abs_by_check_lt_zero(CVC4::api::Solver& slv, fuzz::FreeVars& fvs, fuzz::int_term t)
     {
-        fuzz::int_term zero = generators::zero::placeholder(c, fvs, e);
-        fuzz::bool_term lt_term = generators::lt::placeholder(c, fvs, e, zero);
-        fuzz::int_term abs_e = relations::abs_cvc4::placeholder(c, fvs, e);
-        return c.mkTerm(CVC4::api::Kind::ITE, lt_term, abs_e, e);
+        fuzz::int_term zero = generators::zero::placeholder(slv, fvs, t);
+        fuzz::bool_term lt_term = generators::lt::placeholder(slv, fvs, t, zero);
+        fuzz::int_term abs_t = relations::abs_cvc4::placeholder(slv, fvs, t);
+        return slv.mkTerm(CVC4::api::Kind::ITE, lt_term, abs_t, t);
     }
 
 } // namespace abs
