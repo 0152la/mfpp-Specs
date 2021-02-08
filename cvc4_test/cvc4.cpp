@@ -9,7 +9,7 @@ namespace fuzz {
     typedef CVC4::api::Term int_term;
     class FreeVars {
       public:
-        fuzz::int_term* vars[FV_COUNT];
+        fuzz::int_term vars[FV_COUNT];
     };
 }
 #else
@@ -22,7 +22,7 @@ namespace lib_helper_funcs {
 fuzz::int_term
 ctor_yield_free_var(fuzz::FreeVars& fvs)
 {
-    return *fvs.vars[fuzz::fuzz_rand<int, int>(0, 99)];
+    return fvs.vars[fuzz::fuzz_rand<int, int>(0, 99)];
 }
 
 fuzz::int_term
@@ -70,11 +70,13 @@ make_mul_expr(CVC4::api::Solver& slv, fuzz::int_term lhs, fuzz::int_term rhs)
 fuzz::int_term
 make_pow_expr(CVC4::api::Solver& slv, fuzz::int_term lhs, fuzz::int_term rhs)
 {
-    fuzz::int_term zero = slv.mkInteger(0);
-    fuzz::bool_term is_zero = slv.mkTerm(CVC4::api::AND,
-        slv.mkTerm(CVC4::api::EQUAL, lhs, zero),
-        slv.mkTerm(CVC4::api::EQUAL, rhs, zero));
-    return is_zero.iteTerm(lhs, slv.mkTerm(CVC4::api::Kind::POW, lhs, slv.mkTerm(CVC4::api::Kind::ABS, rhs)));
+    fuzz::int_term exponent = slv.mkInteger(fuzz::fuzz_rand<size_t, int>(0, 20));
+    return slv.mkTerm(CVC4::api::Kind::POW, lhs, exponent);
+    //fuzz::int_term zero = slv.mkInteger(0);
+    //fuzz::bool_term is_zero = slv.mkTerm(CVC4::api::AND,
+        //slv.mkTerm(CVC4::api::EQUAL, lhs, zero),
+        //slv.mkTerm(CVC4::api::EQUAL, rhs, zero));
+    //return is_zero.iteTerm(lhs, slv.mkTerm(CVC4::api::Kind::POW, lhs, slv.mkTerm(CVC4::api::Kind::ABS, rhs)));
 }
 
 //fuzz::int_term
@@ -211,7 +213,7 @@ main(int argc, char** argv)
     for (size_t i = 0; i < FV_COUNT; ++i)
     {
         fuzz::int_term new_term = slv.mkConst(int_s, "x" + std::to_string(i));
-        fvs.vars[i] = &new_term;
+        fvs.vars[i] = new_term;
     }
 
     fuzz::start();
