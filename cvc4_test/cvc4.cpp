@@ -70,7 +70,7 @@ make_mul_expr(CVC4::api::Solver& slv, fuzz::int_term lhs, fuzz::int_term rhs)
 fuzz::int_term
 make_pow_expr(CVC4::api::Solver& slv, fuzz::int_term lhs, fuzz::int_term rhs)
 {
-    fuzz::int_term exponent = slv.mkInteger(fuzz::fuzz_rand<size_t, int>(0, 20));
+    fuzz::int_term exponent = slv.mkInteger(fuzz::fuzz_rand<int, int>(0, 20));
     return slv.mkTerm(CVC4::api::Kind::POW, lhs, exponent);
     //fuzz::int_term zero = slv.mkInteger(0);
     //fuzz::bool_term is_zero = slv.mkTerm(CVC4::api::AND,

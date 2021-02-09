@@ -13,7 +13,7 @@ namespace fuzz
 
     class FreeVars {
       public:
-        int_term* vars[FV_COUNT];
+        int_term vars[FV_COUNT];
     };
 
     static CVC4::api::Solver slv;

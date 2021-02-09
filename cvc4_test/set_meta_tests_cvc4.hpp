@@ -5,10 +5,12 @@ namespace checks {
     void
     check_expr_same_sat(CVC4::api::Solver& slv, fuzz::int_term t1, fuzz::int_term t2)
     {
+        std::cout << "START CHECK" << std::endl;
         fuzz::bool_term check = slv.mkTerm(CVC4::api::DISTINCT, t1, t2);
         slv.assertFormula(check);
         assert(!slv.checkSat().isSat());
         slv.resetAssertions();
+        std::cout << "END CHECK" << std::endl;
     }
 
 } // namespace checks
@@ -351,7 +353,7 @@ namespace false_cvc4 {
     get_false_by_lt_fuzz(CVC4::api::Solver& slv, fuzz::FreeVars& fvs, fuzz::bool_term t)
     {
         fuzz::int_term fuzz_term = generators::fuzz_int_term::placeholder(slv, fvs);
-        fuzz::bool_term iden_term = generators::iden_bool::placeholder(slv, fvs, fuzz_term);
+        fuzz::int_term iden_term = relations::identity::placeholder(slv, fvs, fuzz_term);
         return generators::lt::placeholder(slv, fvs, fuzz_term, iden_term);
     }
 
@@ -359,7 +361,7 @@ namespace false_cvc4 {
     get_false_by_gt_fuzz(CVC4::api::Solver& slv, fuzz::FreeVars& fvs, fuzz::bool_term t)
     {
         fuzz::int_term fuzz_term = generators::fuzz_int_term::placeholder(slv, fvs);
-        fuzz::bool_term iden_term = generators::iden_bool::placeholder(slv, fvs, fuzz_term);
+        fuzz::int_term iden_term = relations::identity::placeholder(slv, fvs, fuzz_term);
         return generators::gt::placeholder(slv, fvs, fuzz_term, iden_term);
     }
 
@@ -703,10 +705,11 @@ namespace identity {
     fuzz::int_term
     iden_by_ite_false(CVC4::api::Solver& slv, fuzz::FreeVars& fvs, fuzz::int_term t)
     {
+        fuzz::bool_term fuzz_term = generators::fuzz_bool_term::placeholder(slv, fvs);
         fuzz::int_term dead = generators::fuzz_int_term::placeholder(slv, fvs);
         t = relations::identity::placeholder(slv, fvs, t);
         return slv.mkTerm(CVC4::api::ITE,
-            generators::false_cvc4::placeholder(slv, fvs, t), dead, t);
+            generators::false_cvc4::placeholder(slv, fvs, fuzz_term), dead, t);
     }
 
     //fuzz::int_term
