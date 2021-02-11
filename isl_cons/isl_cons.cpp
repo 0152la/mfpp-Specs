@@ -1,6 +1,6 @@
+#include <cassert>
 #ifdef EXECUTE
 #include "isl-noexceptions.h"
-#include <cassert>
 #else
 #include "isl-noexceptions-cons.h"
 #include "isl_spec_defs.hpp"
