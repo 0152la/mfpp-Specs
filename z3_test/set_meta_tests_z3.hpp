@@ -7,7 +7,7 @@ namespace metalib {
 namespace checks {
 
     void
-    check_expr_same_sat(z3::context& c, fuzz::FreeVars& fvs, z3::expr e1, z3::expr e2)
+    check_expr_same_sat(z3::context& c, fuzz::FreeVars& fvs, fuzz::int_expr e1, fuzz::int_expr e2)
     {
         check_count += 1;
         std::cout << "START CHECK COUNT " << check_count << std::endl;
