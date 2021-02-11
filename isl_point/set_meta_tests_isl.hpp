@@ -5,7 +5,7 @@ namespace checks {
     bool
     check_set_equals(isl::set s1, isl::set s2)
     {
-        return s1.is_equal(s2);
+        assert(s1.is_equal(s2));
     }
 
 } // namespace checks
