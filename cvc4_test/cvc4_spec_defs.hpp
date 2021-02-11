@@ -22,6 +22,4 @@ namespace fuzz
 
 typedef fuzz::int_term OUT_VAR_TYPE;
 
-#include "set_meta_tests_cvc4.hpp"
-
 #endif // _CVC4_SPEC_DEFS_HPP

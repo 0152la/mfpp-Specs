@@ -14,7 +14,7 @@ namespace fuzz {
 }
 #else
 #include "cvc4_spec_defs.hpp"
-#include "set_meta_tests_cvc4.hpp"
+#include "set_meta_tests_cvc4_nl.hpp"
 #endif
 
 namespace fuzz {
@@ -63,44 +63,30 @@ make_sub_expr(CVC4::api::Solver& slv, fuzz::int_term lhs, fuzz::int_term rhs)
 }
 
 fuzz::int_term
-make_mul_expr(CVC4::api::Solver& slv, fuzz::int_term lhs, fuzz::int_term rhs)
+make_mul_lhs_expr(CVC4::api::Solver& slv, fuzz::int_term lhs, int rhs)
 {
-    return slv.mkTerm(CVC4::api::Kind::MULT, lhs, rhs);
+    return slv.mkTerm(CVC4::api::Kind::MULT, lhs, slv.mkInteger(rhs));
 }
 
 fuzz::int_term
-make_pow_expr(CVC4::api::Solver& slv, fuzz::int_term lhs, fuzz::int_term rhs)
+make_mul_rhs_expr(CVC4::api::Solver& slv, int lhs, fuzz::int_term rhs)
 {
-    fuzz::int_term exponent = slv.mkInteger(fuzz::fuzz_rand<int, int>(0, 20));
-    return slv.mkTerm(CVC4::api::Kind::POW, lhs, exponent);
-    //fuzz::int_term zero = slv.mkInteger(0);
-    //fuzz::bool_term is_zero = slv.mkTerm(CVC4::api::AND,
-        //slv.mkTerm(CVC4::api::EQUAL, lhs, zero),
-        //slv.mkTerm(CVC4::api::EQUAL, rhs, zero));
-    //return is_zero.iteTerm(lhs, slv.mkTerm(CVC4::api::Kind::POW, lhs, slv.mkTerm(CVC4::api::Kind::ABS, rhs)));
+    return slv.mkTerm(CVC4::api::Kind::MULT, slv.mkInteger(lhs), rhs);
 }
 
-//fuzz::int_term
-//make_real_div_expr(CVC4::api::Solver& slv, fuzz::int_term lhs, fuzz::int_term rhs)
-//{
-    //return slv.mkTerm(CVC4::api::Kind::TO_INTEGER, slv.mkTerm(CVC4::api::Kind::DIVISION, lhs, rhs));
-//}
-//
- // TODO rhs for div/mod
-
 fuzz::int_term
-make_int_div_expr(CVC4::api::Solver& slv, fuzz::int_term lhs, fuzz::int_term rhs)
+make_int_div_expr(CVC4::api::Solver& slv, fuzz::int_term lhs, int rhs_int)
 {
-    //return slv.mkTerm(CVC4::api::Kind::INTS_DIVISION, lhs, rhs);
+    fuzz::int_term rhs = slv.mkInteger(rhs_int);
     return slv.mkTerm(CVC4::api::Kind::ITE,
         slv.mkTerm(CVC4::api::Kind::EQUAL, slv.mkInteger(0), rhs),
         lhs, slv.mkTerm(CVC4::api::Kind::INTS_DIVISION, lhs, rhs));
 }
 
 fuzz::int_term
-make_int_mod_expr(CVC4::api::Solver& slv, fuzz::int_term lhs, fuzz::int_term rhs)
+make_int_mod_expr(CVC4::api::Solver& slv, fuzz::int_term lhs, int rhs_int)
 {
-    //return slv.mkTerm(CVC4::api::Kind::INTS_MODULUS, lhs, rhs);
+    fuzz::int_term rhs = slv.mkInteger(rhs_int);
     return slv.mkTerm(CVC4::api::Kind::ITE,
         slv.mkTerm(CVC4::api::Kind::EQUAL, slv.mkInteger(0), rhs),
         lhs, slv.mkTerm(CVC4::api::Kind::INTS_MODULUS, lhs, rhs));
@@ -209,7 +195,7 @@ int
 main(int argc, char** argv)
 {
     CVC4::api::Solver slv;
-    slv.setLogic("QF_NIA");
+    slv.setLogic("QF_LIA");
 
     CVC4::api::Sort int_s = slv.getIntegerSort();
     fuzz::FreeVars fvs;

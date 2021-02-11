@@ -171,11 +171,10 @@ namespace zero {
     fuzz::int_expr
     zero_by_div(z3::context& ctx, fuzz::FreeVars& fvs, fuzz::int_expr t)
     {
-        fuzz::int_expr iden_expr = relations::identity::placeholder(ctx, fvs, t);
         fuzz::int_expr tmp_zero = generators::zero::placeholder(ctx, fvs, t);
         fuzz::int_expr is_zero = z3::operator==(tmp_zero, t);
         fuzz::int_expr tmp_zero_return = generators::zero::placeholder(ctx, fvs, t);
-        fuzz::int_expr div_ts = relations::division::placeholder(ctx, fvs, t, iden_expr);
+        fuzz::int_expr div_ts = relations::division::placeholder(ctx, fvs, tmp_zero, t);
         return z3::ite(is_zero, tmp_zero_return, div_ts);
     }
 
@@ -183,11 +182,10 @@ namespace zero {
     zero_by_div_fuzz(z3::context& ctx, fuzz::FreeVars& fvs, fuzz::int_expr t)
     {
         fuzz::int_expr fuzz = generators::fuzz_int_expr::placeholder(ctx, fvs);
-        fuzz::int_expr iden_fuzz = relations::identity::placeholder(ctx, fvs, fuzz);
-        fuzz::int_expr tmp_zero = generators::zero::placeholder(ctx, fvs, t);
-        fuzz::int_expr is_zero = z3::operator==(tmp_zero, t);
-        fuzz::int_expr tmp_zero_return = generators::zero::placeholder(ctx, fvs, t);
-        fuzz::int_expr div_ts = relations::division::placeholder(ctx, fvs, fuzz, iden_fuzz);
+        fuzz::int_expr tmp_zero = generators::zero::placeholder(ctx, fvs, fuzz);
+        fuzz::int_expr is_zero = z3::operator==(tmp_zero, fuzz);
+        fuzz::int_expr tmp_zero_return = generators::zero::placeholder(ctx, fvs, fuzz);
+        fuzz::int_expr div_ts = relations::division::placeholder(ctx, fvs, tmp_zero, fuzz);
         return z3::ite(is_zero, tmp_zero_return, div_ts);
     }
 
@@ -558,8 +556,11 @@ namespace equal_int {
     check_true_by_div_is_one(z3::context& ctx, fuzz::FreeVars& fvs, fuzz::int_expr e1, fuzz::int_expr e2)
     {
         fuzz::int_expr one = generators::one::placeholder(ctx, fvs, e1);
+        fuzz::int_expr zero = generators::zero::placeholder(ctx, fvs, e2);
         fuzz::int_expr div_ts = relations::division::placeholder(ctx, fvs, e1, e2);
-        return generators::equal_int::placeholder(ctx, fvs, one, div_ts);
+        fuzz::bool_expr e2_check_zero = z3::operator==(zero, e2);
+        fuzz::int_expr div_check = z3::ite(e2_check_zero, one, div_ts);
+        return generators::equal_int::placeholder(ctx, fvs, one, div_check);
     }
 
 } // namespace equal_int
