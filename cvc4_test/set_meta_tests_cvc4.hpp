@@ -142,9 +142,9 @@ namespace zero {
     fuzz::int_term
     zero_by_fuzz_sub(CVC4::api::Solver& slv, fuzz::FreeVars& fvs, fuzz::int_term t)
     {
-        fuzz::int_term iden_term = relations::identity::placeholder(slv, fvs, t);
         fuzz::int_term fuzz = generators::fuzz_int_term::placeholder(slv, fvs);
-        return relations::sub::placeholder(slv, fvs, fuzz, iden_term);
+        fuzz::int_term iden_fuzz = relations::identity::placeholder(slv, fvs, fuzz);
+        return relations::sub::placeholder(slv, fvs, fuzz, iden_fuzz);
     }
 
     fuzz::int_term

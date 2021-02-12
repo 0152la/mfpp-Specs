@@ -154,9 +154,9 @@ namespace zero {
     fuzz::int_expr
     zero_by_fuzz_sub(z3::context& ctx, fuzz::FreeVars& fvs, fuzz::int_expr t)
     {
-        fuzz::int_expr iden_expr = relations::identity::placeholder(ctx, fvs, t);
         fuzz::int_expr fuzz = generators::fuzz_int_expr::placeholder(ctx, fvs);
-        return relations::sub::placeholder(ctx, fvs, fuzz, iden_expr);
+        fuzz::int_expr iden_fuzz = relations::identity::placeholder(ctx, fvs, fuzz);
+        return relations::sub::placeholder(ctx, fvs, fuzz, iden_fuzz);
     }
 
     fuzz::int_expr
