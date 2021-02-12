@@ -12,3 +12,4 @@ params:
     tests: 5
     test-size: 4
     test-depth: 2
+    prune-depth: linear

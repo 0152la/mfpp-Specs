@@ -405,8 +405,8 @@ namespace iden_bool {
     iden_by_xor(CVC4::api::Solver& slv, fuzz::FreeVars& fvs, fuzz::bool_term t)
     {
         fuzz::bool_term iden_term = generators::iden_bool::placeholder(slv, fvs, t);
-        fuzz::bool_term not_t = generators::not_cvc4::placeholder(slv, fvs, iden_term);
-        return generators::xor_cvc4::placeholder(slv, fvs, t, not_t);
+        fuzz::bool_term xor_once = generators::xor_cvc4::placeholder(slv, fvs, iden_term, iden_term);
+        return generators::xor_cvc4::placeholder(slv, fvs, xor_once, iden_term);
     }
 
     //fuzz::bool_term
