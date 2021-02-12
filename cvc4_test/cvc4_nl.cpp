@@ -195,7 +195,7 @@ int
 main(int argc, char** argv)
 {
     CVC4::api::Solver slv;
-    slv.setLogic("QF_LIA");
+    slv.setLogic("QF_NIA");
 
     CVC4::api::Sort int_s = slv.getIntegerSort();
     fuzz::FreeVars fvs;
