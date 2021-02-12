@@ -2,7 +2,7 @@ namespace metalib {
 
 namespace checks {
 
-    bool
+    void
     check_set_equals(isl::set s1, isl::set s2)
     {
         assert(s1.is_equal(s2));

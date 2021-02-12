@@ -1,6 +1,7 @@
+#include <cassert>
+
 #ifdef EXECUTE
 #include "isl-noexceptions.h"
-#include <cassert>
 #else
 #include "isl-noexceptions-point.h"
 #include "isl_spec_defs.hpp"
@@ -58,9 +59,6 @@ main(int argc, char** argv)
     isl::space space(ctx, 0, fuzz::fuzz_rand<int, int>(SPACE_MIN, SPACE_MAX));
     isl::local_space local_space(space);
     fuzz::start();
-    isl::pw_aff dim0 = isl::pw_aff::var_on_domain(local_space, isl::dim::set, 0);
-    isl::pw_aff dim1 = isl::pw_aff::var_on_domain(local_space, isl::dim::set, 1);
-    isl::pw_aff dim2 = isl::pw_aff::var_on_domain(local_space, isl::dim::set, 2);
     fuzz::output_var = isl::set::empty(space);
     isl::point tmp_p = fuzz::fuzz_new<isl::point>();
     fuzz::output_var = fuzz::output_var.unite(isl::set(tmp_p));
@@ -73,4 +71,5 @@ main(int argc, char** argv)
     fuzz::end();
     assert(isl_ctx_last_error(ctx.get()) == isl_error_none);
     fuzz::meta_test();
+    assert(isl_ctx_last_error(ctx.get()) == isl_error_none);
 }

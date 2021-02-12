@@ -1,6 +1,7 @@
+#include <cassert>
+
 #ifdef EXECUTE
 #include "isl-noexceptions.h"
-#include <cassert>
 #else
 #include "isl-noexceptions-point.h"
 #include "isl_spec_defs.hpp"
@@ -80,4 +81,5 @@ main(int argc, char** argv)
     fuzz::end();
     assert(isl_ctx_last_error(ctx.get()) == isl_error_none);
     fuzz::meta_test();
+    assert(isl_ctx_last_error(ctx.get()) == isl_error_none);
 }
