@@ -401,8 +401,8 @@ namespace iden_bool {
     iden_by_xor(z3::context& ctx, fuzz::FreeVars& fvs, fuzz::bool_expr e)
     {
         fuzz::bool_expr iden_expr = generators::iden_bool::placeholder(ctx, fvs, e);
-        fuzz::bool_expr not_e = generators::not_z3::placeholder(ctx, fvs, iden_expr);
-        return generators::xor_z3::placeholder(ctx, fvs, e, not_e);
+        fuzz::bool_expr xor_once = generators::xor_z3::placeholder(ctx, fvs, iden_expr, iden_expr);
+        return generators::xor_z3::placeholder(ctx, fvs, xor_once, iden_expr);
     }
 
     fuzz::bool_expr

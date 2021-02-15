@@ -55,7 +55,7 @@ rem_wrapper(fuzz::int_expr const& e1, fuzz::int_expr const& e2)
 fuzz::int_expr
 pw_wrapper(fuzz::int_expr const& e1, fuzz::int_expr const& e2)
 {
-    return z3::ite(e1 != 0 && e2 != 0, z3::pw(e1, e2), e1);
+    return z3::ite(e1 != 0 && e2 != 0, e1.ctx().int_val(z3::pw(e1, e2)), e1);
 }
 
 /*******************************************************************************
