@@ -554,7 +554,7 @@ namespace equal_int {
     }
 
     fuzz::bool_term
-    check_true_by_sub_is_zero(CVC4::api::Solver& slv, fuzz::FreeVars& fvs, fuzz::int_term t1, fuzz::int_term t2)
+    check_equal_by_sub_is_zero(CVC4::api::Solver& slv, fuzz::FreeVars& fvs, fuzz::int_term t1, fuzz::int_term t2)
     {
         fuzz::int_term zero = generators::zero::placeholder(slv, fvs, t1);
         fuzz::int_term sub_ts = relations::sub::placeholder(slv, fvs, t1, t2);
@@ -562,14 +562,11 @@ namespace equal_int {
     }
 
     //fuzz::bool_term
-    //check_true_by_div_is_one(CVC4::api::Solver& slv, fuzz::FreeVars& fvs, fuzz::int_term t1, fuzz::int_term t2)
+    //check_equal_by_div_is_one(CVC4::api::Solver& slv, fuzz::FreeVars& fvs, fuzz::int_term t1, fuzz::int_term t2)
     //{
-        //fuzz::int_term one = generators::one::placeholder(slv, fvs, t1);
-        //fuzz::int_term zero = generators::zero::placeholder(slv, fvs, t2);
-        //fuzz::int_term div_ts = generators::division::placeholder(slv, fvs, t1, t2);
-        //fuzz::bool_term t2_check_zero = slv.mkTerm(CVC4::api::Kind::EQUAL, t2, zero);
-        //fuzz::int_term div_check = z3::ite(t2_check_zero, one, div_ts);
-        //return generators::equal_int::placeholder(ctx, fvs, one, div_check);
+        fuzz::int_term one = generators::one::placeholder(slv, fvs, t1);
+        fuzz::int_term div_ts = relations::division::placeholder(slv, fvs, t1, t2);
+        return generators::equal_int::placeholder(slv, fvs, one, div_ts);
     //}
 
 } // namespace equal_int
