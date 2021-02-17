@@ -564,9 +564,9 @@ namespace equal_int {
     //fuzz::bool_term
     //check_equal_by_div_is_one(CVC4::api::Solver& slv, fuzz::FreeVars& fvs, fuzz::int_term t1, fuzz::int_term t2)
     //{
-        fuzz::int_term one = generators::one::placeholder(slv, fvs, t1);
-        fuzz::int_term div_ts = relations::division::placeholder(slv, fvs, t1, t2);
-        return generators::equal_int::placeholder(slv, fvs, one, div_ts);
+        //fuzz::int_term one = generators::one::placeholder(slv, fvs, t1);
+        //fuzz::int_term div_ts = relations::division::placeholder(slv, fvs, t1, t2);
+        //return generators::equal_int::placeholder(slv, fvs, one, div_ts);
     //}
 
 } // namespace equal_int
