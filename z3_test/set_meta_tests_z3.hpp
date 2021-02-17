@@ -172,7 +172,7 @@ namespace zero {
     zero_by_div(z3::context& ctx, fuzz::FreeVars& fvs, fuzz::int_expr t)
     {
         fuzz::int_expr tmp_zero = generators::zero::placeholder(ctx, fvs, t);
-        fuzz::int_expr is_zero = z3::operator==(tmp_zero, t);
+        fuzz::bool_expr is_zero = z3::operator==(tmp_zero, t);
         fuzz::int_expr tmp_zero_return = generators::zero::placeholder(ctx, fvs, t);
         fuzz::int_expr div_ts = relations::division::placeholder(ctx, fvs, tmp_zero, t);
         return z3::ite(is_zero, tmp_zero_return, div_ts);
@@ -183,7 +183,7 @@ namespace zero {
     {
         fuzz::int_expr fuzz = generators::fuzz_int_expr::placeholder(ctx, fvs);
         fuzz::int_expr tmp_zero = generators::zero::placeholder(ctx, fvs, fuzz);
-        fuzz::int_expr is_zero = z3::operator==(tmp_zero, fuzz);
+        fuzz::bool_expr is_zero = z3::operator==(tmp_zero, fuzz);
         fuzz::int_expr tmp_zero_return = generators::zero::placeholder(ctx, fvs, fuzz);
         fuzz::int_expr div_ts = relations::division::placeholder(ctx, fvs, tmp_zero, fuzz);
         return z3::ite(is_zero, tmp_zero_return, div_ts);
