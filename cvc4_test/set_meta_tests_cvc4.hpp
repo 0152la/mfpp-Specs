@@ -160,7 +160,7 @@ namespace zero {
     zero_by_div(CVC4::api::Solver& slv, fuzz::FreeVars& fvs, fuzz::int_term t)
     {
         fuzz::int_term tmp_zero = generators::zero::placeholder(slv, fvs, t);
-        fuzz::int_term is_zero = tmp_zero.eqTerm(t);
+        fuzz::bool_term is_zero = tmp_zero.eqTerm(t);
         fuzz::int_term tmp_zero_return = generators::zero::placeholder(slv, fvs, t);
         fuzz::int_term div_ts = relations::division::placeholder(slv, fvs, tmp_zero, t);
         return is_zero.iteTerm(tmp_zero_return, div_ts);
@@ -171,7 +171,7 @@ namespace zero {
     {
         fuzz::int_term fuzz = generators::fuzz_int_term::placeholder(slv, fvs);
         fuzz::int_term tmp_zero = generators::zero::placeholder(slv, fvs, fuzz);
-        fuzz::int_term is_zero = tmp_zero.eqTerm(fuzz);
+        fuzz::bool_term is_zero = tmp_zero.eqTerm(fuzz);
         fuzz::int_term tmp_zero_return = generators::zero::placeholder(slv, fvs, fuzz);
         fuzz::int_term div_ts = relations::division::placeholder(slv, fvs, tmp_zero, fuzz);
         return is_zero.iteTerm(tmp_zero_return, div_ts);
@@ -192,7 +192,7 @@ namespace one {
     {
         fuzz::int_term iden_term = relations::identity::placeholder(slv, fvs, t);
         fuzz::int_term tmp_zero = generators::zero::placeholder(slv, fvs, t);
-        fuzz::int_term is_zero = generators::equal_int::placeholder(slv, fvs, tmp_zero, t);
+        fuzz::bool_term is_zero = generators::equal_int::placeholder(slv, fvs, tmp_zero, t);
         fuzz::int_term div_ts = relations::division::placeholder(slv, fvs, t, iden_term);
         return is_zero.iteTerm(generators::one::placeholder(slv, fvs, t), div_ts);
     }
@@ -203,7 +203,7 @@ namespace one {
         fuzz::int_term fuzz = generators::fuzz_int_term::placeholder(slv, fvs);
         fuzz::int_term iden_fuzz = relations::identity::placeholder(slv, fvs, fuzz);
         fuzz::int_term tmp_zero = generators::zero::placeholder(slv, fvs, fuzz);
-        fuzz::int_term is_zero = generators::equal_int::placeholder(slv, fvs, tmp_zero, fuzz);
+        fuzz::bool_term is_zero = generators::equal_int::placeholder(slv, fvs, tmp_zero, fuzz);
         fuzz::int_term div_ts = relations::division::placeholder(slv, fvs, fuzz, iden_fuzz);
         return is_zero.iteTerm(generators::one::placeholder(slv, fvs, fuzz), div_ts);
     }

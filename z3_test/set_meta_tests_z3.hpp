@@ -204,7 +204,7 @@ namespace one {
     {
         fuzz::int_expr iden_expr = relations::identity::placeholder(ctx, fvs, t);
         fuzz::int_expr tmp_zero = generators::zero::placeholder(ctx, fvs, t);
-        fuzz::int_expr is_zero = generators::equal_int::placeholder(ctx, fvs, tmp_zero, t);
+        fuzz::bool_expr is_zero = generators::equal_int::placeholder(ctx, fvs, tmp_zero, t);
         fuzz::int_expr div_ts = relations::division::placeholder(ctx, fvs, t, iden_expr);
         return z3::ite(is_zero, generators::one::placeholder(ctx, fvs, t), div_ts);
     }
@@ -215,7 +215,7 @@ namespace one {
         fuzz::int_expr fuzz = generators::fuzz_int_expr::placeholder(ctx, fvs);
         fuzz::int_expr iden_fuzz = relations::identity::placeholder(ctx, fvs, fuzz);
         fuzz::int_expr tmp_zero = generators::zero::placeholder(ctx, fvs, fuzz);
-        fuzz::int_expr is_zero = generators::equal_int::placeholder(ctx, fvs, tmp_zero, fuzz);
+        fuzz::bool_expr is_zero = generators::equal_int::placeholder(ctx, fvs, tmp_zero, fuzz);
         fuzz::int_expr div_ts = relations::division::placeholder(ctx, fvs, fuzz, iden_fuzz);
         return z3::ite(is_zero, generators::one::placeholder(ctx, fvs, fuzz), div_ts);
     }
