@@ -565,8 +565,13 @@ namespace equal_int {
     //check_equal_by_div_is_one(CVC4::api::Solver& slv, fuzz::FreeVars& fvs, fuzz::int_term t1, fuzz::int_term t2)
     //{
         //fuzz::int_term one = generators::one::placeholder(slv, fvs, t1);
+        //fuzz::int_expr zero = generators::zero::placeholder(ctx, fvs, e2);
         //fuzz::int_term div_ts = relations::division::placeholder(slv, fvs, t1, t2);
-        //return generators::equal_int::placeholder(slv, fvs, one, div_ts);
+        //fuzz::bool_expr check_zeroes = slv.mkTerm(CVC4::api::Kind::AND,
+            //slv.mkTerm(CVC4::api::Kind::EQUAL, zero, e1),
+            //slv.mkTerm(CVC4::api::Kind::EQUAL, zero, e2));
+        //fuzz::bool_expr check_equal = generators::equal_int::placeholder(slv, fvs, one, div_ts);
+        //return slv.mkTerm(CVC4::api::Kind::OR, check_zeroes, check_equal);
     //}
 
 } // namespace equal_int

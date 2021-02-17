@@ -558,7 +558,9 @@ namespace equal_int {
         fuzz::int_expr one = generators::one::placeholder(ctx, fvs, e1);
         fuzz::int_expr zero = generators::zero::placeholder(ctx, fvs, e2);
         fuzz::int_expr div_ts = relations::division::placeholder(ctx, fvs, e1, e2);
-        return generators::equal_int::placeholder(ctx, fvs, one, div_ts);
+        fuzz::bool_expr check_zeroes = z3::operator&&(z3::operator==(zero, e1), z3::operator==(zero, e2));
+        fuzz::bool_expr check_equal = generators::equal_int::placeholder(ctx, fvs, one, div_ts);
+        return z3::operator||(check_zeroes, check_equal);
     }
 
 } // namespace equal_int
