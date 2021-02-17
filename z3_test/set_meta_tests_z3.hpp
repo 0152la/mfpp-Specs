@@ -30,7 +30,6 @@ namespace checks {
         z3::model mdl_1(c);
         if (result_1 == z3::sat)
         {
-            assert(false);
             mdl_1 = solver.get_model();
             for (fuzz::int_expr e : fvs.vars)
             {
