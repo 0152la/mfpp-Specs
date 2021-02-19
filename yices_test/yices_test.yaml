@@ -1,0 +1,15 @@
+---
+working_dir: /home/sentenced/Documents/Internships/2018_ETH/work/spec_ast
+template_file: ./input/spec_repo/yices_test/yices.cpp
+output_folder: ./output/yices_t
+output_file_name: t_yices.cpp
+compile_script: ./scripts/compile.sh
+cmake_script_dir: ./input/spec_repo/yices_test/runtime/
+spec_repo_dir: ./input/spec_repo/
+lib_repo_dir: /home/sentenced/Documents/Internships/2018_ETH/work/other_libs/yices2
+params:
+    inputs: 2
+    tests: 5
+    test-size: 4
+    test-depth: 5
+    prune-depth: logarithm
