@@ -187,10 +187,9 @@ namespace zero {
     fuzz::int_term
     zero_by_mod_one(CVC4::api::Solver& slv, fuzz::FreeVars& fvs, fuzz::int_term t)
     {
-        fuzz::int_term iden_term = relations::identity::placeholder(slv, fvs, t);
-        fuzz::int_term tmp_zero = generators::zero::placeholder(slv, fvs, t);
-        fuzz::int_term mod_ts = relations::modulo::placeholder(slv, fvs, t, iden_term);
-        return t.eqTerm(tmp_zero).iteTerm(tmp_zero, mod_ts);
+        t = relations::identity::placeholder(slv, fvs, t);
+        fuzz::int_term one = generators::one::placeholder(slv, fvs, t);
+        return generators::modulo::placeholder(slv, fvs, t, one);
     }
 
     fuzz::int_term
