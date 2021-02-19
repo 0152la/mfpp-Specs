@@ -1,6 +1,7 @@
 #define FV_COUNT 100
 
 
+
 #ifdef EXECUTE
 #include "cvc4/api/cvc4cpp.h"
 #include <cassert>
@@ -196,6 +197,7 @@ main(int argc, char** argv)
 {
     CVC4::api::Solver slv;
     slv.setLogic("QF_NIA");
+    slv.setOption("produce-models", "true");
 
     CVC4::api::Sort int_s = slv.getIntegerSort();
     fuzz::FreeVars fvs;

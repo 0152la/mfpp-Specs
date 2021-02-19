@@ -13,6 +13,43 @@ namespace checks {
         std::cout << "END CHECK" << std::endl;
     }
 
+    void
+    check_exprs_are_zero(CVC4::api::Solver& slv, fuzz::FreeVars& fvs, fuzz::int_term t1, fuzz::int_term t2)
+    {
+        fuzz::int_term zero = slv.mkInteger(0);
+        fuzz::int_term check_zero_t1 = slv.mkTerm(CVC4::api::Kind::EQUAL, t1, zero);
+        fuzz::int_term check_zero_t2 = slv.mkTerm(CVC4::api::Kind::EQUAL, t2, zero);
+        slv.push();
+        slv.assertFormula(check_zero_t1);
+        if (slv.checkSat().isSat())
+        {
+            assert(!slv.getValue(check_zero_t2).toString().compare("true"));
+        }
+        else
+        {
+            slv.pop();
+            slv.push();
+            slv.assertFormula(check_zero_t2);
+            assert(!slv.checkSat().isSat());
+        }
+        slv.pop();
+        slv.push();
+        slv.assertFormula(check_zero_t2);
+        if (slv.checkSat().isSat())
+        {
+            assert(!slv.getValue(check_zero_t1).toString().compare("true"));
+        }
+        else
+        {
+            slv.pop();
+            slv.push();
+            slv.assertFormula(check_zero_t1);
+            assert(!slv.checkSat().isSat());
+        }
+        slv.pop();
+        slv.resetAssertions();
+    }
+
 } // namespace checks
 
 // Forward declarations
@@ -150,8 +187,10 @@ namespace zero {
     fuzz::int_term
     zero_by_mod_one(CVC4::api::Solver& slv, fuzz::FreeVars& fvs, fuzz::int_term t)
     {
-        fuzz::int_term one = generators::one::placeholder(slv, fvs, t);
-        return generators::modulo::placeholder(slv, fvs, t, one);
+        fuzz::int_term iden_term = relations::identity::placeholder(slv, fvs, t);
+        fuzz::int_term tmp_zero = generators::zero::placeholder(slv, fvs, t);
+        fuzz::int_term mod_ts = relations::modulo::placeholder(slv, fvs, t, iden_term);
+        return t.eqTerm(tmp_zero).iteTerm(tmp_zero, mod_ts);
     }
 
     fuzz::int_term
