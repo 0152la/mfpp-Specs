@@ -616,9 +616,10 @@ namespace equal_int {
         fuzz::int_expr one = generators::one::placeholder(ctx, fvs, e1);
         fuzz::int_expr zero = generators::zero::placeholder(ctx, fvs, e2);
         fuzz::int_expr div_ts = relations::division::placeholder(ctx, fvs, e1, e2);
-        fuzz::bool_expr check_zeroes = z3::operator&&(z3::operator==(zero, e1), z3::operator==(zero, e2));
+        fuzz::bool_expr check_zero_e1 = generators::equal_int::placeholder(ctx, fvs, zero, e1);
+        fuzz::bool_expr check_zero_e2 = generators::equal_int::placeholder(ctx, fvs, zero, e2);
         fuzz::bool_expr check_equal = generators::equal_int::placeholder(ctx, fvs, one, div_ts);
-        return z3::operator||(check_zeroes, check_equal);
+        return z3::ite(check_zero_e2, check_zero_e1, check_equal);
     }
 
 } // namespace equal_int
