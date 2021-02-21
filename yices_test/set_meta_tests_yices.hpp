@@ -361,7 +361,7 @@ namespace false_yices {
     get_false_by_equal(context_t* ctx, fuzz::FreeVars& fvs, bool_term t)
     {
         bool_term iden_term = generators::iden_bool::placeholder(ctx, fvs, t);
-        return yices_bvneq_atom(t, iden_term);
+        return yices_neq(t, iden_term);
     }
 
     bool_term
