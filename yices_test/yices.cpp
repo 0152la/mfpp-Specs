@@ -27,7 +27,7 @@ main(int argc, char** argv)
 
     ctx_config_t* config = yices_new_config();
     yices_default_config_for_logic(config, "QF_BV");
-    yices_set_config(config, "mode", "one-shot");
+    yices_set_config(config, "mode", "push-pop");
     context_t* ctx = yices_new_context(config);
 
     fuzz::FreeVars fvs;
