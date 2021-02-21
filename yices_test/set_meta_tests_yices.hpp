@@ -88,6 +88,9 @@ namespace identity {
 namespace neg {
     bv_term placeholder(context_t*, fuzz::FreeVars&, bv_term);
 }
+namespace bvnot {
+    bv_term placeholder(context_t*, fuzz::FreeVars&, bv_term);
+}
 namespace sub {
     bv_term placeholder(context_t*, fuzz::FreeVars&, bv_term, bv_term);
 }
@@ -847,7 +850,9 @@ namespace identity {
     bv_term
     double_not(context_t* ctx, fuzz::FreeVars& fvs, bv_term t)
     {
-        return yices_bvnot(yices_bvnot(relations::identity::placeholder(ctx, fvs, t)));
+        t = relations::identity::placeholder(ctx, fvs, t);
+        t = relations::bvnot::placeholder(ctx, fvs, t);
+        return relations::bvnot::placeholder(ctx, fvs, t);
     }
 
     bv_term
@@ -958,21 +963,31 @@ namespace neg {
     }
 
     bv_term
-    neg_by_xor_mask(context_t* ctx, fuzz::FreeVars& fvs, bv_term t)
-    {
-        bv_term mask = yices_bvconst_minus_one(BV_SIZE);
-        return yices_bvxor2(mask, t);
-    }
-
-    bv_term
     neg_by_flip_plus_one(context_t* ctx, fuzz::FreeVars& fvs, bv_term t)
     {
-        bv_term flip_term = yices_bvnot(t);
+        bv_term flip_term = relations::bvnot::placeholder(ctx, fvs, t);
         bv_term one = generators::one::placeholder(ctx, fvs, t);
         return relations::add::placeholder(ctx, fvs, one, flip_term);
     }
 
 }
+
+namespace bvnot {
+
+    bv_term
+    base_neg(context_t* ctx, fuzz::FreeVars& fvs, bv_term t)
+    {
+        return yices_bvnot(t);
+    }
+
+    bv_term
+    not_by_xor_mask(context_t* ctx, fuzz::FreeVars& fvs, bv_term t)
+    {
+        bv_term mask = yices_bvconst_minus_one(BV_SIZE);
+        return yices_bvxor2(mask, t);
+    }
+
+} //namespace bvnot
 
 namespace add {
 
@@ -1185,14 +1200,16 @@ namespace bvand
     bv_term
     nnand(context_t* ctx, fuzz::FreeVars& fvs, bv_term t1, bv_term t2)
     {
-        return yices_bvnot(yices_bvnand(t1, t2));
+        bv_term nand = yices_bvnand(t1, t2);
+        return relations::bvnot::placeholder(ctx, fvs, nand);
     }
 
 
     bv_term
     demorgan_and(context_t* ctx, fuzz::FreeVars& fvs, bv_term t1, bv_term t2)
     {
-        return yices_bvnot(relations::bvor::placeholder(ctx, fvs, yices_bvnot(t1), yices_bvnot(t2)));
+        bv_term bvor = relations::bvor::placeholder(ctx, fvs, yices_bvnot(t1), yices_bvnot(t2)));
+        return relations::bvnot::placeholder(ctx, fvs, bvor);
     }
 
 } // namespace bvand
@@ -1214,13 +1231,15 @@ namespace bvor
     bv_term
     nnor(context_t* ctx, fuzz::FreeVars& fvs, bv_term t1, bv_term t2)
     {
-        return yices_bvnot(yices_bvnor(t1, t2));
+        bv_term nor = yices_bvnor(t1, t2);
+        return relations::bvnot::placeholder(ctx, fvs, nor);
     }
 
     bv_term
     demorgan_or(context_t* ctx, fuzz::FreeVars& fvs, bv_term t1, bv_term t2)
     {
-        return yices_bvnot(relations::bvand::placeholder(ctx, fvs, yices_bvnot(t1), yices_bvnot(t2)));
+        bv_term bvand = relations::bvand::placeholder(ctx, fvs, yices_bvnot(t1), yices_bvnot(t2));
+        return relations::bvnot::placeholder(ctx, fvs, bvand);
     }
 
 } // namespace bvor
