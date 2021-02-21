@@ -1137,6 +1137,14 @@ namespace modulo
 // TODO does most negative number affect this?
 namespace bvabs
 {
+    bv_term
+    abs_by_compare_zero_base(context_t* ctx, fuzz::FreeVars& fvs, bv_term t)
+    {
+        bv_term zero = yices_bvconst_zero(BV_SIZE);
+        bool_term cmp_zero = yices_bvslt_atom(t, zero);
+        bv_term neg_t = yices_bvneg(t);
+        return yices_ite(cmp_zero, neg_t, t);
+    }
 
     bv_term
     abs_by_compare_zero(context_t* ctx, fuzz::FreeVars& fvs, bv_term t)
