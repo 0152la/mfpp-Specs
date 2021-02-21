@@ -957,6 +957,21 @@ namespace neg {
         return relations::mul::placeholder(ctx, fvs, neg_one, t);
     }
 
+    bv_term
+    neg_by_xor_mask(context_t* ctx, fuzz::FreeVars& fvs, bv_term t)
+    {
+        bv_term mask = yices_bvconst_minus_one(BV_SIZE);
+        return yices_bvxor2(mask, t);
+    }
+
+    bv_term
+    neg_by_flip_plus_one(context_t* ctx, fuzz::FreeVars& fvs, bv_term t)
+    {
+        bv_term flip_term = yices_bvnot(t);
+        bv_term one = generators::one::placeholder(ctx, fvs, t);
+        return relations::add::placeholder(ctx, fvs, one, flip_term);
+    }
+
 }
 
 namespace add {
@@ -1122,21 +1137,6 @@ namespace modulo
 // TODO does most negative number affect this?
 namespace bvabs
 {
-
-    bv_term
-    abs_by_flip_mask_base(context_t* ctx, fuzz::FreeVars& fvs, bv_term t)
-    {
-        bv_term mask = yices_bvconst_minus_one(BV_SIZE);
-        return yices_bvxor2(mask, t);
-    }
-
-    bv_term
-    abs_by_flip_plus_one(context_t* ctx, fuzz::FreeVars& fvs, bv_term t)
-    {
-        bv_term flip_term = yices_bvnot(t);
-        bv_term one = generators::one::placeholder(ctx, fvs, t);
-        return relations::add::placeholder(ctx, fvs, one, flip_term);
-    }
 
     bv_term
     abs_by_compare_zero(context_t* ctx, fuzz::FreeVars& fvs, bv_term t)
