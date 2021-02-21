@@ -37,8 +37,8 @@ ctor_expr(int n)
 bool_term
 ctor_bool()
 {
-    size_t r = fuzz::fuzz_rand<int>(1, 2);
-    return r % 2 ? yices_true() : yices_false();
+    size_t rand_bool = fuzz::fuzz_rand<int>(1, 2);
+    return rand_bool % 2 ? yices_true() : yices_false();
 }
 
 /*******************************************************************************
