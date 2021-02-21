@@ -224,7 +224,9 @@ namespace zero {
     {
         bv_term iden_term = relations::identity::placeholder(ctx, fvs, t);
         bv_term zero = generators::zero::placeholder(ctx, fvs, t);
-        return relations::division::placeholder(ctx, fvs, zero, iden_term);
+        bool_term zero_check = generators::equal_bv::placeholder(ctx, fvs, t, zero);
+        bv_term div_ts = relations::division::placeholder(ctx, fvs, zero, iden_term);
+        return yices_ite(zero_check, zero, div_ts);
     }
 
     bv_term
@@ -232,7 +234,9 @@ namespace zero {
     {
         bv_term iden_term = relations::identity::placeholder(ctx, fvs, t);
         bv_term zero = generators::zero::placeholder(ctx, fvs, t);
-        return relations::sdivision::placeholder(ctx, fvs, zero, iden_term);
+        bool_term zero_check = generators::equal_bv::placeholder(ctx, fvs, t, zero);
+        bv_term sdiv_ts = relations::sdivision::placeholder(ctx, fvs, zero, iden_term);
+        return yices_ite(zero_check, zero, sdiv_ts);
     }
 
     bv_term
@@ -276,16 +280,24 @@ namespace one {
     bv_term
     get_one_by_div(context_t* ctx, fuzz::FreeVars& fvs, bv_term t)
     {
+        bv_term zero = generators::zero::placeholder(ctx, fvs, t);
+        bv_term one = generators::one::placeholder(ctx, fvs, t);
+        bool_term zero_check = generators::equal_bv::placeholder(ctx, fvs, t, zero);
         bv_term iden_term = relations::identity::placeholder(ctx, fvs, t);
-        return relations::division::placeholder(ctx, fvs, t, iden_term);
+        bv_term div_ts = relations::division::placeholder(ctx, fvs, t, iden_term);
+        return yices_ite(zero_check, one, div_ts);
     }
 
     bv_term
     get_one_by_fuzz_div(context_t* ctx, fuzz::FreeVars& fvs, bv_term t)
     {
+        bv_term zero = generators::zero::placeholder(ctx, fvs, t);
+        bv_term one = generators::one::placeholder(ctx, fvs, t);
         bv_term fuzz = generators::fuzz_bv_term::placeholder(ctx, fvs);
-        bv_term fuzz_iden = relations::identity::placeholder(ctx, fvs, t);
-        return relations::division::placeholder(ctx, fvs, fuzz, fuzz_iden);
+        bv_term fuzz_iden = relations::identity::placeholder(ctx, fvs, fuzz);
+        bool_term zero_check = generators::equal_bv::placeholder(ctx, fvs, fuzz, zero);
+        bv_term div_fs = relations::division::placeholder(ctx, fvs, fuzz, fuzz_iden);
+        return yices_ite(zero_check, one, div_fs);
     }
 
     bv_term
@@ -1208,7 +1220,7 @@ namespace bvand
     bv_term
     demorgan_and(context_t* ctx, fuzz::FreeVars& fvs, bv_term t1, bv_term t2)
     {
-        bv_term bvor = relations::bvor::placeholder(ctx, fvs, yices_bvnot(t1), yices_bvnot(t2)));
+        bv_term bvor = relations::bvor::placeholder(ctx, fvs, yices_bvnot(t1), yices_bvnot(t2));
         return relations::bvnot::placeholder(ctx, fvs, bvor);
     }
 
