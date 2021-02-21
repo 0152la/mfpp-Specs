@@ -1232,10 +1232,8 @@ namespace bvabs
     abs_by_bitextract(context_t* ctx, fuzz::FreeVars& fvs, bv_term t)
     {
         bv_term lead = yices_bitextract(t, BV_SIZE - 1);
-        bv_term one = generators::one::placeholder(ctx, fvs, t);
-        bool_term cmp_one = generators::equal_bv::placeholder(ctx, fvs, t, one);
         bv_term neg_t = relations::neg::placeholder(ctx, fvs, t);
-        return yices_ite(cmp_one, neg_t, t);
+        return yices_ite(lead, neg_t, t);
     }
 
 }
