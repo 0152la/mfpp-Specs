@@ -640,7 +640,7 @@ namespace gt {
     }
 
     fuzz::bool_term
-    not_geq_base(CVC4::api::Solver& slv, fuzz::FreeVars& fvs, fuzz::int_term t1, fuzz::int_term t2)
+    not_leq_base(CVC4::api::Solver& slv, fuzz::FreeVars& fvs, fuzz::int_term t1, fuzz::int_term t2)
     {
         fuzz::bool_term leq_term = generators::leq::placeholder(slv, fvs, t1, t2);
         return generators::not_cvc4::placeholder(slv, fvs, leq_term);
@@ -657,7 +657,7 @@ namespace leq {
     }
 
     fuzz::bool_term
-    not_geq_base(CVC4::api::Solver& slv, fuzz::FreeVars& fvs, fuzz::int_term t1, fuzz::int_term t2)
+    not_gt_base(CVC4::api::Solver& slv, fuzz::FreeVars& fvs, fuzz::int_term t1, fuzz::int_term t2)
     {
         fuzz::bool_term gt_term = generators::gt::placeholder(slv, fvs, t1, t2);
         return generators::not_cvc4::placeholder(slv, fvs, gt_term);
@@ -674,7 +674,7 @@ namespace geq {
     }
 
     fuzz::bool_term
-    not_geq_base(CVC4::api::Solver& slv, fuzz::FreeVars& fvs, fuzz::int_term t1, fuzz::int_term t2)
+    not_lt_base(CVC4::api::Solver& slv, fuzz::FreeVars& fvs, fuzz::int_term t1, fuzz::int_term t2)
     {
         fuzz::bool_term lt_term = generators::lt::placeholder(slv, fvs, t1, t2);
         return generators::not_cvc4::placeholder(slv, fvs, lt_term);
