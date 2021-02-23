@@ -22,14 +22,15 @@ namespace checks {
         bool_term check_zero_t2 = yices_bveq_atom(zero, t2);
         yices_push(ctx);
         yices_assert_formula(ctx, check_zero_t1);
-        if (yices_check_context(ctx, NULL) == STATUS_SAT)
+        smt_status_t stat_1 = yices_check_context(ctx, NULL);
+        if (stat_1 == STATUS_SAT)
         {
             model_t* mdl = yices_get_model(ctx, true);
             bool_term val;
             assert(yices_get_bool_value(mdl, check_zero_t2, &val) == 0);
             assert(val);
         }
-        else
+        else if (stat_1 == STATUS_UNSAT)
         {
             yices_pop(ctx);
             yices_push(ctx);
@@ -40,14 +41,15 @@ namespace checks {
         assert(!yices_error_code());
         yices_push(ctx);
         yices_assert_formula(ctx, check_zero_t2);
-        if (yices_check_context(ctx, NULL) == STATUS_SAT)
+        smt_status_t stat_2 = yices_check_context(ctx, NULL);
+        if (stat_2 == STATUS_SAT)
         {
             model_t* mdl = yices_get_model(ctx, true);
             bool_term val;
             assert(yices_get_bool_value(mdl, check_zero_t1, &val) == 0);
             assert(val);
         }
-        else
+        else if (stat_2 == STATUS_UNSAT)
         {
             yices_pop(ctx);
             yices_push(ctx);

@@ -21,11 +21,12 @@ namespace checks {
         fuzz::int_term check_zero_t2 = slv.mkTerm(CVC4::api::Kind::EQUAL, t2, zero);
         slv.push();
         slv.assertFormula(check_zero_t1);
-        if (slv.checkSat().isSat())
+        CVC4::api::Result r_1 = slv.checkSat();
+        if (r_1.isSat())
         {
             assert(!slv.getValue(check_zero_t2).toString().compare("true"));
         }
-        else
+        else if (r_1.isUnsat())
         {
             slv.pop();
             slv.push();
@@ -35,11 +36,12 @@ namespace checks {
         slv.pop();
         slv.push();
         slv.assertFormula(check_zero_t2);
-        if (slv.checkSat().isSat())
+        CVC4::api::Result r_2 = slv.checkSat();
+        if (r_2.isSat())
         {
             assert(!slv.getValue(check_zero_t1).toString().compare("true"));
         }
-        else
+        else if (r_2.isUnsat())
         {
             slv.pop();
             slv.push();
