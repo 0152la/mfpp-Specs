@@ -1174,12 +1174,12 @@ namespace smodulo
         return yices_bvsrem(t1, t2);
     }
 
-    bv_term
-    base_smod(context_t* ctx, fuzz::FreeVars& fvs, bv_term t1, bv_term t2)
-    {
-        t2 = relations::bvabs::placeholder(ctx, fvs, t2);
-        return yices_bvsmod(t1, t2);
-    }
+    //bv_term
+    //base_smod(context_t* ctx, fuzz::FreeVars& fvs, bv_term t1, bv_term t2)
+    //{
+        //t2 = relations::bvabs::placeholder(ctx, fvs, t2);
+        //return yices_bvsmod(t1, t2);
+    //}
 
     bv_term
     smod_by_sub(context_t* ctx, fuzz::FreeVars& fvs, bv_term t1, bv_term t2)
