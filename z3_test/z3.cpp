@@ -8,11 +8,20 @@ static size_t check_count = 0;
 #ifdef EXECUTE
 #include <cassert>
 namespace fuzz {
-    typedef z3::expr bool_expr;
-    typedef z3::expr int_expr;
+    typedef z3::expr bool_term;
+    typedef z3::expr int_term;
     class FreeVars {
       public:
-        std::vector<fuzz::int_expr> vars;
+        std::vector<fuzz::int_term> vars;
+    };
+    class fuzz_context
+    {
+        public:
+            z3::context& ctx;
+            fuzz::FreeVars& fvs;
+
+            fuzz_context(z3::context& _ctx, fuzz::FreeVars& _fvs) :
+                ctx(_ctx), fvs(_fvs) {} ;
     };
 }
 #else
@@ -27,12 +36,14 @@ main(int argc, char** argv)
     for (size_t i = 0; i < FV_COUNT; ++i)
     {
         std::string new_var_name = "x" + std::to_string(i);
-        fuzz::int_expr new_expr = ctx.int_const(new_var_name.c_str());
+        fuzz::int_term new_expr = ctx.int_const(new_var_name.c_str());
         fvs.vars.push_back(new_expr);
     }
 
+    fuzz::fuzz_context fctx(ctx, fvs);
+
     fuzz::start();
-    fuzz::output_var = fuzz::fuzz_new<fuzz::int_expr>();
+    fuzz::output_var = fuzz::fuzz_new<fuzz::int_term>();
     fuzz::end();
     assert(ctx.check_error() == Z3_OK);
     fuzz::meta_test();

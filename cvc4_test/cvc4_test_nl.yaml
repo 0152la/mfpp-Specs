@@ -9,7 +9,7 @@ spec_repo_dir: ./input/spec_repo/
 lib_repo_dir: /home/sentenced/Documents/Internships/2018_ETH/work/other_libs/CVC4
 params:
     inputs: 2
-    tests: 5
-    test-size: 4
-    test-depth: 2
-    prune-depth: linear
+    tests: 2
+    test-size: 5
+    test-depth: 3
+    prune-depth: noprune

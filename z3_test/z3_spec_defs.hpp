@@ -5,59 +5,64 @@
 
 namespace fuzz
 {
-    typedef z3::expr bool_expr;
-    typedef z3::expr int_expr;
+    typedef z3::expr bool_term;
+    typedef z3::expr int_term;
 
     class FreeVars {
       public:
-        std::vector<int_expr> vars;
+        std::vector<int_term> vars;
     };
 
     static z3::context ctx;
-    static fuzz::int_expr output_var(ctx);
+    static fuzz::int_term output_var(ctx);
+} // namespace fuzz
 
+#include "meta_spec_z3.hpp"
+#include "smt_spec.hpp"
+
+namespace fuzz {
 namespace lib_helper_funcs {
 
 /*******************************************************************************
  * CONSTRUCTORS
  ******************************************************************************/
 
-fuzz::int_expr
-ctor_expr(int n, z3::context& ctx)
+fuzz::int_term
+ctor_expr(int n, fuzz::fuzz_context& ctx)
 {
-    return ctx.int_val(n);
+    return ctx.ctx.int_val(n);
 }
 
-fuzz::int_expr
-ctor_yield_free_var(fuzz::FreeVars& fvs)
+fuzz::int_term
+ctor_yield_free_var(fuzz::fuzz_context& ctx)
 {
-    return fvs.vars.at(fuzz::fuzz_rand<int, int>(0, FV_COUNT - 1));
+    return ctx.fvs.vars.at(fuzz::fuzz_rand<int, int>(0, FV_COUNT - 1));
 }
 
 /*******************************************************************************
  * LIBRARY OPERATIONS WRAPPERS
  ******************************************************************************/
 
-fuzz::int_expr
-div_wrapper(fuzz::int_expr const& e1, fuzz::int_expr const& e2)
+fuzz::int_term
+div_wrapper(fuzz::int_term const& e1, fuzz::int_term const& e2)
 {
     return z3::ite(e2 != 0, e1 / e2, e1);
 }
 
-fuzz::int_expr
-mod_wrapper(fuzz::int_expr const& e1, fuzz::int_expr const& e2)
+fuzz::int_term
+mod_wrapper(fuzz::int_term const& e1, fuzz::int_term const& e2)
 {
     return z3::ite(e2 != 0, z3::mod(e1, e2), e1);
 }
 
-fuzz::int_expr
-rem_wrapper(fuzz::int_expr const& e1, fuzz::int_expr const& e2)
+fuzz::int_term
+rem_wrapper(fuzz::int_term const& e1, fuzz::int_term const& e2)
 {
     return z3::ite(e2 != 0, z3::rem(e1, e2), e1);
 }
 
-fuzz::int_expr
-pw_wrapper(fuzz::int_expr const& e1, fuzz::int_expr const& e2)
+fuzz::int_term
+pw_wrapper(fuzz::int_term const& e1, fuzz::int_term const& e2)
 {
     return z3::ite(e1 != 0 && e2 != 0, e1.ctx().int_val(z3::pw(e1, e2)), e1);
 }
@@ -66,8 +71,8 @@ pw_wrapper(fuzz::int_expr const& e1, fuzz::int_expr const& e2)
  * int_term API WRAPPERS
  ******************************************************************************/
 
-fuzz::int_expr
-make_ite_int_expr(fuzz::bool_expr cond, fuzz::int_expr if_b, fuzz::int_expr then_b)
+fuzz::int_term
+make_ite_int_term(fuzz::bool_term cond, fuzz::int_term if_b, fuzz::int_term then_b)
 {
     return z3::ite(cond, if_b, then_b);
 }
@@ -76,93 +81,93 @@ make_ite_int_expr(fuzz::bool_expr cond, fuzz::int_expr if_b, fuzz::int_expr then
  * bool_term API WRAPPERS
  ******************************************************************************/
 
-fuzz::bool_expr
-make_bool_const(z3::context& ctx)
+fuzz::bool_term
+make_bool_const(fuzz::fuzz_context& ctx)
 {
-    return ctx.bool_val(fuzz::fuzz_rand<int, int>(1, 2) % 2);
+    return ctx.ctx.bool_val(fuzz::fuzz_rand<int, int>(1, 2) % 2);
 }
 
-fuzz::bool_expr
-not_wrapper(fuzz::bool_expr e)
+fuzz::bool_term
+not_wrapper(fuzz::bool_term e)
 {
     return z3::operator!(e);
 }
 
-fuzz::bool_expr
-and_wrapper(fuzz::bool_expr e1, fuzz::bool_expr e2)
+fuzz::bool_term
+and_wrapper(fuzz::bool_term e1, fuzz::bool_term e2)
 {
     return z3::operator&&(e1, e2);
 }
 
-fuzz::bool_expr
-nand_wrapper(fuzz::bool_expr e1, fuzz::bool_expr e2)
+fuzz::bool_term
+nand_wrapper(fuzz::bool_term e1, fuzz::bool_term e2)
 {
     return z3::nand(e1, e2);
 }
 
-fuzz::bool_expr
-or_wrapper(fuzz::bool_expr e1, fuzz::bool_expr e2)
+fuzz::bool_term
+or_wrapper(fuzz::bool_term e1, fuzz::bool_term e2)
 {
     return z3::operator||(e1, e2);
 }
 
-fuzz::bool_expr
-nor_wrapper(fuzz::bool_expr e1, fuzz::bool_expr e2)
+fuzz::bool_term
+nor_wrapper(fuzz::bool_term e1, fuzz::bool_term e2)
 {
     return z3::nor(e1, e2);
 }
 
-fuzz::bool_expr
-xor_wrapper(fuzz::bool_expr e1, fuzz::bool_expr e2)
+fuzz::bool_term
+xor_wrapper(fuzz::bool_term e1, fuzz::bool_term e2)
 {
     return z3::operator^(e1, e2);
 }
 
-fuzz::bool_expr
-implies_wrapper(fuzz::bool_expr e1, fuzz::bool_expr e2)
+fuzz::bool_term
+implies_wrapper(fuzz::bool_term e1, fuzz::bool_term e2)
 {
     return z3::implies(e1, e2);
 }
 
-fuzz::bool_expr
-lt_wrapper(fuzz::int_expr const& e1, fuzz::int_expr const& e2)
+fuzz::bool_term
+lt_wrapper(fuzz::int_term const& e1, fuzz::int_term const& e2)
 {
     return z3::operator<(e1, e2);
 }
 
-fuzz::bool_expr
-gt_wrapper(fuzz::int_expr const& e1, fuzz::int_expr const& e2)
+fuzz::bool_term
+gt_wrapper(fuzz::int_term const& e1, fuzz::int_term const& e2)
 {
     return z3::operator>(e1, e2);
 }
 
-fuzz::bool_expr
-lte_wrapper(fuzz::int_expr const& e1, fuzz::int_expr const& e2)
+fuzz::bool_term
+lte_wrapper(fuzz::int_term const& e1, fuzz::int_term const& e2)
 {
     return z3::operator<=(e1, e2);
 }
 
-fuzz::bool_expr
-gte_wrapper(fuzz::int_expr const& e1, fuzz::int_expr const& e2)
+fuzz::bool_term
+gte_wrapper(fuzz::int_term const& e1, fuzz::int_term const& e2)
 {
     return z3::operator>=(e1, e2);
 }
 
-fuzz::bool_expr
-eq_wrapper(fuzz::int_expr const& e1, fuzz::int_expr const& e2)
+fuzz::bool_term
+eq_wrapper(fuzz::int_term const& e1, fuzz::int_term const& e2)
 {
     return z3::operator==(e1, e2);
 }
 
-fuzz::bool_expr
-neq_wrapper(fuzz::int_expr const& e1, fuzz::int_expr const& e2)
+fuzz::bool_term
+neq_wrapper(fuzz::int_term const& e1, fuzz::int_term const& e2)
 {
     return z3::operator!=(e1, e2);
 }
 
-fuzz::bool_expr
-make_ite_bool_expr(fuzz::bool_expr cond, fuzz::bool_expr const& then_e,
-    fuzz::bool_expr const& else_e)
+fuzz::bool_term
+make_ite_bool_term(fuzz::bool_term cond, fuzz::bool_term const& then_e,
+    fuzz::bool_term const& else_e)
 {
     return z3::ite(cond, then_e, else_e);
 }
@@ -170,8 +175,6 @@ make_ite_bool_expr(fuzz::bool_expr cond, fuzz::bool_expr const& then_e,
 } // namespace lib_helper_funcs
 } // namespace fuzz
 
-typedef fuzz::int_expr OUT_VAR_TYPE;
-
-#include "set_meta_tests_z3.hpp"
+typedef fuzz::int_term OUT_VAR_TYPE;
 
 #endif // _Z3_SPEC_DEFS_HPP

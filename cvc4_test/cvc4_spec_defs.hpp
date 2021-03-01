@@ -10,10 +10,9 @@ namespace fuzz
 {
     typedef CVC4::api::Term bool_term;
     typedef CVC4::api::Term int_term;
-
     class FreeVars {
       public:
-        int_term vars[FV_COUNT];
+        fuzz::int_term vars[FV_COUNT];
     };
 
     static CVC4::api::Solver slv;
@@ -21,5 +20,9 @@ namespace fuzz
 } // namespace fuzz
 
 typedef fuzz::int_term OUT_VAR_TYPE;
+
+#include "meta_spec_cvc4_nl.hpp"
+#include "smt_spec.hpp"
+//#include "set_meta_tests_cvc4.hpp"
 
 #endif // _CVC4_SPEC_DEFS_HPP
