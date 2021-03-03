@@ -7,10 +7,91 @@ namespace fuzz {
 
             fuzz_context(z3::context& _ctx, fuzz::FreeVars& _fvs) :
                 ctx(_ctx), fvs(_fvs) {} ;
+
+            z3::expr simplify(z3::expr& e)
+            {
+                return e.simplify();
+            }
     };
 } // namespace fuzz
 
 namespace metalib {
+
+namespace checks {
+
+    void
+    check_expr_same_sat(z3::context& c, fuzz::int_term e1, fuzz::int_term e2)
+    {
+        check_count += 1;
+        std::cout << "START CHECK COUNT " << check_count << std::endl;
+        z3::solver solver(c);
+        z3::expr conjecture = z3::operator==(e1, e2);
+        solver.add(!conjecture);
+        assert(solver.check() != z3::sat);
+        assert(c.check_error() == Z3_OK);
+        std::cout << "END CHECK COUNT " << check_count << std::endl;
+    }
+
+    void
+    check_exprs_are_zero(z3::context& c, fuzz::FreeVars& fvs, fuzz::int_term e1, fuzz::int_term e2)
+    {
+        z3::solver solver(c);
+        solver.push();
+        solver.add(z3::operator==(e1, 0));
+        z3::check_result result_1 = solver.check();
+        assert(c.check_error() == Z3_OK);
+        z3::model mdl_1(c);
+        if (result_1 == z3::sat)
+        {
+            mdl_1 = solver.get_model();
+            for (fuzz::int_term e : fvs.vars)
+            {
+                z3::func_decl cnst_decl = e.decl();
+                if (!mdl_1.has_interp(cnst_decl))
+                {
+                    z3::expr zero_val = c.int_val(0);
+                    mdl_1.add_const_interp(cnst_decl, zero_val);
+                }
+            }
+        }
+        solver.pop();
+        solver.push();
+        solver.add(z3::operator==(e2, 0));
+        z3::check_result result_2 = solver.check();
+        assert(c.check_error() == Z3_OK);
+        z3::model mdl_2(c);
+        if (result_2 == z3::sat)
+        {
+            mdl_2 = solver.get_model();
+            for (fuzz::int_term e : fvs.vars)
+            {
+                z3::func_decl cnst_decl = e.decl();
+                if (!mdl_2.has_interp(cnst_decl))
+                {
+                    z3::expr zero_val = c.int_val(0);
+                    mdl_2.add_const_interp(cnst_decl, zero_val);
+                }
+            }
+        }
+        solver.pop();
+        if (result_1 == z3::sat)
+        {
+            assert(result_2 != z3::unsat);
+        }
+        if (result_2 == z3::sat)
+        {
+            assert(result_1 != z3::unsat);
+        }
+        if (result_1 == z3::sat && result_2 == z3::sat)
+        {
+            assert(mdl_1.eval(z3::operator==(e2, 0)).bool_value() == Z3_L_TRUE);
+            assert(mdl_2.eval(z3::operator==(e1, 0)).bool_value() == Z3_L_TRUE);
+        }
+        assert(c.check_error() == Z3_OK);
+    }
+
+}
+
 namespace generators {
     namespace zero {
         fuzz::int_term base(fuzz::fuzz_context ctx, fuzz::int_term t) {
@@ -34,7 +115,7 @@ namespace generators {
     }
     namespace not_expr {
         fuzz::bool_term base(fuzz::fuzz_context ctx, fuzz::bool_term t) {
-            return z3::operator-(t); }
+            return z3::operator!(t); }
     }
     namespace and_expr {
         fuzz::bool_term base(fuzz::fuzz_context ctx, fuzz::bool_term t1, fuzz::bool_term t2) {

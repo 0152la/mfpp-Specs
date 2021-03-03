@@ -7,13 +7,25 @@
 #ifdef EXECUTE
 #include "yices.h"
 
-typedef term_t bool_term;
-typedef term_t bv_term;
 
 namespace fuzz {
+typedef term_t bool_term;
+typedef term_t int_term;
 class FreeVars {
     public:
-        bv_term vars[FV_COUNT];
+        int_term vars[FV_COUNT];
+};
+class fuzz_context
+{
+    public:
+        fuzz::FreeVars& fvs;
+
+        fuzz_context(fuzz::FreeVars& _fvs) : fvs(_fvs) {} ;
+
+        term_t simplify(term_t t)
+        {
+            return t;
+        }
 };
 }
 #else
@@ -33,15 +45,15 @@ main(int argc, char** argv)
     fuzz::FreeVars fvs;
     for (size_t i = 0; i < FV_COUNT; ++i)
     {
-        bv_term new_term = yices_new_uninterpreted_term(yices_bv_type(BV_SIZE));
+        fuzz::int_term new_term = yices_new_uninterpreted_term(yices_int_type());
         yices_set_term_name(new_term, ("x_" + std::to_string(i)).c_str());
         fvs.vars[i] = new_term;
     }
 
+    fuzz::fuzz_context ctx(fvs);
+
     fuzz::start();
-    bv_term lhs = fuzz::fuzz_new<bv_term>();
-    bv_term rhs = fuzz::fuzz_new<bv_term>();
-    fuzz::output_var = yices_bvadd(lhs, rhs);
+    fuzz::int_term i_var = fuzz::fuzz_new<fuzz::int_term>();
     fuzz::end();
 
     assert(!yices_error_code());

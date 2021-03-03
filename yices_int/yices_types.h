@@ -39,8 +39,6 @@
  */
 __attribute__((annotate("expose"))) typedef int32_t term_t;
 typedef int32_t type_t;
-__attribute__((annotate("expose"))) typedef term_t bool_term;
-__attribute__((annotate("expose"))) typedef term_t bv_term;
 
 /*
  * Error values

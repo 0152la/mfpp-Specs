@@ -386,28 +386,10 @@ namespace iden_bool {
         return generators::xor_expr::placeholder(ctx, xor_once, iden_term);
     }
 
-    //fuzz::bool_term
-    //iden_bool_by_ite_false(fuzz::fuzz_context ctx, fuzz::bool_term t)
-    //{
-        //fuzz::bool_term dead = generators::fuzz_bool_term::placeholder(ctx);
-        //t = generators::iden_bool::placeholder(ctx, t);
-        //return slv.mkTerm(CVC4::api::ITE,
-            //generators::false_expr::placeholder(ctx, t), dead, t);
-    //}
-
-    //fuzz::bool_term
-    //iden_bool_by_ite_true(fuzz::fuzz_context ctx, fuzz::bool_term t)
-    //{
-        //fuzz::bool_term dead = generators::fuzz_bool_term::placeholder(ctx);
-        //t = generators::iden_bool::placeholder(ctx, t);
-        //return slv.mkTerm(CVC4::api::ITE,
-            //generators::true_expr::placeholder(ctx, t), t, dead);
-    //}
-    //
     fuzz::bool_term
     iden_by_simplify(fuzz::fuzz_context ctx, fuzz::bool_term t)
     {
-        return t.simplify();
+        return ctx.simplify(t);
     }
 
 } // namespace iden_bool
@@ -707,7 +689,7 @@ namespace identity {
     fuzz::int_term
     iden_by_simplify(fuzz::fuzz_context ctx, fuzz::int_term t)
     {
-        return t.simplify();
+        return ctx.simplify(t);
     }
 
 

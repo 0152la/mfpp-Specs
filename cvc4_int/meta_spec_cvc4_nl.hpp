@@ -7,10 +7,70 @@ namespace fuzz {
 
             fuzz_context(CVC4::api::Solver& _slv, fuzz::FreeVars& _fvs) :
                 slv(_slv), fvs(_fvs) {} ;
+
+            CVC4::api::Term simplify(CVC4::api::Term& t)
+            {
+                return this->slv.simplify(t);
+            }
     };
 } // namespace fuzz
 
 namespace metalib {
+
+namespace checks {
+
+    void
+    check_expr_same_sat(CVC4::api::Solver& slv, fuzz::int_term t1, fuzz::int_term t2)
+    {
+        std::cout << "START CHECK" << std::endl;
+        fuzz::bool_term check = slv.mkTerm(CVC4::api::DISTINCT, t1, t2);
+        slv.assertFormula(check);
+        assert(!slv.checkSat().isSat());
+        slv.resetAssertions();
+        std::cout << "END CHECK" << std::endl;
+    }
+
+    void
+    check_exprs_are_zero(CVC4::api::Solver& slv, fuzz::FreeVars& fvs, fuzz::int_term t1, fuzz::int_term t2)
+    {
+        fuzz::int_term zero = slv.mkInteger(0);
+        fuzz::int_term check_zero_t1 = slv.mkTerm(CVC4::api::Kind::EQUAL, t1, zero);
+        fuzz::int_term check_zero_t2 = slv.mkTerm(CVC4::api::Kind::EQUAL, t2, zero);
+        slv.push();
+        slv.assertFormula(check_zero_t1);
+        CVC4::api::Result r_1 = slv.checkSat();
+        if (r_1.isSat())
+        {
+            assert(!slv.getValue(check_zero_t2).toString().compare("true"));
+        }
+        else if (r_1.isUnsat())
+        {
+            slv.pop();
+            slv.push();
+            slv.assertFormula(check_zero_t2);
+            assert(!slv.checkSat().isSat());
+        }
+        slv.pop();
+        slv.push();
+        slv.assertFormula(check_zero_t2);
+        CVC4::api::Result r_2 = slv.checkSat();
+        if (r_2.isSat())
+        {
+            assert(!slv.getValue(check_zero_t1).toString().compare("true"));
+        }
+        else if (r_2.isUnsat())
+        {
+            slv.pop();
+            slv.push();
+            slv.assertFormula(check_zero_t1);
+            assert(!slv.checkSat().isSat());
+        }
+        slv.pop();
+        slv.resetAssertions();
+    }
+
+} // namespace checks
+
 namespace generators {
     namespace zero {
         fuzz::int_term base(fuzz::fuzz_context ctx, fuzz::int_term t) {

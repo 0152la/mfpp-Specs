@@ -705,7 +705,7 @@ __YICES_DLLSPEC__ extern term_t yices_application3(term_t fun, term_t arg1, term
  *   term2 = else_term
  *   type2 = term2's type
  */
-__YICES_DLLSPEC__ extern bv_term __attribute__((annotate("expose"))) yices_ite(bool_term cond, bv_term then_term, bv_term else_term);
+__YICES_DLLSPEC__ extern fuzz::int_term __attribute__((annotate("expose"))) yices_ite(fuzz::bool_term cond, fuzz::int_term then_term, fuzz::int_term else_term);
 
 
 /*
@@ -723,8 +723,8 @@ __YICES_DLLSPEC__ extern bv_term __attribute__((annotate("expose"))) yices_ite(b
  *   term2 = right
  *   type2 = term2's type
  */
-__YICES_DLLSPEC__ extern bool_term __attribute__((annotate("expose"))) yices_eq(bv_term left, bv_term right);
-__YICES_DLLSPEC__ extern bool_term __attribute__((annotate("expose"))) yices_neq(bv_term left, bv_term right);
+__YICES_DLLSPEC__ extern fuzz::bool_term __attribute__((annotate("expose"))) yices_eq(fuzz::int_term left, fuzz::int_term right);
+__YICES_DLLSPEC__ extern fuzz::bool_term __attribute__((annotate("expose"))) yices_neq(fuzz::int_term left, fuzz::int_term right);
 
 
 /*
@@ -739,7 +739,7 @@ __YICES_DLLSPEC__ extern bool_term __attribute__((annotate("expose"))) yices_neq
  *    term1 = arg
  *    type1 = bool (expected type)
  */
-__YICES_DLLSPEC__ extern bool_term __attribute__((annotate("expose"))) yices_not(bool_term arg);
+__YICES_DLLSPEC__ extern fuzz::bool_term __attribute__((annotate("expose"))) yices_not(fuzz::bool_term arg);
 
 
 /*
@@ -769,13 +769,13 @@ __YICES_DLLSPEC__ extern term_t yices_xor(uint32_t n, term_t arg[]);
 /*
  * Variants of or/and/xor with 2 or 3 arguments
  */
-__YICES_DLLSPEC__ extern bool_term __attribute__((annotate("expose"))) yices_or2(bool_term t1, bool_term t2);
-__YICES_DLLSPEC__ extern bool_term __attribute__((annotate("expose"))) yices_and2(bool_term t1, bool_term t2);
-__YICES_DLLSPEC__ extern bool_term __attribute__((annotate("expose"))) yices_xor2(bool_term t1, bool_term t2);
+__YICES_DLLSPEC__ extern fuzz::bool_term __attribute__((annotate("expose"))) yices_or2(fuzz::bool_term t1, fuzz::bool_term t2);
+__YICES_DLLSPEC__ extern fuzz::bool_term __attribute__((annotate("expose"))) yices_and2(fuzz::bool_term t1, fuzz::bool_term t2);
+__YICES_DLLSPEC__ extern fuzz::bool_term __attribute__((annotate("expose"))) yices_xor2(fuzz::bool_term t1, fuzz::bool_term t2);
 
-__YICES_DLLSPEC__ extern bool_term __attribute__((annotate("expose"))) yices_or3(bool_term t1, bool_term t2, bool_term t3);
-__YICES_DLLSPEC__ extern bool_term __attribute__((annotate("expose"))) yices_and3(bool_term t1, bool_term t2, bool_term t3);
-__YICES_DLLSPEC__ extern bool_term __attribute__((annotate("expose"))) yices_xor3(bool_term t1, bool_term t2, bool_term t3);
+__YICES_DLLSPEC__ extern fuzz::bool_term __attribute__((annotate("expose"))) yices_or3(fuzz::bool_term t1, fuzz::bool_term t2, fuzz::bool_term t3);
+__YICES_DLLSPEC__ extern fuzz::bool_term __attribute__((annotate("expose"))) yices_and3(fuzz::bool_term t1, fuzz::bool_term t2, fuzz::bool_term t3);
+__YICES_DLLSPEC__ extern fuzz::bool_term __attribute__((annotate("expose"))) yices_xor3(fuzz::bool_term t1, fuzz::bool_term t2, fuzz::bool_term t3);
 
 
 /*
@@ -791,8 +791,8 @@ __YICES_DLLSPEC__ extern bool_term __attribute__((annotate("expose"))) yices_xor
  *    term1 = left/right
  *    type1 = bool (expected type)
  */
-__YICES_DLLSPEC__ extern bool_term __attribute__((annotate("expose"))) yices_iff(bool_term left, bool_term right);
-__YICES_DLLSPEC__ extern bool_term __attribute__((annotate("expose"))) yices_implies(bool_term left, bool_term right);
+__YICES_DLLSPEC__ extern fuzz::bool_term __attribute__((annotate("expose"))) yices_iff(fuzz::bool_term left, fuzz::bool_term right);
+__YICES_DLLSPEC__ extern fuzz::bool_term __attribute__((annotate("expose"))) yices_implies(fuzz::bool_term left, fuzz::bool_term right);
 
 
 /*
@@ -1002,14 +1002,14 @@ __YICES_DLLSPEC__ extern term_t yices_lambda(uint32_t n, const term_t var[], ter
 /*
  * Zero: no error
  */
-__YICES_DLLSPEC__ extern term_t yices_zero(void);
+__YICES_DLLSPEC__ extern fuzz::int_term __attribute__((annotate("expose"))) yices_zero(void);
 
 
 /*
  * Integer constants
  */
-__YICES_DLLSPEC__ extern term_t yices_int32(int32_t val);
-__YICES_DLLSPEC__ extern term_t yices_int64(int64_t val);
+__YICES_DLLSPEC__ extern fuzz::int_term __attribute__((annotate("expose"))) yices_int32(int32_t val);
+__YICES_DLLSPEC__ extern fuzz::int_term __attribute__((annotate("expose"))) yices_int64(int64_t val);
 
 
 /*
@@ -1089,12 +1089,12 @@ __YICES_DLLSPEC__ extern term_t yices_parse_float(const char *s);
  *   code = DEGREE_OVERFLOW
  *   badval = product degree
  */
-__YICES_DLLSPEC__ extern term_t yices_add(term_t t1, term_t t2);     // t1 + t2
-__YICES_DLLSPEC__ extern term_t yices_sub(term_t t1, term_t t2);     // t1 - t2
-__YICES_DLLSPEC__ extern term_t yices_neg(term_t t1);                // -t1
-__YICES_DLLSPEC__ extern term_t yices_mul(term_t t1, term_t t2);     // t1 * t2
-__YICES_DLLSPEC__ extern term_t yices_square(term_t t1);             // t1 * t1
-__YICES_DLLSPEC__ extern term_t yices_power(term_t t1, uint32_t d);  // t1 ^ d
+__YICES_DLLSPEC__ extern fuzz::int_term __attribute__((annotate("expose"))) yices_add(fuzz::int_term t1, fuzz::int_term t2);     // t1 + t2
+__YICES_DLLSPEC__ extern fuzz::int_term __attribute__((annotate("expose"))) yices_sub(fuzz::int_term t1, fuzz::int_term t2);     // t1 - t2
+__YICES_DLLSPEC__ extern fuzz::int_term __attribute__((annotate("expose"))) yices_neg(fuzz::int_term t1);                // -t1
+__YICES_DLLSPEC__ extern fuzz::int_term __attribute__((annotate("expose"))) yices_mul(fuzz::int_term t1, fuzz::int_term t2);     // t1 * t2
+__YICES_DLLSPEC__ extern fuzz::int_term __attribute__((annotate("expose"))) yices_square(fuzz::int_term t1);             // t1 * t1
+__YICES_DLLSPEC__ extern fuzz::int_term yices_power(fuzz::int_term t1, uint32_t d);  // t1 ^ d
 
 
 /*
@@ -1150,7 +1150,7 @@ __YICES_DLLSPEC__ extern term_t yices_product(uint32_t n, const term_t t[]);
  *    code = ARITHTERM_REQUIRED
  *    term1 = t1 or t2
  */
-__YICES_DLLSPEC__ extern term_t yices_division(term_t t1, term_t t2);
+__YICES_DLLSPEC__ extern fuzz::int_term __attribute__((annotate("expose"))) yices_division(fuzz::int_term t1, fuzz::int_term t2);
 
 
 /*
@@ -1180,8 +1180,8 @@ __YICES_DLLSPEC__ extern term_t yices_division(term_t t1, term_t t2);
  *    code = ARITHTERM_REQUIRED
  *    term1 = t1 or t2
  */
-__YICES_DLLSPEC__ extern term_t yices_idiv(term_t t1, term_t t2);
-__YICES_DLLSPEC__ extern term_t yices_imod(term_t t1, term_t t2);
+__YICES_DLLSPEC__ extern fuzz::int_term __attribute__((annotate("expose"))) yices_idiv(fuzz::int_term t1, fuzz::int_term t2);
+__YICES_DLLSPEC__ extern fuzz::int_term __attribute__((annotate("expose"))) yices_imod(fuzz::int_term t1, fuzz::int_term t2);
 
 
 /*
@@ -1250,9 +1250,9 @@ __YICES_DLLSPEC__ extern term_t yices_is_int_atom(term_t t);
  *    code = ARITHTERM_REQUIRED
  *    term1 = t
  */
-__YICES_DLLSPEC__ extern term_t yices_abs(term_t t);
-__YICES_DLLSPEC__ extern term_t yices_floor(term_t t);
-__YICES_DLLSPEC__ extern term_t yices_ceil(term_t t);
+__YICES_DLLSPEC__ extern fuzz::int_term __attribute__((annotate("expose"))) yices_abs(fuzz::int_term t);
+__YICES_DLLSPEC__ extern fuzz::int_term __attribute__((annotate("expose"))) yices_floor(fuzz::int_term t);
+__YICES_DLLSPEC__ extern fuzz::int_term __attribute__((annotate("expose"))) yices_ceil(fuzz::int_term t);
 
 
 
@@ -1325,12 +1325,12 @@ __YICES_DLLSPEC__ extern term_t yices_poly_mpq(uint32_t n, const mpq_t q[], cons
  *   code = ARITHTERM_REQUIRED
  *   term1 = t1 or t2
  */
-__YICES_DLLSPEC__ extern term_t yices_arith_eq_atom(term_t t1, term_t t2);   // t1 == t2
-__YICES_DLLSPEC__ extern term_t yices_arith_neq_atom(term_t t1, term_t t2);  // t1 != t2
-__YICES_DLLSPEC__ extern term_t yices_arith_geq_atom(term_t t1, term_t t2);  // t1 >= t2
-__YICES_DLLSPEC__ extern term_t yices_arith_leq_atom(term_t t1, term_t t2);  // t1 <= t2
-__YICES_DLLSPEC__ extern term_t yices_arith_gt_atom(term_t t1, term_t t2);   // t1 > t2
-__YICES_DLLSPEC__ extern term_t yices_arith_lt_atom(term_t t1, term_t t2);   // t1 < t2
+__YICES_DLLSPEC__ extern fuzz::bool_term __attribute__((annotate("expose"))) yices_arith_eq_atom(fuzz::int_term t1, fuzz::int_term t2);   // t1 == t2
+__YICES_DLLSPEC__ extern fuzz::bool_term __attribute__((annotate("expose"))) yices_arith_neq_atom(fuzz::int_term t1, fuzz::int_term t2);  // t1 != t2
+__YICES_DLLSPEC__ extern fuzz::bool_term __attribute__((annotate("expose"))) yices_arith_geq_atom(fuzz::int_term t1, fuzz::int_term t2);  // t1 >= t2
+__YICES_DLLSPEC__ extern fuzz::bool_term __attribute__((annotate("expose"))) yices_arith_leq_atom(fuzz::int_term t1, fuzz::int_term t2);  // t1 <= t2
+__YICES_DLLSPEC__ extern fuzz::bool_term __attribute__((annotate("expose"))) yices_arith_gt_atom(fuzz::int_term t1, fuzz::int_term t2);   // t1 > t2
+__YICES_DLLSPEC__ extern fuzz::bool_term __attribute__((annotate("expose"))) yices_arith_lt_atom(fuzz::int_term t1, fuzz::int_term t2);   // t1 < t2
 
 
 /*
@@ -1346,12 +1346,12 @@ __YICES_DLLSPEC__ extern term_t yices_arith_lt_atom(term_t t1, term_t t2);   // 
  *   code = ARITH_TERM_REQUIRED
  *   term1 = t
  */
-__YICES_DLLSPEC__ extern term_t yices_arith_eq0_atom(term_t t);   // t == 0
-__YICES_DLLSPEC__ extern term_t yices_arith_neq0_atom(term_t t);  // t != 0
-__YICES_DLLSPEC__ extern term_t yices_arith_geq0_atom(term_t t);  // t >= 0
-__YICES_DLLSPEC__ extern term_t yices_arith_leq0_atom(term_t t);  // t <= 0
-__YICES_DLLSPEC__ extern term_t yices_arith_gt0_atom(term_t t);   // t > 0
-__YICES_DLLSPEC__ extern term_t yices_arith_lt0_atom(term_t t);   // t < 0
+__YICES_DLLSPEC__ extern fuzz::bool_term __attribute__((annotate("expose"))) yices_arith_eq0_atom(fuzz::int_term t);   // t == 0
+__YICES_DLLSPEC__ extern fuzz::bool_term __attribute__((annotate("expose"))) yices_arith_neq0_atom(fuzz::int_term t);  // t != 0
+__YICES_DLLSPEC__ extern fuzz::bool_term __attribute__((annotate("expose"))) yices_arith_geq0_atom(fuzz::int_term t);  // t >= 0
+__YICES_DLLSPEC__ extern fuzz::bool_term __attribute__((annotate("expose"))) yices_arith_leq0_atom(fuzz::int_term t);  // t <= 0
+__YICES_DLLSPEC__ extern fuzz::bool_term __attribute__((annotate("expose"))) yices_arith_gt0_atom(fuzz::int_term t);   // t > 0
+__YICES_DLLSPEC__ extern fuzz::bool_term __attribute__((annotate("expose"))) yices_arith_lt0_atom(fuzz::int_term t);   // t < 0
 
 
 
@@ -1536,27 +1536,27 @@ __YICES_DLLSPEC__ extern term_t yices_parse_bvhex(const char *s);
  *   (bvsmod x 0b00...0) is x
  *
  */
-__YICES_DLLSPEC__ extern bv_term __attribute__((annotate("expose"))) yices_bvadd(bv_term t1, bv_term t2);     // addition (t1 + t2)
-__YICES_DLLSPEC__ extern bv_term __attribute__((annotate("expose"))) yices_bvsub(bv_term t1, bv_term t2);     // subtraction (t1 - t2)
-__YICES_DLLSPEC__ extern bv_term __attribute__((annotate("expose"))) yices_bvneg(bv_term t1);                // negation (- t1)
-__YICES_DLLSPEC__ extern bv_term __attribute__((annotate("expose"))) yices_bvmul(bv_term t1, bv_term t2);     // multiplication (t1 * t2)
-__YICES_DLLSPEC__ extern bv_term __attribute__((annotate("expose"))) yices_bvsquare(bv_term t1);             // square (t1 * t1)
-__YICES_DLLSPEC__ extern bv_term yices_bvpower(bv_term t1, uint32_t d);  // exponentiation (t1 ^ d)
+__YICES_DLLSPEC__ extern term_t yices_bvadd(term_t t1, term_t t2);     // addition (t1 + t2)
+__YICES_DLLSPEC__ extern term_t yices_bvsub(term_t t1, term_t t2);     // subtraction (t1 - t2)
+__YICES_DLLSPEC__ extern term_t yices_bvneg(term_t t1);                // negation (- t1)
+__YICES_DLLSPEC__ extern term_t yices_bvmul(term_t t1, term_t t2);     // multiplication (t1 * t2)
+__YICES_DLLSPEC__ extern term_t yices_bvsquare(term_t t1);             // square (t1 * t1)
+__YICES_DLLSPEC__ extern term_t yices_bvpower(term_t t1, uint32_t d);  // exponentiation (t1 ^ d)
 
-__YICES_DLLSPEC__ extern bv_term __attribute__((annotate("expose"))) yices_bvdiv(bv_term t1, bv_term t2);   // unsigned div
-__YICES_DLLSPEC__ extern bv_term __attribute__((annotate("expose"))) yices_bvrem(bv_term t1, bv_term t2);   // unsigned rem
-__YICES_DLLSPEC__ extern bv_term __attribute__((annotate("expose"))) yices_bvsdiv(bv_term t1, bv_term t2);  // signed div
-__YICES_DLLSPEC__ extern bv_term __attribute__((annotate("expose"))) yices_bvsrem(bv_term t1, bv_term t2);  // signed rem
-__YICES_DLLSPEC__ extern bv_term __attribute__((annotate("expose"))) yices_bvsmod(bv_term t1, bv_term t2);  // signed mod
+__YICES_DLLSPEC__ extern term_t yices_bvdiv(term_t t1, term_t t2);   // unsigned div
+__YICES_DLLSPEC__ extern term_t yices_bvrem(term_t t1, term_t t2);   // unsigned rem
+__YICES_DLLSPEC__ extern term_t yices_bvsdiv(term_t t1, term_t t2);  // signed div
+__YICES_DLLSPEC__ extern term_t yices_bvsrem(term_t t1, term_t t2);  // signed rem
+__YICES_DLLSPEC__ extern term_t yices_bvsmod(term_t t1, term_t t2);  // signed mod
 
-__YICES_DLLSPEC__ extern bv_term __attribute__((annotate("expose"))) yices_bvnot(bv_term t1);              // bitwise not
-__YICES_DLLSPEC__ extern bv_term __attribute__((annotate("expose"))) yices_bvnand(bv_term t1, bv_term t2);  // bitwise not and
-__YICES_DLLSPEC__ extern bv_term __attribute__((annotate("expose"))) yices_bvnor(bv_term t1, bv_term t2);   // bitwise not or
-__YICES_DLLSPEC__ extern bv_term __attribute__((annotate("expose"))) yices_bvxnor(bv_term t1, bv_term t2);  // bitwise not xor
+__YICES_DLLSPEC__ extern term_t yices_bvnot(term_t t1);              // bitwise not
+__YICES_DLLSPEC__ extern term_t yices_bvnand(term_t t1, term_t t2);  // bitwise not and
+__YICES_DLLSPEC__ extern term_t yices_bvnor(term_t t1, term_t t2);   // bitwise not or
+__YICES_DLLSPEC__ extern term_t yices_bvxnor(term_t t1, term_t t2);  // bitwise not xor
 
-__YICES_DLLSPEC__ extern bv_term __attribute__((annotate("expose"))) yices_bvshl(bv_term t1, bv_term t2);   // shift t1 left by k bits where k = value of t2
-__YICES_DLLSPEC__ extern bv_term __attribute__((annotate("expose"))) yices_bvlshr(bv_term t1, bv_term t2);  // logical shift t1 right by k bits, where k = value of t2
-__YICES_DLLSPEC__ extern bv_term __attribute__((annotate("expose"))) yices_bvashr(bv_term t1, bv_term t2);  // arithmetic shift t1 right by k bits, k = value of t2
+__YICES_DLLSPEC__ extern term_t yices_bvshl(term_t t1, term_t t2);   // shift t1 left by k bits where k = value of t2
+__YICES_DLLSPEC__ extern term_t yices_bvlshr(term_t t1, term_t t2);  // logical shift t1 right by k bits, where k = value of t2
+__YICES_DLLSPEC__ extern term_t yices_bvashr(term_t t1, term_t t2);  // arithmetic shift t1 right by k bits, k = value of t2
 
 
 
@@ -1591,13 +1591,13 @@ __YICES_DLLSPEC__ extern term_t yices_bvand(uint32_t n, const term_t t[]);
 __YICES_DLLSPEC__ extern term_t yices_bvor(uint32_t n, const term_t t[]);
 __YICES_DLLSPEC__ extern term_t yices_bvxor(uint32_t n, const term_t t[]);
 
-__YICES_DLLSPEC__ extern bv_term __attribute__((annotate("expose"))) yices_bvand2(bv_term t1, bv_term t2);
-__YICES_DLLSPEC__ extern bv_term __attribute__((annotate("expose"))) yices_bvor2(bv_term t1, bv_term t2);
-__YICES_DLLSPEC__ extern bv_term __attribute__((annotate("expose"))) yices_bvxor2(bv_term t1, bv_term t2);
+__YICES_DLLSPEC__ extern term_t yices_bvand2(term_t t1, term_t t2);
+__YICES_DLLSPEC__ extern term_t yices_bvor2(term_t t1, term_t t2);
+__YICES_DLLSPEC__ extern term_t yices_bvxor2(term_t t1, term_t t2);
 
-__YICES_DLLSPEC__ extern bv_term __attribute__((annotate("expose"))) yices_bvand3(bv_term t1, bv_term t2, bv_term t3);
-__YICES_DLLSPEC__ extern bv_term __attribute__((annotate("expose"))) yices_bvor3(bv_term t1, bv_term t2, bv_term t3);
-__YICES_DLLSPEC__ extern bv_term __attribute__((annotate("expose"))) yices_bvxor3(bv_term t1, bv_term t2, bv_term t3);
+__YICES_DLLSPEC__ extern term_t yices_bvand3(term_t t1, term_t t2, term_t t3);
+__YICES_DLLSPEC__ extern term_t yices_bvor3(term_t t1, term_t t2, term_t t3);
+__YICES_DLLSPEC__ extern term_t yices_bvxor3(term_t t1, term_t t2, term_t t3);
 
 
 /*
@@ -1939,26 +1939,26 @@ __YICES_DLLSPEC__ extern term_t yices_bitextract(term_t t, uint32_t i);
 /*
  * Equality and disequality
  */
-__YICES_DLLSPEC__ extern bool_term __attribute__((annotate("expose"))) yices_bveq_atom(bv_term t1, bv_term t2);   // t1 == t2
-__YICES_DLLSPEC__ extern bool_term __attribute__((annotate("expose"))) yices_bvneq_atom(bv_term t1, bv_term t2);  // t1 != t2
+__YICES_DLLSPEC__ extern fuzz::bool_term yices_bveq_atom(term_t t1, term_t t2);   // t1 == t2
+__YICES_DLLSPEC__ extern fuzz::bool_term yices_bvneq_atom(term_t t1, term_t t2);  // t1 != t2
 
 
 /*
  * Unsigned inequalities
  */
-__YICES_DLLSPEC__ extern bool_term __attribute__((annotate("expose"))) yices_bvge_atom(bv_term t1, bv_term t2);  // t1 >= t2
-__YICES_DLLSPEC__ extern bool_term __attribute__((annotate("expose"))) yices_bvgt_atom(bv_term t1, bv_term t2);  // t1 > t2
-__YICES_DLLSPEC__ extern bool_term __attribute__((annotate("expose"))) yices_bvle_atom(bv_term t1, bv_term t2);  // t1 <= t2
-__YICES_DLLSPEC__ extern bool_term __attribute__((annotate("expose"))) yices_bvlt_atom(bv_term t1, bv_term t2);  // t1 < t2
+__YICES_DLLSPEC__ extern fuzz::bool_term yices_bvge_atom(term_t t1, term_t t2);  // t1 >= t2
+__YICES_DLLSPEC__ extern fuzz::bool_term yices_bvgt_atom(term_t t1, term_t t2);  // t1 > t2
+__YICES_DLLSPEC__ extern fuzz::bool_term yices_bvle_atom(term_t t1, term_t t2);  // t1 <= t2
+__YICES_DLLSPEC__ extern fuzz::bool_term yices_bvlt_atom(term_t t1, term_t t2);  // t1 < t2
 
 
 /*
  * Signed inequalities
  */
-__YICES_DLLSPEC__ extern bool_term __attribute__((annotate("expose"))) yices_bvsge_atom(bv_term t1, bv_term t2);  // t1 >= t2
-__YICES_DLLSPEC__ extern bool_term __attribute__((annotate("expose"))) yices_bvsgt_atom(bv_term t1, bv_term t2);  // t1 > t2
-__YICES_DLLSPEC__ extern bool_term __attribute__((annotate("expose"))) yices_bvsle_atom(bv_term t1, bv_term t2);  // t1 <= t2
-__YICES_DLLSPEC__ extern bool_term __attribute__((annotate("expose"))) yices_bvslt_atom(bv_term t1, bv_term t2);  // t1 < t2
+__YICES_DLLSPEC__ extern fuzz::bool_term yices_bvsge_atom(term_t t1, term_t t2);  // t1 >= t2
+__YICES_DLLSPEC__ extern fuzz::bool_term yices_bvsgt_atom(term_t t1, term_t t2);  // t1 > t2
+__YICES_DLLSPEC__ extern fuzz::bool_term yices_bvsle_atom(term_t t1, term_t t2);  // t1 <= t2
+__YICES_DLLSPEC__ extern fuzz::bool_term yices_bvslt_atom(term_t t1, term_t t2);  // t1 < t2
 
 
 

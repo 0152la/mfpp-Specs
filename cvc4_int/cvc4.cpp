@@ -1,9 +1,5 @@
 #define FV_COUNT 100
 
-
-#ifdef EXECUTE
-#include "cvc4/api/cvc4cpp.h"
-#include <cassert>
 namespace fuzz {
     typedef CVC4::api::Term bool_term;
     typedef CVC4::api::Term int_term;
@@ -12,9 +8,12 @@ namespace fuzz {
         fuzz::int_term vars[FV_COUNT];
     };
 }
+
+#ifdef EXECUTE
+#include "cvc4/api/cvc4cpp.h"
+#include <cassert>
 #else
 #include "cvc4_spec_defs.hpp"
-#include "set_meta_tests_cvc4.hpp"
 #endif
 
 namespace fuzz {
@@ -218,6 +217,8 @@ main(int argc, char** argv)
         fuzz::int_term new_term = slv.mkConst(int_s, "x" + std::to_string(i));
         fvs.vars[i] = new_term;
     }
+
+    fuzz_context ctx(slv, fvs);
 
     fuzz::start();
     fuzz::output_var = fuzz::fuzz_new<fuzz::int_term>();

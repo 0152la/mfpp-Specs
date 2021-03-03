@@ -8,9 +8,11 @@ typedef term_t OUT_VAR_TYPE;
 
 namespace fuzz
 {
+    typedef term_t fuzz::bool_term;
+    typedef term_t fuzz::int_term;
     class FreeVars {
         public:
-            bv_term vars[FV_COUNT];
+            fuzz::int_term vars[FV_COUNT];
     };
 
     static term_t output_var;
@@ -22,19 +24,19 @@ namespace lib_helper_funcs {
  * CONSTRUCTORS
  ******************************************************************************/
 
-bv_term
+fuzz::int_term
 ctor_yield_free_var(fuzz::FreeVars& fvs)
 {
     return fvs.vars[fuzz::fuzz_rand<int, int>(0, 99)];
 }
 
-bv_term
+fuzz::int_term
 ctor_expr(int n)
 {
-    return yices_bvconst_uint32(BV_SIZE, n);
+    return yices_int32(n);
 }
 
-bool_term
+fuzz::bool_term
 ctor_bool()
 {
     size_t rand_bool = fuzz::fuzz_rand<int>(1, 2);
@@ -45,39 +47,17 @@ ctor_bool()
  * LIBRARY OPERATIONS WRAPPERS
  ******************************************************************************/
 
-bv_term
-rotate_left_wrapper(bv_term t, unsigned int n)
+fuzz::int_term
+yices_power_wrapper(fuzz::int_term t, unsigned int i)
 {
-    return yices_rotate_left(t, n % (BV_SIZE + 1));
+    return yices_power(t, i % 32);
 }
-
-bv_term
-rotate_right_wrapper(bv_term t, unsigned int n)
-{
-    return yices_rotate_right(t, n % (BV_SIZE + 1));
-}
-
-/*******************************************************************************
- * bv_term API WRAPPERS
- ******************************************************************************/
-
-bv_term
-ite_lt_wrapper(bv_term cond1, bv_term cond2, bv_term then_e, bv_term else_e)
-{
-    return yices_ite(yices_bvlt_atom(cond1, cond2), then_e, else_e);
-}
-
-bv_term
-ite_gte_wrapper(bv_term cond1, bv_term cond2, bv_term then_e, bv_term else_e)
-{
-    return yices_ite(yices_bvge_atom(cond1, cond2), then_e, else_e);
-}
-
 
 } // namespace lib_helper_funcs
 } // namespace fuzz
 
-#include "set_meta_tests_yices.hpp"
+#include "meta_spec_yices.hpp"
+#include "smt_spec.hpp"
 
 #endif // _YICES_SPEC_DEFS_HPP
 

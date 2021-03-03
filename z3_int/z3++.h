@@ -72,6 +72,15 @@ namespace z3 {
     typedef ast_vector_tpl<expr>      expr_vector;
     typedef ast_vector_tpl<sort>      sort_vector;
     typedef ast_vector_tpl<func_decl> func_decl_vector;
+}
+
+    namespace fuzz
+    {
+        typedef __attribute__((annotate("expose"))) z3::expr int_term;
+        typedef __attribute__((annotate("expose"))) z3::expr bool_term;
+    }
+
+namespace z3 {
 
     inline void set_param(char const * param, char const * value) { Z3_global_param_set(param, value); }
     inline void set_param(char const * param, bool value) { Z3_global_param_set(param, value ? "true" : "false"); }
@@ -342,7 +351,7 @@ namespace z3 {
 
         expr bool_val(bool b);
 
-        expr __attribute__((annotate("expose"))) int_val(int n);
+        expr int_val(int n);
         expr int_val(unsigned n);
         expr int_val(int64_t n);
         expr int_val(uint64_t n);
@@ -1086,6 +1095,7 @@ namespace z3 {
 
            \pre a.is_bool()
         */
+        friend __attribute__((annotate("expose"))) fuzz::bool_term operator!(fuzz::bool_term const & a);
         friend expr operator!(expr const & a);
 
         /**
@@ -1094,6 +1104,7 @@ namespace z3 {
            \pre a.is_bool()
            \pre b.is_bool()
         */
+        friend __attribute__((annotate("expose"))) fuzz::bool_term operator&&(fuzz::bool_term const & a, fuzz::bool_term const & b);
         friend expr operator&&(expr const & a, expr const & b);
 
 
@@ -1118,6 +1129,7 @@ namespace z3 {
            \pre a.is_bool()
            \pre b.is_bool()
         */
+        friend __attribute__((annotate("expose"))) fuzz::bool_term operator||(fuzz::bool_term const & a, fuzz::bool_term const & b);
         friend expr operator||(expr const & a, expr const & b);
         /**
            \brief Return an expression representing <tt>a or b</tt>.
@@ -1135,6 +1147,7 @@ namespace z3 {
         */
         friend expr operator||(bool a, expr const & b);
 
+        friend __attribute__((annotate("expose"))) fuzz::bool_term implies(fuzz::bool_term const & a, fuzz::bool_term const & b);
         friend expr implies(expr const & a, expr const & b);
         friend expr implies(expr const & a, bool b);
         friend expr implies(bool a, expr const & b);
@@ -1142,7 +1155,9 @@ namespace z3 {
         friend expr mk_or(expr_vector const& args);
         friend expr mk_and(expr_vector const& args);
 
-        friend __attribute__((annotate("expose_special"))) expr ite(expr const & c, expr const & t, expr const & e);
+        friend expr ite(expr const & c, expr const & t, expr const & e);
+        friend fuzz::bool_term ite(fuzz::bool_term const & c, fuzz::int_term const & t, fuzz::int_term const & e);
+        friend fuzz::bool_term ite(fuzz::bool_term const & c, fuzz::bool_term const & t, fuzz::bool_term const & e);
 
         bool is_true() const { return is_app() && Z3_OP_TRUE == decl().decl_kind(); }
         bool is_false() const { return is_app() && Z3_OP_FALSE == decl().decl_kind(); }
@@ -1159,23 +1174,30 @@ namespace z3 {
         friend expr concat(expr const& a, expr const& b);
         friend expr concat(expr_vector const& args);
 
+        friend __attribute__((annotate("expose"))) fuzz::bool_term operator==(fuzz::int_term const & a, fuzz::int_term const & b);
+        friend __attribute__((annotate("expose"))) fuzz::bool_term operator==(fuzz::bool_term const & a, fuzz::bool_term const & b);
         friend expr operator==(expr const & a, expr const & b);
         friend expr operator==(expr const & a, int b);
         friend expr operator==(int a, expr const & b);
 
-        friend __attribute__((annotate("expose_special"))) expr operator!=(expr const & a, expr const & b);
-        friend __attribute__((annotate("expose_special"))) expr operator!=(expr const & a, int b);
-        friend __attribute__((annotate("expose_special"))) expr operator!=(expr const & a, unsigned int b);
-        friend __attribute__((annotate("expose_special"))) expr operator!=(int a, expr const & b);
+        friend __attribute__((annotate("expose"))) fuzz::bool_term operator!=(fuzz::int_term const & a, fuzz::int_term const & b);
+        friend __attribute__((annotate("expose"))) fuzz::bool_term operator!=(fuzz::bool_term const & a, fuzz::bool_term const & b);
+        friend expr operator!=(expr const & a, expr const & b);
+        friend expr operator!=(expr const & a, int b);
+        friend expr operator!=(expr const & a, unsigned int b);
+        friend expr operator!=(int a, expr const & b);
+        friend __attribute__((annotate("expose"))) fuzz::bool_term operator!=(fuzz::int_term const & a, fuzz::int_term const & b);
 
-        friend __attribute__((annotate("expose"))) expr operator+(expr const & a, expr const & b);
-        friend __attribute__((annotate("expose"))) expr operator+(expr const & a, int b);
-        friend __attribute__((annotate("expose"))) expr operator+(int a, expr const & b);
+        friend __attribute__((annotate("expose"))) fuzz::int_term operator+(fuzz::int_term const & a, fuzz::int_term const & b);
+        friend expr operator+(expr const & a, expr const & b);
+        friend expr operator+(expr const & a, int b);
+        friend expr operator+(int a, expr const & b);
         friend expr sum(expr_vector const& args);
 
-        friend __attribute__((annotate("expose"))) expr operator*(expr const & a, expr const & b);
-        friend __attribute__((annotate("expose"))) expr operator*(expr const & a, int b);
-        friend __attribute__((annotate("expose"))) expr operator*(int a, expr const & b);
+        friend __attribute__((annotate("expose"))) fuzz::int_term operator*(fuzz::int_term const & a, fuzz::int_term const & b);
+        friend expr operator*(expr const & a, expr const & b);
+        friend expr operator*(expr const & a, int b);
+        friend expr operator*(int a, expr const & b);
 
         /*  \brief Power operator  */
         friend expr pw(expr const & a, expr const & b);
@@ -1192,31 +1214,37 @@ namespace z3 {
         friend expr rem(expr const& a, int b);
         friend expr rem(int a, expr const& b);
 
-        friend expr is_int(expr const& e);
+        friend __attribute__((annotate("expose"))) fuzz::bool_term is_int(fuzz::int_term const& e);
 
         friend expr operator/(expr const & a, expr const & b);
         friend expr operator/(expr const & a, int b);
         friend expr operator/(int a, expr const & b);
 
-        friend __attribute__((annotate("expose"))) expr operator-(expr const & a);
+        friend __attribute__((annotate("expose"))) fuzz::int_term operator-(fuzz::int_term const & a);
+        friend expr operator-(expr const & a);
 
-        friend __attribute__((annotate("expose"))) expr operator-(expr const & a, expr const & b);
-        friend __attribute__((annotate("expose"))) expr operator-(expr const & a, int b);
-        friend __attribute__((annotate("expose"))) expr operator-(int a, expr const & b);
+        friend __attribute__((annotate("expose"))) fuzz::int_term operator-(fuzz::int_term const & a, fuzz::int_term const & b);
+        friend expr operator-(expr const & a, expr const & b);
+        friend expr operator-(expr const & a, int b);
+        friend expr operator-(int a, expr const & b);
 
+        friend __attribute__((annotate("expose"))) fuzz::bool_term operator<=(fuzz::int_term const & a, fuzz::int_term const & b);
         friend expr operator<=(expr const & a, expr const & b);
         friend expr operator<=(expr const & a, int b);
         friend expr operator<=(int a, expr const & b);
 
 
+        friend __attribute__((annotate("expose"))) fuzz::bool_term operator>=(fuzz::int_term const & a, fuzz::int_term const & b);
         friend expr operator>=(expr const & a, expr const & b);
         friend expr operator>=(expr const & a, int b);
         friend expr operator>=(int a, expr const & b);
 
+        friend __attribute__((annotate("expose"))) fuzz::bool_term operator<(fuzz::int_term const & a, fuzz::int_term const & b);
         friend expr operator<(expr const & a, expr const & b);
         friend expr operator<(expr const & a, int b);
         friend expr operator<(int a, expr const & b);
 
+        friend __attribute__((annotate("expose"))) fuzz::bool_term operator>(fuzz::int_term const & a, fuzz::int_term const & b);
         friend expr operator>(expr const & a, expr const & b);
         friend expr operator>(expr const & a, int b);
         friend expr operator>(int a, expr const & b);
@@ -1227,22 +1255,30 @@ namespace z3 {
         friend expr atmost(expr_vector const& es, unsigned bound);
         friend expr atleast(expr_vector const& es, unsigned bound);
 
+        friend __attribute__((annotate("expose"))) fuzz::bool_term operator&(fuzz::bool_term const & a, fuzz::bool_term const & b);
         friend expr operator&(expr const & a, expr const & b);
         friend expr operator&(expr const & a, int b);
         friend expr operator&(int a, expr const & b);
 
+        friend __attribute__((annotate("expose"))) fuzz::bool_term operator^(fuzz::bool_term const & a, fuzz::bool_term const & b);
         friend expr operator^(expr const & a, expr const & b);
         friend expr operator^(expr const & a, int b);
         friend expr operator^(int a, expr const & b);
 
+        friend __attribute__((annotate("expose"))) fuzz::bool_term operator|(fuzz::bool_term const & a, fuzz::bool_term const & b);
         friend expr operator|(expr const & a, expr const & b);
         friend expr operator|(expr const & a, int b);
         friend expr operator|(int a, expr const & b);
+        friend __attribute__((annotate("expose"))) fuzz::bool_term nand(fuzz::bool_term const& a, fuzz::bool_term const& b);
         friend expr nand(expr const& a, expr const& b);
+        friend __attribute__((annotate("expose"))) fuzz::bool_term nor(fuzz::bool_term const& a, fuzz::bool_term const& b);
         friend expr nor(expr const& a, expr const& b);
+        friend __attribute__((annotate("expose"))) fuzz::bool_term xnor(fuzz::bool_term const& a, fuzz::bool_term const& b);
         friend expr xnor(expr const& a, expr const& b);
 
+        friend __attribute__((annotate("expose"))) fuzz::int_term min(fuzz::int_term const& a, fuzz::int_term const& b);
         friend expr min(expr const& a, expr const& b);
+        friend __attribute__((annotate("expose"))) fuzz::int_term max(fuzz::int_term const& a, fuzz::int_term const& b);
         friend expr max(expr const& a, expr const& b);
 
         friend expr bv2int(expr const& a, bool is_signed); 
@@ -1260,7 +1296,8 @@ namespace z3 {
         expr rotate_right(unsigned i) { Z3_ast r = Z3_mk_rotate_right(ctx(), i, *this); ctx().check_error(); return expr(ctx(), r); }
         expr repeat(unsigned i) { Z3_ast r = Z3_mk_repeat(ctx(), i, *this); ctx().check_error(); return expr(ctx(), r); }
 
-        friend __attribute__((annotate("expose"))) expr abs(expr const & a);
+        friend __attribute__((annotate("expose"))) fuzz::int_term abs(fuzz::int_term const & a);
+        friend expr abs(expr const & a);
         friend expr sqrt(expr const & a, expr const & rm);
 
         friend expr operator~(expr const & a);
@@ -1360,7 +1397,7 @@ namespace z3 {
         /**
            \brief Return a simplified version of this expression.
         */
-        expr __attribute__((annotate("expose"))) simplify() const { Z3_ast r = Z3_simplify(ctx(), m_ast); check_error(); return expr(ctx(), r); }
+        expr simplify() const { Z3_ast r = Z3_simplify(ctx(), m_ast); check_error(); return expr(ctx(), r); }
         /**
            \brief Return a simplified version of this expression. The parameter \c p is a set of parameters for the Z3 simplifier.
         */

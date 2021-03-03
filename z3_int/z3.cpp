@@ -22,6 +22,11 @@ namespace fuzz {
 
             fuzz_context(z3::context& _ctx, fuzz::FreeVars& _fvs) :
                 ctx(_ctx), fvs(_fvs) {} ;
+
+            z3::expr simplify(z3::expr& e)
+            {
+                return e.simplify();
+            }
     };
 }
 #else
