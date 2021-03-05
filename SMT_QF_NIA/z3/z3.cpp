@@ -1,34 +1,12 @@
 #define FV_COUNT 100
 
-#include "z3++.h"
+#include "spec_fuzz.hpp"
+
 #include <vector>
 
-static size_t check_count = 0;
-
 #ifdef EXECUTE
-#include <cassert>
-namespace fuzz {
-    typedef z3::expr bool_term;
-    typedef z3::expr int_term;
-    class FreeVars {
-      public:
-        std::vector<fuzz::int_term> vars;
-    };
-    class fuzz_context
-    {
-        public:
-            z3::context& ctx;
-            fuzz::FreeVars& fvs;
-
-            fuzz_context(z3::context& _ctx, fuzz::FreeVars& _fvs) :
-                ctx(_ctx), fvs(_fvs) {} ;
-
-            z3::expr simplify(z3::expr& e)
-            {
-                return e.simplify();
-            }
-    };
-}
+#include "z3++.h"
+#include "z3_fuzz_type_defs.hpp"
 #else
 #include "z3_spec_defs.hpp"
 #endif

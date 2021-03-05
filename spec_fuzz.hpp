@@ -1,10 +1,11 @@
 #ifndef _SPEC_FUZZ_HPP
 #define _SPEC_FUZZ_HPP
 
+#include <cassert>
+#include <string>
+
 namespace fuzz
 {
-    //static OUT_VAR_TYPE output_var;
-
     void start() {}
     void end()   {}
 

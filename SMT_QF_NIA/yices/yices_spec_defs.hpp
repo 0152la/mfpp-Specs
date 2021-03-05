@@ -1,25 +1,18 @@
 #ifndef _YICES_SPEC_DEFS_HPP
 #define _YICES_SPEC_DEFS_HPP
 
-#include "spec_fuzz.hpp"
 #include "yices.h"
 
 typedef term_t OUT_VAR_TYPE;
 
-namespace fuzz
-{
-    class FreeVars {
-        public:
-            fuzz::int_term vars[FV_COUNT];
-    };
-    static term_t output_var;
-    term_t output_var_get(size_t);
-}
-
+#include "yices_fuzz_type_defs.hpp"
 #include "meta_spec_yices.hpp"
-#include "smt_spec.hpp"
+#include "spec.hpp"
 
 namespace fuzz {
+
+static term_t output_var;
+term_t output_var_get(size_t);
 
 namespace lib_helper_funcs {
 

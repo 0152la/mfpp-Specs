@@ -1,31 +1,11 @@
 #define BV_SIZE 20
 #define FV_COUNT 100
 
-#include <cassert>
-#include <string>
+#include "spec_fuzz.hpp"
 
 #ifdef EXECUTE
 #include "yices.h"
-namespace fuzz {
-typedef term_t bool_term;
-typedef term_t int_term;
-class FreeVars {
-    public:
-        int_term vars[FV_COUNT];
-};
-class fuzz_context
-{
-    public:
-        fuzz::FreeVars& fvs;
-
-        fuzz_context(fuzz::FreeVars& _fvs) : fvs(_fvs) {} ;
-
-        term_t simplify(term_t t)
-        {
-            return t;
-        }
-};
-} // namespace fuzz
+#include "yices_fuzz_type_defs.hpp"
 #else
 #include "yices_spec_defs.hpp"
 #endif

@@ -1,10 +1,10 @@
 ---
 working_dir: /home/sentenced/Documents/Internships/2018_ETH/work/spec_ast
-template_file: ./input/spec_repo/cvc4_test/cvc4_nl.cpp
-output_folder: ./output/cvc4_test_nl
-output_file_name: t_cvc4nl.cpp
+template_file: ./input/spec_repo/SMT_QF_NIA/cvc4/cvc4.cpp
+output_folder: ./output/cvc4_int
+output_file_name: t_cvc4.cpp
 compile_script: ./scripts/compile.sh
-cmake_script_dir: ./input/spec_repo/cvc4_test/runtime/
+cmake_script_dir: ./input/spec_repo/SMT_QF_NIA/cvc4/runtime/
 spec_repo_dir: ./input/spec_repo/
 lib_repo_dir: /home/sentenced/Documents/Internships/2018_ETH/work/other_libs/CVC4
 params:
@@ -13,3 +13,4 @@ params:
     test-size: 5
     test-depth: 3
     prune-depth: noprune
+    p: /home/sentenced/Documents/Internships/2018_ETH/work/spec_ast/input/spec_repo/SMT_QF_NIA/cvc4/build/compile_commands.json

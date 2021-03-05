@@ -13,4 +13,4 @@ params:
     test-size: 4
     test-depth: 5
     prune-depth: logarithm
-    p: /home/sentenced/Documents/Internships/2018_ETH/work/spec_ast/input/spec_repo/yices_int/build/compile_commands.json
+    p: /home/sentenced/Documents/Internships/2018_ETH/work/spec_ast/input/spec_repo/SMT_QF_NIA/yices/build/compile_commands.json

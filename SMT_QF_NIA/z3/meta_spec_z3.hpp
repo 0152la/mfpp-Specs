@@ -1,20 +1,3 @@
-namespace fuzz {
-    class fuzz_context
-    {
-        public:
-            z3::context& ctx;
-            fuzz::FreeVars& fvs;
-
-            fuzz_context(z3::context& _ctx, fuzz::FreeVars& _fvs) :
-                ctx(_ctx), fvs(_fvs) {} ;
-
-            z3::expr simplify(z3::expr& e)
-            {
-                return e.simplify();
-            }
-    };
-} // namespace fuzz
-
 namespace metalib {
 
 namespace checks {
@@ -22,14 +5,11 @@ namespace checks {
     void
     check_expr_same_sat(z3::context& c, fuzz::int_term e1, fuzz::int_term e2)
     {
-        check_count += 1;
-        std::cout << "START CHECK COUNT " << check_count << std::endl;
         z3::solver solver(c);
         z3::expr conjecture = z3::operator==(e1, e2);
         solver.add(!conjecture);
         assert(solver.check() != z3::sat);
         assert(c.check_error() == Z3_OK);
-        std::cout << "END CHECK COUNT " << check_count << std::endl;
     }
 
     void

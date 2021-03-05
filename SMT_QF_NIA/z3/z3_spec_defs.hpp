@@ -1,24 +1,17 @@
 #ifndef _Z3_SPEC_DEFS_HPP
 #define _Z3_SPEC_DEFS_HPP
 
-#include "spec_fuzz.hpp"
+#include "z3++.h"
+#include "z3_fuzz_type_defs.hpp"
 
 namespace fuzz
 {
-    typedef z3::expr bool_term;
-    typedef z3::expr int_term;
-
-    class FreeVars {
-      public:
-        std::vector<int_term> vars;
-    };
-
     static z3::context ctx;
     static fuzz::int_term output_var(ctx);
 } // namespace fuzz
 
 #include "meta_spec_z3.hpp"
-#include "smt_spec.hpp"
+#include "spec.hpp"
 
 namespace fuzz {
 namespace lib_helper_funcs {

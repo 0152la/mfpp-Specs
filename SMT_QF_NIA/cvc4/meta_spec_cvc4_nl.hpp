@@ -1,18 +1,6 @@
 namespace fuzz {
-    class fuzz_context
-    {
-        public:
-            CVC4::api::Solver& slv;
-            fuzz::FreeVars& fvs;
-
-            fuzz_context(CVC4::api::Solver& _slv, fuzz::FreeVars& _fvs) :
-                slv(_slv), fvs(_fvs) {} ;
-
-            CVC4::api::Term simplify(CVC4::api::Term& t)
-            {
-                return this->slv.simplify(t);
-            }
-    };
+    static CVC4::api::Solver slv;
+    static int_term output_var;
 } // namespace fuzz
 
 namespace metalib {
