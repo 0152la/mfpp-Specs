@@ -1,4 +1,5 @@
-*/build/
-*.swp
+**/build/
 */compile_commands.json
-*/spec_fuzz.hpp
+**/spec_fuzz.hpp
+**/spec.hpp
+*.swp

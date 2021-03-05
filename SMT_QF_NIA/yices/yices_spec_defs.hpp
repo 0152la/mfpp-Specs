@@ -8,15 +8,18 @@ typedef term_t OUT_VAR_TYPE;
 
 namespace fuzz
 {
-    typedef term_t fuzz::bool_term;
-    typedef term_t fuzz::int_term;
     class FreeVars {
         public:
             fuzz::int_term vars[FV_COUNT];
     };
-
     static term_t output_var;
     term_t output_var_get(size_t);
+}
+
+#include "meta_spec_yices.hpp"
+#include "smt_spec.hpp"
+
+namespace fuzz {
 
 namespace lib_helper_funcs {
 
@@ -25,9 +28,9 @@ namespace lib_helper_funcs {
  ******************************************************************************/
 
 fuzz::int_term
-ctor_yield_free_var(fuzz::FreeVars& fvs)
+ctor_yield_free_var(fuzz::fuzz_context& fctx)
 {
-    return fvs.vars[fuzz::fuzz_rand<int, int>(0, 99)];
+    return fctx.fvs.vars[fuzz::fuzz_rand<int, int>(0, 99)];
 }
 
 fuzz::int_term
@@ -56,8 +59,6 @@ yices_power_wrapper(fuzz::int_term t, unsigned int i)
 } // namespace lib_helper_funcs
 } // namespace fuzz
 
-#include "meta_spec_yices.hpp"
-#include "smt_spec.hpp"
 
 #endif // _YICES_SPEC_DEFS_HPP
 

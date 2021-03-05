@@ -1,0 +1,16 @@
+---
+working_dir: /home/sentenced/Documents/Internships/2018_ETH/work/spec_ast
+template_file: ./input/spec_repo/SMT_QF_NIA/yices/yices.cpp
+output_folder: ./output/yices_int
+output_file_name: t_yices.cpp
+compile_script: ./scripts/compile.sh
+cmake_script_dir: ./input/spec_repo/SMT_QF_NIA/yices/runtime/
+spec_repo_dir: ./input/spec_repo/
+lib_repo_dir: /home/sentenced/Documents/Internships/2018_ETH/work/other_libs/yices2
+params:
+    inputs: 2
+    tests: 5
+    test-size: 4
+    test-depth: 5
+    prune-depth: logarithm
+    p: /home/sentenced/Documents/Internships/2018_ETH/work/spec_ast/input/spec_repo/yices_int/build/compile_commands.json
