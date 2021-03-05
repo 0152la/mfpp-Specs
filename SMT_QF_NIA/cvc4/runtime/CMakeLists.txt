@@ -18,6 +18,7 @@ add_executable(${TEST_OUT}
     ${TEST_FILE})
 
 target_include_directories(${TEST_OUT} PUBLIC $ENV{CVC4_INSTALL_LOC}/include)
+target_include_directories(${TEST_OUT} PUBLIC ${CMAKE_SOURCE_DIR}/..)
 target_link_libraries(${TEST_OUT} PUBLIC ${CVC4_LIBS})
 target_compile_options(${TEST_OUT} PRIVATE "-Wno-attributes")
 target_compile_definitions(${TEST_OUT} PRIVATE EXECUTE=1)

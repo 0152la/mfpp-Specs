@@ -14,6 +14,7 @@ get_filename_component(TEST_OUT ${TEST_FILE} NAME_WLE)
 add_executable(${TEST_OUT}
     ${TEST_FILE})
 target_include_directories(${TEST_OUT} PUBLIC ${Z3_CXX_INCLUDE_DIRS})
+target_include_directories(${TEST_OUT} PUBLIC ${CMAKE_SOURCE_DIR}/..)
 target_link_libraries(${TEST_OUT} PUBLIC ${Z3_LIBRARIES})
 target_compile_options(${TEST_OUT} PRIVATE "-Wno-attributes")
 target_compile_definitions(${TEST_OUT} PRIVATE EXECUTE=1)
