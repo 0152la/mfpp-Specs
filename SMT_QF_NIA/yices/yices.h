@@ -1150,7 +1150,7 @@ __YICES_DLLSPEC__ extern term_t yices_product(uint32_t n, const term_t t[]);
  *    code = ARITHTERM_REQUIRED
  *    term1 = t1 or t2
  */
-__YICES_DLLSPEC__ extern fuzz::int_term __attribute__((annotate("expose"))) yices_division(fuzz::int_term t1, fuzz::int_term t2);
+__YICES_DLLSPEC__ extern fuzz::int_term yices_division(fuzz::int_term t1, fuzz::int_term t2);
 
 
 /*
@@ -1180,8 +1180,8 @@ __YICES_DLLSPEC__ extern fuzz::int_term __attribute__((annotate("expose"))) yice
  *    code = ARITHTERM_REQUIRED
  *    term1 = t1 or t2
  */
-__YICES_DLLSPEC__ extern fuzz::int_term __attribute__((annotate("expose"))) yices_idiv(fuzz::int_term t1, fuzz::int_term t2);
-__YICES_DLLSPEC__ extern fuzz::int_term __attribute__((annotate("expose"))) yices_imod(fuzz::int_term t1, fuzz::int_term t2);
+__YICES_DLLSPEC__ extern fuzz::int_term yices_idiv(fuzz::int_term t1, fuzz::int_term t2);
+__YICES_DLLSPEC__ extern fuzz::int_term yices_imod(fuzz::int_term t1, fuzz::int_term t2);
 
 
 /*
