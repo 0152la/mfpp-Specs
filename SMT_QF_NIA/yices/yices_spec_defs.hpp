@@ -49,11 +49,11 @@ yices_power_wrapper(fuzz::int_term t, unsigned int i)
     return yices_power(t, i % 32);
 }
 
-fuzz::int_term
-yices_division_wrapper(fuzz::int_term t1, fuzz::int_term t2)
-{
-    return yices_ite(yices_eq(t2, yices_zero()), t1, yices_division(t1, t2));
-}
+//fuzz::int_term
+//yices_division_wrapper(fuzz::int_term t1, fuzz::int_term t2)
+//{
+    //return yices_ite(yices_eq(t2, yices_zero()), t1, yices_division(t1, t2));
+//}
 
 fuzz::int_term
 yices_idiv_wrapper(fuzz::int_term t1, fuzz::int_term t2)
