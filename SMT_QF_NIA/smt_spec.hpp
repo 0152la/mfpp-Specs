@@ -60,16 +60,6 @@ namespace geq {
 namespace ite_bool {
     fuzz::bool_term placeholder(fuzz::fuzz_context, fuzz::bool_term, fuzz::bool_term, fuzz::bool_term);
 }
-namespace mul {
-    fuzz::int_term placeholder(fuzz::fuzz_context, fuzz::int_term, fuzz::int_term);
-}
-namespace division {
-    fuzz::int_term placeholder(fuzz::fuzz_context, fuzz::int_term, fuzz::int_term);
-}
-namespace modulo {
-    fuzz::int_term placeholder(fuzz::fuzz_context, fuzz::int_term, fuzz::int_term);
-}
-
 } // namespace generators
 
 namespace relations {
@@ -80,6 +70,15 @@ namespace add {
     fuzz::int_term placeholder(fuzz::fuzz_context, fuzz::int_term, fuzz::int_term);
 }
 namespace sub {
+    fuzz::int_term placeholder(fuzz::fuzz_context, fuzz::int_term, fuzz::int_term);
+}
+namespace mul {
+    fuzz::int_term placeholder(fuzz::fuzz_context, fuzz::int_term, fuzz::int_term);
+}
+namespace division {
+    fuzz::int_term placeholder(fuzz::fuzz_context, fuzz::int_term, fuzz::int_term);
+}
+namespace modulo {
     fuzz::int_term placeholder(fuzz::fuzz_context, fuzz::int_term, fuzz::int_term);
 }
 namespace abs_expr {
@@ -123,7 +122,7 @@ namespace zero {
     zero_by_mul(fuzz::fuzz_context ctx, fuzz::int_term t)
     {
         fuzz::int_term zero = generators::zero::placeholder(ctx, t);
-        return generators::mul::placeholder(ctx, t, zero);
+        return relations::mul::placeholder(ctx, t, zero);
     }
 
     fuzz::int_term
@@ -146,7 +145,7 @@ namespace zero {
     {
         t = relations::identity::placeholder(ctx, t);
         fuzz::int_term one = generators::one::placeholder(ctx, t);
-        return generators::modulo::placeholder(ctx, t, one);
+        return relations::modulo::placeholder(ctx, t, one);
     }
 
     fuzz::int_term
@@ -154,38 +153,41 @@ namespace zero {
     {
         fuzz::int_term fuzz = generators::fuzz_int_term::placeholder(ctx);
         fuzz::int_term one = generators::one::placeholder(ctx, t);
-        return generators::modulo::placeholder(ctx, fuzz, one);
+        return relations::modulo::placeholder(ctx, fuzz, one);
     }
 
-    //fuzz::int_term
-    //zero_by_mod(fuzz::fuzz_context ctx, fuzz::int_term t)
-    //{
-        //fuzz::int_term iden_term = relations::identity::placeholder(ctx, t);
-        //fuzz::int_term tmp_zero = generators::zero::placeholder(ctx, t);
-        //fuzz::int_term mod_ts = generators::modulo::placeholder(ctx, t, iden_term);
-        //return t.eqTerm(tmp_zero).iteTerm(tmp_zero, mod_ts);
-    //}
+    fuzz::int_term
+    zero_by_mod(fuzz::fuzz_context ctx, fuzz::int_term t)
+    {
+        fuzz::int_term iden_term = relations::identity::placeholder(ctx, t);
+        fuzz::int_term tmp_zero = generators::zero::placeholder(ctx, t);
+        fuzz::bool_term is_zero = generators::equal_int::placeholder(ctx, iden_term, tmp_zero);
+        fuzz::int_term mod_ts = relations::modulo::placeholder(ctx, t, iden_term);
+        fuzz::int_term tmp_zero_return = generators::zero::placeholder(ctx, t);
+        return generators::ite_integer_term_cond::placeholder(ctx, is_zero, tmp_zero_return, mod_ts);
+    }
 
-    //fuzz::int_term
-    //zero_by_div(fuzz::fuzz_context ctx, fuzz::int_term t)
-    //{
-        //fuzz::int_term tmp_zero = generators::zero::placeholder(ctx, t);
-        //fuzz::bool_term is_zero = tmp_zero.eqTerm(t);
-        //fuzz::int_term tmp_zero_return = generators::zero::placeholder(ctx, t);
-        //fuzz::int_term div_ts = generators::division::placeholder(ctx, tmp_zero, t);
-        //return is_zero.iteTerm(tmp_zero_return, div_ts);
-    //}
+    fuzz::int_term
+    zero_by_div(fuzz::fuzz_context ctx, fuzz::int_term t)
+    {
+        t = relations::identity::placeholder(ctx, t);
+        fuzz::int_term tmp_zero = generators::zero::placeholder(ctx, t);
+        fuzz::int_term tmp_zero_return = generators::zero::placeholder(ctx, t);
+        fuzz::bool_term is_zero = generators::equal_int::placeholder(ctx, t, tmp_zero);
+        fuzz::int_term div_ts = relations::division::placeholder(ctx, tmp_zero, t);
+        return generators::ite_integer_term_cond::placeholder(ctx, is_zero, tmp_zero_return, div_ts);
+    }
 
-    //fuzz::int_term
-    //zero_by_div_fuzz(fuzz::fuzz_context ctx, fuzz::int_term t)
-    //{
-        //fuzz::int_term fuzz = generators::fuzz_int_term::placeholder(ctx);
-        //fuzz::int_term tmp_zero = generators::zero::placeholder(ctx, fuzz);
-        //fuzz::bool_term is_zero = tmp_zero.eqTerm(fuzz);
-        //fuzz::int_term tmp_zero_return = generators::zero::placeholder(ctx, fuzz);
-        //fuzz::int_term div_ts = generators::division::placeholder(ctx, tmp_zero, iden_fuzz);
-        //return is_zero.iteTerm(tmp_zero_return, div_ts);
-    //}
+    fuzz::int_term
+    zero_by_div_fuzz(fuzz::fuzz_context ctx, fuzz::int_term t)
+    {
+        fuzz::int_term fuzz = generators::fuzz_int_term::placeholder(ctx);
+        fuzz::int_term tmp_zero = generators::zero::placeholder(ctx, fuzz);
+        fuzz::bool_term is_zero = generators::equal_int::placeholder(ctx, fuzz, tmp_zero);
+        fuzz::int_term tmp_zero_return = generators::zero::placeholder(ctx, fuzz);
+        fuzz::int_term div_ts = relations::division::placeholder(ctx, tmp_zero, fuzz);
+        return generators::ite_integer_term_cond::placeholder(ctx, is_zero, tmp_zero_return, div_ts);
+    }
 
 } // namespace zero
 
@@ -197,7 +199,7 @@ namespace one {
         fuzz::int_term iden_term = relations::identity::placeholder(ctx, t);
         fuzz::int_term tmp_zero = generators::zero::placeholder(ctx, t);
         fuzz::bool_term is_zero = generators::equal_int::placeholder(ctx, tmp_zero, t);
-        fuzz::int_term div_ts = generators::division::placeholder(ctx, t, iden_term);
+        fuzz::int_term div_ts = relations::division::placeholder(ctx, t, iden_term);
         fuzz::int_term one = generators::one::placeholder(ctx, t);
         return generators::ite_integer_term_cond::placeholder(ctx, is_zero, one, div_ts);
     }
@@ -209,19 +211,10 @@ namespace one {
         fuzz::int_term iden_fuzz = relations::identity::placeholder(ctx, fuzz);
         fuzz::int_term tmp_zero = generators::zero::placeholder(ctx, fuzz);
         fuzz::bool_term is_zero = generators::equal_int::placeholder(ctx, tmp_zero, fuzz);
-        fuzz::int_term div_ts = generators::division::placeholder(ctx, fuzz, iden_fuzz);
+        fuzz::int_term div_ts = relations::division::placeholder(ctx, fuzz, iden_fuzz);
         fuzz::int_term one = generators::one::placeholder(ctx, fuzz);
         return generators::ite_integer_term_cond::placeholder(ctx, is_zero, one, div_ts);
     }
-
-    //fuzz::int_term
-    //one_by_pw(CVC4::api::Solver& c, fuzz::FreeVars& fvs, fuzz::int_term f)
-    //{
-        //fuzz::int_term tmp_zero = zero::placeholder(c, f);
-        //fuzz::int_term is_zero = tmp_zero.eqTerm(f);
-        //return is_zero.iteTerm(placeholder(c, f),
-            //c.mkTerm(CVC4::api::POW, f, tmp_zero));
-    //}
 
 } // namespace one
 
@@ -386,12 +379,6 @@ namespace iden_bool {
         return generators::xor_expr::placeholder(ctx, xor_once, iden_term);
     }
 
-    fuzz::bool_term
-    iden_by_simplify(fuzz::fuzz_context ctx, fuzz::bool_term t)
-    {
-        return ctx.simplify(t);
-    }
-
 } // namespace iden_bool
 
 namespace not_expr {
@@ -490,18 +477,17 @@ namespace equal_int {
         return generators::equal_int::placeholder(ctx, zero, sub_ts);
     }
 
-    //fuzz::bool_term
-    //check_equal_by_div_is_one(fuzz::fuzz_context ctx, fuzz::int_term t1, fuzz::int_term t2)
-    //{
-        //fuzz::int_term one = generators::one::placeholder(ctx, t1);
-        //fuzz::int_expr zero = generators::zero::placeholder(ctx, fvs, e2);
-        //fuzz::int_term div_ts = relations::division::placeholder(ctx, t1, t2);
-        //fuzz::bool_expr check_zeroes = slv.mkTerm(CVC4::api::Kind::AND,
-            //slv.mkTerm(CVC4::api::Kind::EQUAL, zero, e1),
-            //slv.mkTerm(CVC4::api::Kind::EQUAL, zero, e2));
-        //fuzz::bool_expr check_equal = generators::equal_int::placeholder(ctx, one, div_ts);
-        //return slv.mkTerm(CVC4::api::Kind::OR, check_zeroes, check_equal);
-    //}
+    fuzz::bool_term
+    check_equal_by_div_is_one(fuzz::fuzz_context ctx, fuzz::int_term t1, fuzz::int_term t2)
+    {
+        fuzz::int_term one = generators::one::placeholder(ctx, t1);
+        fuzz::int_term zero = generators::zero::placeholder(ctx, t1);
+        fuzz::int_term div_ts = relations::division::placeholder(ctx, t1, t2);
+        fuzz::bool_term check_t1 = generators::equal_int::placeholder(ctx, t1, zero);
+        fuzz::bool_term check_t2 = generators::equal_int::placeholder(ctx, t2, zero);
+        fuzz::bool_term check_equal = generators::equal_int::placeholder(ctx, one, div_ts);
+        return generators::ite_bool::placeholder(ctx, check_t2, check_t1, check_equal);
+    }
 
 } // namespace equal_int
 
@@ -549,46 +535,6 @@ namespace geq {
 
 } // namespace geq
 
-namespace mul {
-
-    fuzz::int_term
-    mul_comm(fuzz::fuzz_context ctx, fuzz::int_term t1, fuzz::int_term t2)
-    {
-        t1 = relations::identity::placeholder(ctx, t1);
-        t2 = relations::identity::placeholder(ctx, t2);
-        return generators::mul::placeholder(ctx, t2, t1);
-    }
-
-} // namespace mul
-
-namespace division {
-
-} // namespace division
-
-namespace modulo {
-
-    fuzz::int_term
-    mod_by_sub(fuzz::fuzz_context ctx, fuzz::int_term t1, fuzz::int_term t2)
-    {
-        t1 = relations::identity::placeholder(ctx, t1);
-        t2 = relations::identity::placeholder(ctx, t2);
-        fuzz::int_term zero = generators::zero::placeholder(ctx, t1);
-        fuzz::bool_term chk_zero = generators::equal_int::placeholder(ctx, t2, zero);
-        // make t1 - t2 * t1 / t2
-        // TODO make base
-        fuzz::int_term t1_div_t2 = generators::division::placeholder(ctx, t1, t2);
-        fuzz::int_term t2_mul_div = generators::mul::placeholder(ctx, t2, t1_div_t2);
-        fuzz::int_term t1_sub_mul = relations::sub::placeholder(ctx, t1, t2_mul_div);
-        return generators::ite_integer_term_cond::placeholder(ctx, chk_zero, t1, t1_sub_mul);
-        //return slv.mkTerm(CVC4::api::ITE,
-            //slv.mkTerm(CVC4::api::EQUAL, t2, zero), t1,
-            //slv.mkTerm(CVC4::api::MINUS, t1,
-                //slv.mkTerm(CVC4::api::MULT, t2,
-                    //slv.mkTerm(CVC4::api::INTS_DIVISION, t1, t2))));
-    }
-
-} // namespace modulo
-
 } // namespace generators
 
 /*******************************************************************************
@@ -620,7 +566,7 @@ namespace identity {
     {
         t = relations::identity::placeholder(ctx, t);
         fuzz::int_term one = generators::one::placeholder(ctx, t);
-        return generators::mul::placeholder(ctx, t, one);
+        return relations::mul::placeholder(ctx, t, one);
     }
 
     fuzz::int_term
@@ -628,7 +574,7 @@ namespace identity {
     {
         t = relations::identity::placeholder(ctx, t);
         fuzz::int_term one = generators::one::placeholder(ctx, t);
-        return generators::division::placeholder(ctx, t, one);
+        return relations::division::placeholder(ctx, t, one);
     }
 
     fuzz::int_term
@@ -649,14 +595,6 @@ namespace identity {
         return generators::ite_integer_term_cond::placeholder(ctx, t_equal, abs_t, t);
     }
 
-    //fuzz::int_term
-    //sqrt_square(CVC4::api::Solver& c, fuzz::FreeVars& fvs, fuzz::int_term e)
-    //{
-        //fuzz::int_term two = c.mkInteger(2);
-        //e = relations::identity::placeholder(c, fvs, e);
-        //return c.mkTerm(CVC4::api::TO_INTEGER, c.mkTerm(CVC4::api::SQRT, c.mkTerm(CVC4::api::POW, e, two));
-    //}
-
     fuzz::int_term
     iden_by_ite_false(fuzz::fuzz_context ctx, fuzz::int_term t)
     {
@@ -676,22 +614,6 @@ namespace identity {
         fuzz::bool_term true_expr = generators::true_expr::placeholder(ctx, fuzz_term);
         return generators::ite_integer_term_cond::placeholder(ctx, true_expr, t, dead);
     }
-
-    //fuzz::int_term
-    //iden_by_ite_fuzz(CVC4::api::Solver& c, fuzz::FreeVars& fvs, fuzz::int_term e)
-    //{
-        //fuzz::int_term dead = generators::fuzz_int_term::placeholder(c, fvs);
-        //e = relations::identity::placeholder(c, fvs, e);
-        //return c.mkTerm(CVC4::api::ITE,
-            //c.mkTerm(CVC4::api::EQUAL, e, dead), dead, e);
-    //}
-
-    fuzz::int_term
-    iden_by_simplify(fuzz::fuzz_context ctx, fuzz::int_term t)
-    {
-        return ctx.simplify(t);
-    }
-
 
 } // namespace identity
 
@@ -728,6 +650,41 @@ namespace sub {
     }
 
 } // namespace sub
+
+namespace mul {
+
+    fuzz::int_term
+    mul_comm(fuzz::fuzz_context ctx, fuzz::int_term t1, fuzz::int_term t2)
+    {
+        t1 = relations::identity::placeholder(ctx, t1);
+        t2 = relations::identity::placeholder(ctx, t2);
+        return relations::mul::placeholder(ctx, t2, t1);
+    }
+
+} // namespace mul
+
+namespace division {
+
+} // namespace division
+
+namespace modulo {
+
+    fuzz::int_term
+    mod_by_sub(fuzz::fuzz_context ctx, fuzz::int_term t1, fuzz::int_term t2)
+    {
+        t1 = relations::identity::placeholder(ctx, t1);
+        t2 = relations::identity::placeholder(ctx, t2);
+        fuzz::int_term zero = generators::zero::placeholder(ctx, t1);
+        fuzz::bool_term chk_zero = generators::equal_int::placeholder(ctx, t2, zero);
+        // make t1 - t2 * t1 / t2
+        // TODO make base
+        fuzz::int_term t1_div_t2 = relations::division::placeholder(ctx, t1, t2);
+        fuzz::int_term t2_mul_div = relations::mul::placeholder(ctx, t2, t1_div_t2);
+        fuzz::int_term t1_sub_mul = relations::sub::placeholder(ctx, t1, t2_mul_div);
+        return generators::ite_integer_term_cond::placeholder(ctx, chk_zero, t1, t1_sub_mul);
+    }
+
+} // namespace modulo
 
 namespace abs_expr
 {
@@ -766,7 +723,7 @@ namespace neg {
         fuzz::int_term one = generators::one::placeholder(ctx, t);
         fuzz::int_term two = generators::one::placeholder(ctx, t);
         two = relations::add::placeholder(ctx, one, two);
-        fuzz::int_term two_t = generators::mul::placeholder(ctx, t, two);
+        fuzz::int_term two_t = relations::mul::placeholder(ctx, t, two);
         return relations::sub::placeholder(ctx, t, two_t);
     }
 
