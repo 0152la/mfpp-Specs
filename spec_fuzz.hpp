@@ -9,6 +9,9 @@ namespace fuzz
     void start() {}
     void end()   {}
 
+    void mfr_fuzz_start(std::string s) {};
+    void mfr_fuzz_end(std::string s) {};
+
     template <class T> T fuzz_new();
     template<typename T, typename U> T fuzz_rand(U min, U max);
 
