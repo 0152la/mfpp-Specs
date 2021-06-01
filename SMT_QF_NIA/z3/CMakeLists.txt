@@ -7,6 +7,8 @@ if (LLVM_INSTALL_LOC)
     set(CMAKE_C_COMPILER ${LLVM_INSTALL_LOC}/bin/clang)
     set(CMAKE_CXX_COMPILER ${LLVM_INSTALL_LOC}/bin/clang++)
     set(Clang_DIR ${LLVM_INSTALL_LOC}/lib/cmake/clang)
+else()
+    message(WARNING "No given LLVM_INSTALL_LOC")
 endif()
 
 find_package(Z3 REQUIRED)

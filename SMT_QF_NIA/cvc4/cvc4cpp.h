@@ -3548,12 +3548,6 @@ std::vector<Sort> typeVectorToSorts(const Solver* slv,
 std::vector<Sort> typeNodeVectorToSorts(const Solver* slv,
                                         const std::vector<TypeNode>& types);
 
-//class __attribute__((annotate("expose"))) FreeVars
-//{
-    //public:
-        //CVC4::api::Term* vars[FV_COUNT];
-//};
-
 }  // namespace api
 
 // !!! Only temporarily public until the parser is fully migrated to the

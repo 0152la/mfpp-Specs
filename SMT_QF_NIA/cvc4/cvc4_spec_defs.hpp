@@ -10,6 +10,9 @@ typedef fuzz::int_term OUT_VAR_TYPE;
 #include "spec.hpp"
 
 namespace fuzz {
+
+static fuzz::int_term output_var;
+
 namespace lib_helper_funcs {
 
 fuzz::FreeVars

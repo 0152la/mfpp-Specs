@@ -1,8 +1,3 @@
-namespace fuzz {
-    static CVC4::api::Solver slv;
-    static int_term output_var;
-} // namespace fuzz
-
 namespace metalib {
 
 namespace checks {
@@ -79,6 +74,8 @@ namespace generators {
     namespace iden_bool {
         fuzz::bool_term base(fuzz::fuzz_context ctx, fuzz::bool_term t) {
             return t; }
+        fuzz::bool_term iden_by_simplify(fuzz::fuzz_context ctx, fuzz::bool_term t) {
+            return ctx.slv.simplify(t); }
     }
     namespace not_expr {
         fuzz::bool_term base(fuzz::fuzz_context ctx, fuzz::bool_term t) {
@@ -155,6 +152,8 @@ namespace relations {
     namespace identity {
         fuzz::int_term base(fuzz::fuzz_context ctx, fuzz::int_term t) {
             return t; }
+        fuzz::int_term iden_by_simplify(fuzz::fuzz_context ctx, fuzz::int_term t) {
+            return ctx.slv.simplify(t); }
     }
     namespace add {
         fuzz::int_term base(fuzz::fuzz_context ctx, fuzz::int_term t1, fuzz::int_term t2) {

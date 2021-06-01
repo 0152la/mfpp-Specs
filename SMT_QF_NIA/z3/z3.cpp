@@ -7,6 +7,7 @@
 #ifdef EXECUTE
 #include "z3++.h"
 #include "z3_fuzz_type_defs.hpp"
+#include "meta_spec_z3.hpp"
 #else
 #include "z3_spec_defs.hpp"
 #endif

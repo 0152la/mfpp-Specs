@@ -9,8 +9,8 @@ spec_repo_dir: ./input/spec_repo/
 lib_repo_dir: /home/sentenced/Documents/Internships/2018_ETH/work/other_libs/CVC4
 params:
     inputs: 2
-    tests: 2
-    test-size: 5
+    tests: 4
+    test-size: 4
     test-depth: 3
-    prune-depth: noprune
+    prune-depth: logarithm
     p: /home/sentenced/Documents/Internships/2018_ETH/work/spec_ast/input/spec_repo/SMT_QF_NIA/cvc5/build/compile_commands.json

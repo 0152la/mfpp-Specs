@@ -143,20 +143,6 @@ namespace generators {
         fuzz::bool_term base(fuzz::fuzz_context ctx, fuzz::bool_term c, fuzz::bool_term t, fuzz::bool_term e) {
             return z3::ite(c, t, e); }
     }
-#ifdef NL_AVOIDANCE
-    namespace mul {
-        fuzz::int_term base(fuzz::fuzz_context ctx, fuzz::int_term t1, fuzz::int_term t2) {
-            return z3::operator*(t1, t2); }
-    }
-    namespace division {
-        fuzz::int_term base(fuzz::fuzz_context ctx, fuzz::int_term t1, fuzz::int_term t2) {
-            return z3::ite(z3::operator==(t2, ctx.ctx.int_val(0)), t1, z3::operator/(t1, t2)); }
-    }
-    namespace modulo {
-        fuzz::int_term base(fuzz::fuzz_context ctx, fuzz::int_term t1, fuzz::int_term t2) {
-            return z3::ite(z3::operator==(t2, ctx.ctx.int_val(0)), t1, z3::mod(t1, t2)); }
-    }
-#endif
 } // namespace generators
 
 namespace relations {
@@ -174,7 +160,6 @@ namespace relations {
         fuzz::int_term base(fuzz::fuzz_context ctx, fuzz::int_term t1, fuzz::int_term t2) {
             return z3::operator-(t1, t2); }
     }
-#ifndef NL_AVOIDANCE
     namespace mul {
         fuzz::int_term base(fuzz::fuzz_context ctx, fuzz::int_term t1, fuzz::int_term t2) {
             return z3::operator*(t1, t2); }
@@ -187,7 +172,6 @@ namespace relations {
         fuzz::int_term base(fuzz::fuzz_context ctx, fuzz::int_term t1, fuzz::int_term t2) {
             return z3::ite(z3::operator==(t2, ctx.ctx.int_val(0)), t1, z3::mod(t1, t2)); }
     }
-#endif
     namespace abs_expr {
         fuzz::int_term base(fuzz::fuzz_context ctx, fuzz::int_term t) {
             return z3::abs(t); }

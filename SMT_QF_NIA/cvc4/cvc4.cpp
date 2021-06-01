@@ -5,6 +5,7 @@
 #ifdef EXECUTE
 #include "cvc4/api/cvc4cpp.h"
 #include "cvc4_fuzz_type_defs.hpp"
+#include "meta_spec_cvc4_nl.hpp"
 #else
 #include "cvc4_spec_defs.hpp"
 #endif
