@@ -10,3 +10,9 @@ mfr_bool_term(fuzz::fuzz_context ctx)
     return ctx.slv.mkTrue();
 }
 
+fuzz::FreeVars
+mfr_fvs(fuzz::fuzz_context ctx)
+{
+    return ctx.fvs;
+}
+
