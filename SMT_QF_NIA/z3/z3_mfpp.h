@@ -173,7 +173,7 @@ namespace z3 {
         void set_context(Z3_context ctx) {
             m_ctx = ctx;
             m_enable_exceptions = true;
-            m_rounding_mode = RNE;
+            m_rounding_mode = RNA;
             Z3_set_error_handler(m_ctx, 0);
             Z3_set_ast_print_mode(m_ctx, Z3_PRINT_SMTLIB2_COMPLIANT);
         }
@@ -262,13 +262,8 @@ namespace z3 {
            \brief Return the Bit-vector sort of size \c sz. That is, the sort for bit-vectors of size \c sz.
         */
         sort bv_sort(unsigned sz);
-
         /**
-           \brief Return the sort for Unicode characters.
-         */
-        sort char_sort();
-        /**
-           \brief Return the sort for Unicode strings.
+           \brief Return the sort for ASCII strings.
          */
         sort string_sort();
         /**
@@ -301,7 +296,7 @@ namespace z3 {
         /**
            \brief Return a RoundingMode sort.
          */
-        sort fpa_rounding_mode_sort();
+        sort fpa_rounding_mode();
         /**
            \brief Sets RoundingMode of FloatingPoints.
          */
@@ -356,8 +351,6 @@ namespace z3 {
         template<size_t precision>
         expr fpa_const(char const * name);
 
-        expr fpa_rounding_mode();
-
         expr bool_val(bool b);
 
         expr int_val(int n);
@@ -382,8 +375,6 @@ namespace z3 {
 
         expr fpa_val(double n);
         expr fpa_val(float n);
-        expr fpa_nan(sort const & s);
-        expr fpa_inf(sort const & s, bool sgn);
 
         expr string_val(char const* s);
         expr string_val(char const* s, unsigned n);
@@ -515,7 +506,8 @@ namespace z3 {
     public:
         ast(context & c):object(c), m_ast(0) {}
         ast(context & c, Z3_ast n):object(c), m_ast(n) { Z3_inc_ref(ctx(), m_ast); }
-        ast(ast const & s) :object(s), m_ast(s.m_ast) { Z3_inc_ref(ctx(), m_ast); }
+        ast(ast const & s):object(s), m_ast(s.m_ast) { Z3_inc_ref(ctx(), m_ast); }
+        ast(ast && s) noexcept : object(std::forward<object>(s)), m_ast(s.m_ast) { s.m_ast = nullptr; }
         ~ast() { if (m_ast) Z3_dec_ref(*m_ctx, m_ast); }
         operator Z3_ast() const { return m_ast; }
         operator bool() const { return m_ast != 0; }
@@ -525,6 +517,12 @@ namespace z3 {
                 Z3_dec_ref(ctx(), m_ast);
             object::operator=(s);
             m_ast = s.m_ast;
+            return *this;
+        }
+        ast & operator=(ast && s) noexcept {
+            object::operator=(std::forward<object>(s));
+            m_ast = s.m_ast;
+            s.m_ast = nullptr;
             return *this;
         }
         Z3_ast_kind kind() const { Z3_ast_kind r = Z3_get_ast_kind(ctx(), m_ast); check_error(); return r; }
@@ -608,7 +606,6 @@ namespace z3 {
         iterator begin() const noexcept { return iterator(this, 0); }
         iterator end() const { return iterator(this, size()); }
         friend std::ostream & operator<<(std::ostream & out, ast_vector_tpl const & v) { out << Z3_ast_vector_to_string(v.ctx(), v); return out; }
-        std::string to_string() const { return std::string(Z3_ast_vector_to_string(ctx(), m_vector)); }
     };
 
 
@@ -706,8 +703,6 @@ namespace z3 {
             \pre is_array()
         */
         sort array_range() const { assert(is_array()); Z3_sort s = Z3_get_array_sort_range(ctx(), *this); check_error(); return sort(ctx(), s); }
-
-        friend std::ostream & operator<<(std::ostream & out, sort const & s) { return out << Z3_sort_to_string(s.ctx(), Z3_sort(s.m_ast)); }
     };
 
     /**
@@ -886,7 +881,7 @@ namespace z3 {
         bool is_well_sorted() const { bool r = Z3_is_well_sorted(ctx(), m_ast); check_error(); return r; }
 
         /**
-           \brief Return Boolean expression to test for whether an FP expression is inf
+           \brief Return Boolean expression to test whether expression is inf
         */
         expr mk_is_inf() const {
             assert(is_fpa());
@@ -896,41 +891,11 @@ namespace z3 {
         }
 
         /**
-           \brief Return Boolean expression to test for whether an FP expression is a NaN
+           \brief Return Boolean expression to test for whether expression is a NaN
         */
         expr mk_is_nan() const {
             assert(is_fpa());
             Z3_ast r = Z3_mk_fpa_is_nan(ctx(), m_ast);
-            check_error();
-            return expr(ctx(), r);
-        }
-
-        /**
-           \brief Return Boolean expression to test for whether an FP expression is a normal
-        */
-        expr mk_is_normal() const {
-            assert(is_fpa());
-            Z3_ast r = Z3_mk_fpa_is_normal(ctx(), m_ast);
-            check_error();
-            return expr(ctx(), r);
-        }
-
-        /**
-           \brief Return Boolean expression to test for whether an FP expression is a subnormal
-        */
-        expr mk_is_subnormal() const {
-            assert(is_fpa());
-            Z3_ast r = Z3_mk_fpa_is_subnormal(ctx(), m_ast);
-            check_error();
-            return expr(ctx(), r);
-        }
-
-        /**
-           \brief Return Boolean expression to test for whether an FP expression is a zero
-        */
-        expr mk_is_zero() const {
-            assert(is_fpa());
-            Z3_ast r = Z3_mk_fpa_is_zero(ctx(), m_ast);
             check_error();
             return expr(ctx(), r);
         }
@@ -941,16 +906,6 @@ namespace z3 {
         expr mk_to_ieee_bv() const {
             assert(is_fpa());
             Z3_ast r = Z3_mk_fpa_to_ieee_bv(ctx(), m_ast);
-            check_error();
-            return expr(ctx(), r);
-        }
-
-        /**
-           \brief Convert this IEEE BV into a fpa
-        */
-        expr mk_from_ieee_bv(sort const &s) const {
-            assert(is_bv());
-            Z3_ast r = Z3_mk_fpa_to_fp_bv(ctx(), m_ast, s);
             check_error();
             return expr(ctx(), r);
         }
@@ -1131,6 +1086,17 @@ namespace z3 {
         operator Z3_app() const { assert(is_app()); return reinterpret_cast<Z3_app>(m_ast); }
 
         /**
+           \brief Return a RoundingMode sort.
+         */
+        sort fpa_rounding_mode() {
+            assert(is_fpa());
+            Z3_sort s = ctx().fpa_rounding_mode();
+            check_error();
+            return sort(ctx(), s);
+        }
+
+
+        /**
            \brief Return the declaration associated with this application.
            This method assumes the expression is an application.
 
@@ -1217,12 +1183,12 @@ namespace z3 {
         */
         friend expr operator||(bool a, expr const & b);
 
+        friend __attribute__((annotate("expose"))) fuzz::bool_term implies(fuzz::bool_term const & a, fuzz::bool_term const & b);
         friend expr implies(expr const & a, expr const & b);
         friend expr implies(expr const & a, bool b);
         friend expr implies(bool a, expr const & b);
 
         friend expr mk_or(expr_vector const& args);
-        friend expr mk_xor(expr_vector const& args);
         friend expr mk_and(expr_vector const& args);
 
         friend expr ite(expr const & c, expr const & t, expr const & e);
@@ -1370,7 +1336,6 @@ namespace z3 {
         friend __attribute__((annotate("expose"))) fuzz::int_term abs(fuzz::int_term const & a);
         friend expr abs(expr const & a);
         friend expr sqrt(expr const & a, expr const & rm);
-        friend expr fp_eq(expr const & a, expr const & b);
 
         friend expr operator~(expr const & a);
         expr extract(unsigned hi, unsigned lo) const { Z3_ast r = Z3_mk_extract(ctx(), hi, lo, *this); ctx().check_error(); return expr(ctx(), r); }
@@ -1396,26 +1361,6 @@ namespace z3 {
            \brief Conversion of a floating-point term into an unsigned bit-vector.
         */
         friend expr fpa_to_ubv(expr const& t, unsigned sz);
-
-        /**
-           \brief Conversion of a signed bit-vector term into a floating-point.
-        */
-        friend expr sbv_to_fpa(expr const& t, sort s);
-
-        /**
-           \brief Conversion of an unsigned bit-vector term into a floating-point.
-        */
-        friend expr ubv_to_fpa(expr const& t, sort s);
-
-        /**
-           \brief Conversion of a floating-point term into another floating-point.
-        */
-        friend expr fpa_to_fpa(expr const& t, sort s);
-
-        /**
-           \brief Round a floating-point term into its closest integer.
-        */
-        friend expr round_fpa_to_closest_integer(expr const& t);
 
         /**
            \brief sequence and regular expression operations.
@@ -1470,37 +1415,7 @@ namespace z3 {
             check_error();
             return expr(ctx(), r);
         }
-        expr ubvtos() const {
-            Z3_ast r = Z3_mk_ubv_to_str(ctx(), *this);
-            check_error();
-            return expr(ctx(), r);
-        }
-        expr sbvtos() const {
-            Z3_ast r = Z3_mk_sbv_to_str(ctx(), *this);
-            check_error();
-            return expr(ctx(), r);
-        }
-        expr char_to_int() const {
-            Z3_ast r = Z3_mk_char_to_int(ctx(), *this);
-            check_error();
-            return expr(ctx(), r);
-        }
-        expr char_to_bv() const {
-            Z3_ast r = Z3_mk_char_to_bv(ctx(), *this);
-            check_error();
-            return expr(ctx(), r);
-        }
-        expr char_from_bv() const {
-            Z3_ast r = Z3_mk_char_from_bv(ctx(), *this);
-            check_error();
-            return expr(ctx(), r);
-        }
-        expr is_digit() const {
-            Z3_ast r = Z3_mk_char_is_digit(ctx(), *this);
-            check_error();
-            return expr(ctx(), r);
-        }
- 
+
         friend expr range(expr const& lo, expr const& hi);
         /**
            \brief create a looping regular expression.
@@ -1549,26 +1464,6 @@ namespace z3 {
            \brief Apply substitution. Replace bound variables by expressions.
         */
         expr substitute(expr_vector const& dst);
-
-
-	class iterator {
-            expr& e;
-            unsigned i;
-        public:
-            iterator(expr& e, unsigned i): e(e), i(i) {}
-            bool operator==(iterator const& other) noexcept {
-                return i == other.i;
-            }
-            bool operator!=(iterator const& other) noexcept {
-                return i != other.i;
-            }
-            expr operator*() const { return e.arg(i); }
-            iterator& operator++() { ++i; return *this; }
-            iterator operator++(int) { assert(false); return *this; }
-        };
-
-        iterator begin() { return iterator(*this, 0); }
-        iterator end() { return iterator(*this, is_app() ? num_args() : 0); }
 
    };
 
@@ -1931,31 +1826,15 @@ namespace z3 {
         }
         return expr(a.ctx(), r); 
     }
-    inline expr bvredor(expr const & a) {
-        assert(a.is_bv());
-        Z3_ast r = Z3_mk_bvredor(a.ctx(), a);
-        a.check_error();
-        return expr(a.ctx(), r);
-    }
-    inline expr bvredand(expr const & a) {
-        assert(a.is_bv());
-        Z3_ast r = Z3_mk_bvredor(a.ctx(), a);
-        a.check_error();
-        return expr(a.ctx(), r);
-    }
     inline expr abs(expr const & a) { 
         Z3_ast r;
         if (a.is_int()) {
             expr zero = a.ctx().int_val(0);
-	    expr ge = a >= zero;
-	    expr na = -a;
-            r = Z3_mk_ite(a.ctx(), ge, a, na);	    
+            r = Z3_mk_ite(a.ctx(), Z3_mk_ge(a.ctx(), a, zero), a, -a);
         }
         else if (a.is_real()) {
             expr zero = a.ctx().real_val(0);
-	    expr ge = a >= zero;
-	    expr na = -a;
-            r = Z3_mk_ite(a.ctx(), ge, a, na);
+            r = Z3_mk_ite(a.ctx(), Z3_mk_ge(a.ctx(), a, zero), a, -a);
         }
         else {
             r = Z3_mk_fpa_abs(a.ctx(), a); 
@@ -1967,13 +1846,6 @@ namespace z3 {
         check_context(a, rm);
         assert(a.is_fpa());
         Z3_ast r = Z3_mk_fpa_sqrt(a.ctx(), rm, a);
-        a.check_error();
-        return expr(a.ctx(), r);
-    }
-    inline expr fp_eq(expr const & a, expr const & b) {
-        check_context(a, b);
-        assert(a.is_fpa());
-        Z3_ast r = Z3_mk_fpa_eq(a.ctx(), a, b);
         a.check_error();
         return expr(a.ctx(), r);
     }
@@ -2005,34 +1877,6 @@ namespace z3 {
     inline expr fpa_to_ubv(expr const& t, unsigned sz) {
         assert(t.is_fpa());
         Z3_ast r = Z3_mk_fpa_to_ubv(t.ctx(), t.ctx().fpa_rounding_mode(), t, sz);
-        t.check_error();
-        return expr(t.ctx(), r);
-    }
-
-    inline expr sbv_to_fpa(expr const& t, sort s) {
-        assert(t.is_bv());
-        Z3_ast r = Z3_mk_fpa_to_fp_signed(t.ctx(), t.ctx().fpa_rounding_mode(), t, s);
-        t.check_error();
-        return expr(t.ctx(), r);
-    }
-
-    inline expr ubv_to_fpa(expr const& t, sort s) {
-        assert(t.is_bv());
-        Z3_ast r = Z3_mk_fpa_to_fp_unsigned(t.ctx(), t.ctx().fpa_rounding_mode(), t, s);
-        t.check_error();
-        return expr(t.ctx(), r);
-    }
-
-    inline expr fpa_to_fpa(expr const& t, sort s) {
-        assert(t.is_fpa());
-        Z3_ast r = Z3_mk_fpa_to_fp_float(t.ctx(), t.ctx().fpa_rounding_mode(), t, s);
-        t.check_error();
-        return expr(t.ctx(), r);
-    }
-
-    inline expr round_fpa_to_closest_integer(expr const& t) {
-        assert(t.is_fpa());
-        Z3_ast r = Z3_mk_fpa_round_to_integral(t.ctx(), t.ctx().fpa_rounding_mode(), t);
         t.check_error();
         return expr(t.ctx(), r);
     }
@@ -2459,14 +2303,6 @@ namespace z3 {
         Z3_ast r = Z3_mk_and(args.ctx(), _args.size(), _args.ptr());
         args.check_error();
         return expr(args.ctx(), r);
-    }
-    inline expr mk_xor(expr_vector const& args) {
-        if (args.empty())
-            return args.ctx().bool_val(false);
-        expr r = args[0];
-        for (unsigned i = 1; i < args.size(); ++i)
-            r = r ^ args[i];
-        return r;
     }
 
 
@@ -3294,7 +3130,6 @@ namespace z3 {
     inline sort context::real_sort() { Z3_sort s = Z3_mk_real_sort(m_ctx); check_error(); return sort(*this, s); }
     inline sort context::bv_sort(unsigned sz) { Z3_sort s = Z3_mk_bv_sort(m_ctx, sz); check_error(); return sort(*this, s); }
     inline sort context::string_sort() { Z3_sort s = Z3_mk_string_sort(m_ctx); check_error(); return sort(*this, s); }
-    inline sort context::char_sort() { Z3_sort s = Z3_mk_char_sort(m_ctx); check_error(); return sort(*this, s); }
     inline sort context::seq_sort(sort& s) { Z3_sort r = Z3_mk_seq_sort(m_ctx, s); check_error(); return sort(*this, r); }
     inline sort context::re_sort(sort& s) { Z3_sort r = Z3_mk_re_sort(m_ctx, s); check_error(); return sort(*this, r); }
     inline sort context::fpa_sort(unsigned ebits, unsigned sbits) { Z3_sort s = Z3_mk_fpa_sort(m_ctx, ebits, sbits); check_error(); return sort(*this, s); }
@@ -3311,7 +3146,18 @@ namespace z3 {
     template<>
     inline sort context::fpa_sort<128>() { return fpa_sort(15, 113); }
 
-    inline sort context::fpa_rounding_mode_sort() { Z3_sort r = Z3_mk_fpa_rounding_mode_sort(m_ctx); check_error(); return sort(*this, r); }
+    inline sort context::fpa_rounding_mode() {
+        switch (m_rounding_mode) {
+        case RNA: return sort(*this, Z3_mk_fpa_rna(m_ctx));
+        case RNE: return sort(*this, Z3_mk_fpa_rne(m_ctx));
+        case RTP: return sort(*this, Z3_mk_fpa_rtp(m_ctx));
+        case RTN: return sort(*this, Z3_mk_fpa_rtn(m_ctx));
+        case RTZ: return sort(*this, Z3_mk_fpa_rtz(m_ctx));
+        default: return sort(*this); 
+        }
+    }
+
+    inline void context::set_rounding_mode(rounding_mode rm) { m_rounding_mode = rm; }
 
     inline sort context::array_sort(sort d, sort r) { Z3_sort s = Z3_mk_array_sort(m_ctx, d, r); check_error(); return sort(*this, s); }
     inline sort context::array_sort(sort_vector const& d, sort r) {
@@ -3468,19 +3314,6 @@ namespace z3 {
     template<size_t precision>
     inline expr context::fpa_const(char const * name) { return constant(name, fpa_sort<precision>()); }
 
-    inline void context::set_rounding_mode(rounding_mode rm) { m_rounding_mode = rm; }
-
-    inline expr context::fpa_rounding_mode() {
-        switch (m_rounding_mode) {
-        case RNA: return expr(*this, Z3_mk_fpa_rna(m_ctx));
-        case RNE: return expr(*this, Z3_mk_fpa_rne(m_ctx));
-        case RTP: return expr(*this, Z3_mk_fpa_rtp(m_ctx));
-        case RTN: return expr(*this, Z3_mk_fpa_rtn(m_ctx));
-        case RTZ: return expr(*this, Z3_mk_fpa_rtz(m_ctx));
-        default: return expr(*this);
-        }
-    }
-
     inline expr context::bool_val(bool b) { return b ? expr(*this, Z3_mk_true(m_ctx)) : expr(*this, Z3_mk_false(m_ctx)); }
 
     inline expr context::int_val(int n) { Z3_ast r = Z3_mk_int(m_ctx, n, int_sort()); check_error(); return expr(*this, r); }
@@ -3509,8 +3342,6 @@ namespace z3 {
 
     inline expr context::fpa_val(double n) { sort s = fpa_sort<64>(); Z3_ast r = Z3_mk_fpa_numeral_double(m_ctx, n, s); check_error(); return expr(*this, r); }
     inline expr context::fpa_val(float n) { sort s = fpa_sort<32>(); Z3_ast r = Z3_mk_fpa_numeral_float(m_ctx, n, s); check_error(); return expr(*this, r); }
-    inline expr context::fpa_nan(sort const & s) { Z3_ast r = Z3_mk_fpa_nan(m_ctx, s); check_error(); return expr(*this, r); }
-    inline expr context::fpa_inf(sort const & s, bool sgn) { Z3_ast r = Z3_mk_fpa_inf(m_ctx, s, sgn); check_error(); return expr(*this, r); }
 
     inline expr context::string_val(char const* s, unsigned n) { Z3_ast r = Z3_mk_lstring(m_ctx, n, s); check_error(); return expr(*this, r); }
     inline expr context::string_val(char const* s) { Z3_ast r = Z3_mk_string(m_ctx, s); check_error(); return expr(*this, r); }
@@ -3958,11 +3789,8 @@ namespace z3 {
 
 
     public:
-        user_propagator_base(Z3_context c) : s(nullptr), c(c) {}
-        
-        user_propagator_base(solver* s): s(s), c(nullptr) {
-              Z3_solver_propagate_init(ctx(), *s, this, push_eh, pop_eh, fresh_eh);
-	    }
+        user_propagator_base(solver* s): s(s), c(nullptr) {}
+        user_propagator_base(Z3_context c): s(nullptr), c(c) {}
 
         virtual void push() = 0;
         virtual void pop(unsigned num_scopes) = 0;

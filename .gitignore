@@ -1,5 +1,8 @@
 **/build/
+wip/
+
 */compile_commands.json
 **/spec_fuzz.hpp
 **/spec.hpp
 *.swp
+**/*.yaml
