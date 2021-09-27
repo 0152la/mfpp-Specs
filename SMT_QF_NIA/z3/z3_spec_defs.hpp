@@ -1,7 +1,7 @@
 #ifndef _Z3_SPEC_DEFS_HPP
 #define _Z3_SPEC_DEFS_HPP
 
-#include "z3++.h"
+#include "z3_mfpp.h"
 #include "z3_fuzz_type_defs.hpp"
 
 namespace fuzz
