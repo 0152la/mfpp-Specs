@@ -72,7 +72,7 @@ extern "C" {
 #include <stdint.h>
 #include <stdio.h>
 
-#include "yices_types.h"
+#include "yices_types_mfpp.h"
 #include "yices_limits.h"
 
 

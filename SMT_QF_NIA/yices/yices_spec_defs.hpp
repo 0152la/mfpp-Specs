@@ -1,7 +1,7 @@
 #ifndef _YICES_SPEC_DEFS_HPP
 #define _YICES_SPEC_DEFS_HPP
 
-#include "yices.h"
+#include "yices_mfpp.h"
 
 typedef term_t OUT_VAR_TYPE;
 
