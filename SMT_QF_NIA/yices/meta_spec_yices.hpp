@@ -135,21 +135,6 @@ namespace generators {
         fuzz::bool_term base(fuzz::fuzz_context ctx, fuzz::bool_term c, fuzz::bool_term t, fuzz::bool_term e) {
             return yices_ite(c, t, e); }
     }
-    // Second class non-linear operations to control parameters (if called
-    // appropriately, ensures that it won't be the case that both operands
-    // contain free variables
-    namespace mul {
-        fuzz::int_term base(fuzz::fuzz_context ctx, fuzz::int_term t1, fuzz::int_term t2) {
-            return yices_mul(t1, t2); }
-    }
-    namespace division {
-        fuzz::int_term base(fuzz::fuzz_context ctx, fuzz::int_term t1, fuzz::int_term t2) {
-            return yices_ite(yices_arith_eq0_atom(t2), t1, yices_idiv(t1, t2)); }
-    }
-    namespace modulo {
-        fuzz::int_term base(fuzz::fuzz_context ctx, fuzz::int_term t1, fuzz::int_term t2) {
-            return yices_ite(yices_arith_eq0_atom(t2), t1, yices_imod(t1, t2)); }
-    }
 } // namespace generators
 
 namespace relations {
@@ -177,6 +162,21 @@ namespace relations {
         fuzz::int_term base(fuzz::fuzz_context ctx, bool b, fuzz::int_term t, fuzz::int_term e) {
             term_t bool_term = b ? yices_true() : yices_false();
             return yices_ite(bool_term, t, e); }
+    }
+    // Second class non-linear operations to control parameters (if called
+    // appropriately, ensures that it won't be the case that both operands
+    // contain free variables
+    namespace mul {
+        fuzz::int_term base(fuzz::fuzz_context ctx, fuzz::int_term t1, fuzz::int_term t2) {
+            return yices_mul(t1, t2); }
+    }
+    namespace division {
+        fuzz::int_term base(fuzz::fuzz_context ctx, fuzz::int_term t1, fuzz::int_term t2) {
+            return yices_ite(yices_arith_eq0_atom(t2), t1, yices_idiv(t1, t2)); }
+    }
+    namespace modulo {
+        fuzz::int_term base(fuzz::fuzz_context ctx, fuzz::int_term t1, fuzz::int_term t2) {
+            return yices_ite(yices_arith_eq0_atom(t2), t1, yices_imod(t1, t2)); }
     }
 
 } // namespace relations
