@@ -1,0 +1,20 @@
+# TO REPLACE
+# <SpecAST-path>
+# <SpecASTSpecs-path>
+# <SUT-path>
+---
+working_dir: <SpecAST-path>
+template_file: <SpecASTSpec-path>/SMT_QF_NIA/yices/yices.cpp
+output_folder: ./output/yices_int
+output_file_name: t_yices.cpp
+compile_script: ./scripts/compile.sh
+cmake_script_dir: <SpecASTSpec-path>/SMT_QF_NIA/yices/runtime/
+spec_repo_dir: <SpecASTSpec-path>
+lib_repo_dir: <SUT-path>
+params:
+    inputs: 2
+    tests: 5
+    test-size: 4
+    test-depth: 5
+    prune-depth: logarithm
+    p: <SpecASTSpec-path>/SMT_QF_NIA/yices/build/compile_commands.json

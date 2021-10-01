@@ -1,0 +1,21 @@
+# TO REPLACE
+# <SpecAST-path>
+# <SpecASTSpecs-path>
+# <SUT-path>
+---
+working_dir: <SpecAST-path>
+template_file: <SpecASTSpecs-path>/SMT_QF_NIA/cvc5/cvc5.cpp
+output_folder: ./output/cvc5_int
+output_file_name: t_cvc5.cpp
+compile_script: ./scripts/compile.sh
+cmake_script_dir: <SpecASTSpecs-path>/SMT_QF_NIA/cvc5/runtime/
+spec_repo_dir: <SpecASTSpecs-path>
+lib_repo_dir: <SUT-path>
+params:
+    inputs: 2
+    tests: 4
+    test-size: 4
+    test-depth: 3
+    prune-depth: logarithm
+    p: <SpecASTSpecs-path>/SMT_QF_NIA/cvc5/build/compile_commands.json
+

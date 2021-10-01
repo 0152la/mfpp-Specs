@@ -1,7 +1,7 @@
 # TO REPLACE
 # <SpecAST-path>
 # <SpecASTSpecs-path>
-# <Z3-path>
+# <SUT-path>
 ---
 working_dir: <SpecAST-path>
 template_file: <SpecASTSpecs-path>/SMT_QF_NIA/z3/z3.cpp
@@ -10,7 +10,7 @@ output_file_name: t_z3.cpp
 compile_script: ./scripts/compile.sh
 cmake_script_dir: <SpecASTSpecs-path>/SMT_QF_NIA/z3/runtime/
 spec_repo_dir: <SpecASTSpecs-path>
-lib_repo_dir: <Z3-path>
+lib_repo_dir: <SUT-path>
 params:
     inputs: 2
     tests: 5
