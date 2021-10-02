@@ -14,7 +14,7 @@ endif()
 
 find_library(YICES_LIBS yices PATHS $ENV{YICES_INSTALL_LOC}/lib)
 
-set(THIRD_PARTY_INSTALL_LOC ENV{YICES_INSTALL_LOC}/../../third_party/install)
+set(THIRD_PARTY_INSTALL_LOC $ENV{YICES_INSTALL_LOC}/../../../third_party/install)
 find_library(CUDD_LIBS cudd PATHS ${THIRD_PARTY_INSTALL_LOC}/lib)
 find_library(GMP_LIBS gmp PATHS ${THIRD_PARTY_INSTALL_LOC}/lib)
 find_library(LIBPOLY_LIBS poly PATHS ${THIRD_PARTY_INSTALL_LOC}/lib)
