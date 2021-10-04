@@ -1,8 +1,6 @@
 #ifndef _ISL_SPEC_DEFS_HPP
 #define _ISL_SPEC_DEFS_HPP
 
-#define MAX_INT_EXP 64
-
 #define VAL_MIN_VAL -20
 #define VAL_MAX_VAL 20
 

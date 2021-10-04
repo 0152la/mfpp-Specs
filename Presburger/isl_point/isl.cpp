@@ -1,3 +1,4 @@
+#define MAX_INT_EXP 64
 #include <cassert>
 
 #include "spec_fuzz.hpp"
