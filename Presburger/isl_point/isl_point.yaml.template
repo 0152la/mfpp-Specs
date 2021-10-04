@@ -4,11 +4,11 @@
 # <SUT-path>
 ---
 working_dir: <SpecAST-path>
-template_file: <SpecASTSpecs-path>/Presburger/isl/isl.cpp
+template_file: <SpecASTSpecs-path>/Presburger/isl_point/isl.cpp
 output_folder: ./output/isl_point
 output_file_name: t_isl.cpp
 compile_script: ./scripts/compile.sh
-cmake_script_dir: <SpecASTSpecs-path>/Presburger/isl/runtime/
+cmake_script_dir: <SpecASTSpecs-path>/Presburger/isl_point/runtime/
 spec_repo_dir: <SpecASTSpecs-path>
 lib_repo_dir: <SUT-path>
 params:
@@ -17,5 +17,5 @@ params:
     test-size: 5
     test-depth: 4
     prune-depth: logarithm
-    p: <SpecASTSpecs-path>/Presburger/isl/build/compile_commands.json
+    p: <SpecASTSpecs-path>/Presburger/isl_point/build/compile_commands.json
 
