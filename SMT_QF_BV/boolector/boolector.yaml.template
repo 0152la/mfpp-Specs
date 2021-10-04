@@ -1,0 +1,20 @@
+# TO REPLACE
+# <SpecAST-path>
+# <SpecASTSpecs-path>
+# <SUT-path>
+---
+working_dir: <SpecAST-path>
+template_file: <SpecASTSpecs-path>/SMT_QF_BV/boolector/boolector.cpp
+output_folder: ./output/boolector
+output_file_name: t_btor.cpp
+compile_script: ./scripts/compile.sh
+cmake_script_dir: <SpecASTSpecs-path>/SMT_QF_BV/boolector/runtime/
+spec_repo_dir: <SpecASTSpecs-path>/
+lib_repo_dir: <SUT-path>
+params:
+    inputs: 2
+    tests: 6
+    test-size: 7
+    test-depth: 7
+    prune-depth: logarithm
+    p: <SpecASTSpecs-path>/SMT_QF_BV/boolector/build/compile_commands.json

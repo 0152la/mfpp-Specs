@@ -4,6 +4,7 @@
 
 #ifdef EXECUTE
 #include "boolector/boolector.h"
+#include "meta_spec_boolector.hpp"
 #else
 #include "boolector_spec_defs.hpp"
 #endif

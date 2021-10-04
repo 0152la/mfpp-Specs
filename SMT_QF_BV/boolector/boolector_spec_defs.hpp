@@ -5,7 +5,7 @@
 
 typedef BoolectorNode* OUT_VAR_TYPE;
 
-//#include "meta_spec_boolector.hpp"
+#include "meta_spec_boolector.hpp"
 #include "set_meta_tests_boolector.hpp"
 
 namespace fuzz
