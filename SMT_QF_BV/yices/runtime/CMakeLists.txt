@@ -14,11 +14,22 @@ endif()
 
 find_library(YICES_LIBS yices PATHS $ENV{YICES_INSTALL_LOC}/lib)
 
+set(THIRD_PARTY_INSTALL_LOC $ENV{YICES_INSTALL_LOC}/../../../third_party/install)
+find_library(CUDD_LIBS cudd PATHS ${THIRD_PARTY_INSTALL_LOC}/lib)
+find_library(GMP_LIBS gmp PATHS ${THIRD_PARTY_INSTALL_LOC}/lib)
+find_library(LIBPOLY_LIBS poly PATHS ${THIRD_PARTY_INSTALL_LOC}/lib)
+
 get_filename_component(TEST_OUT ${TEST_FILE} NAME_WLE)
 add_executable(${TEST_OUT}
     ${TEST_FILE})
 
 target_include_directories(${TEST_OUT} PUBLIC $ENV{YICES_INSTALL_LOC}/include)
+target_include_directories(${TEST_OUT} PUBLIC ${CMAKE_SOURCE_DIR}/..)
 target_link_libraries(${TEST_OUT} PUBLIC ${YICES_LIBS})
+target_link_libraries(${TEST_OUT} PUBLIC ${CUDD_LIBS})
+target_link_libraries(${TEST_OUT} PUBLIC ${GMP_LIBS})
+target_link_libraries(${TEST_OUT} PUBLIC ${LIBPOLY_LIBS})
+target_link_libraries(${TEST_OUT} PUBLIC gcov)
 target_compile_options(${TEST_OUT} PRIVATE "-Wno-attributes")
 target_compile_definitions(${TEST_OUT} PRIVATE EXECUTE=1)
+set_target_properties(${TEST_OUT} PROPERTIES LINK_FLAGS "-lgcov")
