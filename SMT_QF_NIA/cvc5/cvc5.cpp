@@ -3,7 +3,7 @@
 #include "spec_fuzz.hpp"
 
 #ifdef EXECUTE
-#include "cvc4/api/cvc5.h"
+#include "cvc5/cvc5.h"
 #include "cvc5_fuzz_type_defs.hpp"
 #include "meta_spec_cvc5_nl.hpp"
 #else
