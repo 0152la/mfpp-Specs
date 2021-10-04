@@ -6,6 +6,7 @@
 #ifdef EXECUTE
 #include "yices.h"
 #include "yices_fuzz_type_defs.hpp"
+#include "meta_spec_yices.hpp"
 #else
 #include "yices_spec_defs.hpp"
 #endif

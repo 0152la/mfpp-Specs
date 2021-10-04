@@ -8,7 +8,7 @@ template_file: <SpecASTSpecs-path>/SMT_QF_NIA/yices/yices.cpp
 output_folder: ./output/yices_int
 output_file_name: t_yices.cpp
 compile_script: ./scripts/compile.sh
-cmake_script_dir: <SpecASTSpecs-path>/SMT_QF_NIA/yices/runtime/
+cmake_script_dir: <SpecASTSpecs-path>/SMT_QF_NIA/yices/runtime/mcsat
 spec_repo_dir: <SpecASTSpecs-path>
 lib_repo_dir: <SUT-path>
 params:
