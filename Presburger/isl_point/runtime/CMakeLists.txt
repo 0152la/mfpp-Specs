@@ -16,6 +16,7 @@ add_executable(${TEST_OUT}
     ${TEST_FILE})
 target_include_directories(${TEST_OUT} PUBLIC ${ISL_INCLUDE_DIRS})
 target_include_directories(${TEST_OUT} PUBLIC ${CMAKE_SOURCE_DIR}/..)
+target_link_directories(${TEST_OUT} PUBLIC ${ISL_LIBRARY_DIRS})
 target_link_libraries(${TEST_OUT} PUBLIC ${ISL_LIBRARIES})
 target_compile_options(${TEST_OUT} PRIVATE "-Wno-attributes")
 target_compile_definitions(${TEST_OUT} PRIVATE EXECUTE=1)

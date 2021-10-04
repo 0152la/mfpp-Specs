@@ -1,4 +1,9 @@
 #define MAX_INT_EXP 64
+#define SPACE_MIN 3
+#define SPACE_MAX 6
+#define VAL_MIN_VAL -20
+#define VAL_MAX_VAL 20
+
 #include <cassert>
 
 #include "spec_fuzz.hpp"
@@ -11,9 +16,6 @@
 #include "isl-noexceptions-point.h"
 #include "isl_spec_defs.hpp"
 #endif
-
-#define SPACE_MIN 3
-#define SPACE_MAX 6
 
 int
 main(int argc, char** argv)
@@ -36,7 +38,7 @@ main(int argc, char** argv)
     fuzz::output_var = fuzz::output_var.unite(fuzz::fuzz_new<isl::set>());
     fuzz::output_var = fuzz::output_var.unite(fuzz::fuzz_new<isl::set>());
     fuzz::output_var = fuzz::output_var.convex_hull();
-    fuzz::output_var = fuzz::output_var.project_out(isl::dim::set, 0, SPACE_MIN / 2);
+    //fuzz::output_var = fuzz::output_var.project_out(isl::dim::set, 0, SPACE_MIN / 2);
     fuzz::end();
     assert(isl_ctx_last_error(ctx.get()) == isl_error_none);
 
