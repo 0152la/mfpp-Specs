@@ -5,17 +5,21 @@ namespace checks {
     void
     check_equal(Btor* ctx, BoolectorNode* t1, BoolectorNode* t2)
     {
+        boolector_push(ctx, 1);
         BoolectorNode* check = boolector_eq(ctx, t1, t2);
         boolector_assert(ctx, check);
         assert(boolector_sat(ctx) == BOOLECTOR_SAT);
+        boolector_pop(ctx, 1);
     }
 
     void
     check_not_distinct(Btor* ctx, BoolectorNode* t1, BoolectorNode* t2)
     {
+        boolector_push(ctx, 1);
         BoolectorNode* check = boolector_ne(ctx, t1, t2);
         boolector_assert(ctx, check);
         assert(boolector_sat(ctx) != BOOLECTOR_SAT);
+        boolector_pop(ctx, 1);
     }
 
 } // namespace checks
